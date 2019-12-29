@@ -24,7 +24,8 @@ func _ready():
 	var basic_floor_color_seco = Color(randf(), randf(), randf())
 	var basic_door_color_prim = Color(randf(), randf(), randf())
 	var basic_door_color_seco = Color(randf(), randf(), randf())	
-	
+	var kitchen_floor_color_prim = Color(randf(), randf(), randf())
+	var kitchen_floor_color_seco = Color(randf(), randf(), randf())
 	
 	#Print out mansion 
 	for row in mansion:
@@ -82,6 +83,14 @@ func _ready():
 				new_building_item.setTile(103)
 				new_building_item.SetPrimColor(basic_door_color_prim)
 				new_building_item.SetSecoColor(basic_door_color_seco)
+			if mansion[i][j] == 4:
+				var new_building_item = Item.instance()
+				new_building_item.position.y = 16 + j * $TileMap.cell_size.y
+				new_building_item.position.x = 16 + i * $TileMap.cell_size.x
+				add_child(new_building_item)
+				new_building_item.setTile(107)
+				new_building_item.SetPrimColor(kitchen_floor_color_prim)
+				new_building_item.SetSecoColor(kitchen_floor_color_seco)
 	
 	pass # Replace with function body.
 

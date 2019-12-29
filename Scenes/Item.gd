@@ -19,6 +19,7 @@ extends Node2D
 # 104 - LADDER (HOLE)
 # 105 - FLAG
 # 106 - DESK
+# 107 - KITCHEN FLOOR
 
 ########### STREET ITEMS
 # 201 - ROAD_CENTER_CORNER_INNER
@@ -61,6 +62,8 @@ var wallPrim = preload("res://Tiles//scenery//brickPrim.png")
 var wallSeco = preload("res://Tiles//scenery//brickSeco.png")
 var doorPrim = preload("res://Tiles//scenery//doorPrim.png")
 var doorSeco = preload("res://Tiles//scenery//doorSeco.png")
+var kitchenFloorPrim = preload("res://Tiles//scenery//kitchenFloorPrim.png")
+var kitchenFloorSeco = preload("res://Tiles//scenery//kitchenFloorSeco.png")
 #var ladderPrim
 #var flagPrim
 #var flagSeco
@@ -120,7 +123,7 @@ func _ready():
 	$Tert.modulate = tertColor
 	
 	#Pick random tile_index (set here for debug purposesssss)
-	tile_index = randi()%2
+	tile_index = 107
 	setTile(tile_index)
 	
 	
@@ -214,6 +217,12 @@ func setTile(in_tile_index):
 			item_name = "flag"
 			$Prim.texture = flagPrim
 			$Seco.texture = flagSeco
+			$Tert.texture = null
+		107:
+			#KITCHEN FLOOR
+			item_name = "kitchen floor"
+			$Prim.texture = kitchenFloorPrim
+			$Seco.texture = kitchenFloorSeco
 			$Tert.texture = null
 		######STREET SHIT
 		201:

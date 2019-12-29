@@ -972,6 +972,7 @@ func RowDeckTop(botRow, midRow):
 # 1 - WALL
 # 2 - FLOOR
 # 3 - DOOR
+# 4 - KITCHEN FLOOR
 #
 # Output:
 # 	a 2D indexed array [x][y] with tile data for the mansion (see legend)
@@ -1045,8 +1046,10 @@ func GenerateMansion(space_dimensions):
 			#Calculate new stamp location
 			stamp_location.x = temp_wall.x - floor_coord.x
 			stamp_location.y = temp_wall.y - floor_dim_y 
-			#Attempt to stamp...
-			stamp_data = StampRoomOntoSpace(floor_space, map_space, stamp_location )
+			#Attempt to stamp... (choose a random floor type)
+			var floor_type = 2 + (2*(randi()%2)) #RANDOM floor tile type of 2 or 4
+			print(floor_type)
+			stamp_data = StampRoomOntoSpace(floor_space, map_space, stamp_location , floor_type)
 			#Make sure stamping succeeded 
 			if stamp_data["success"] == true:
 				print("yes stamp")
@@ -1065,8 +1068,10 @@ func GenerateMansion(space_dimensions):
 			#Calculate new stamp location
 			stamp_location.x = temp_wall.x - floor_coord.x
 			stamp_location.y = (temp_wall.y + 1) + floor_coord.y
-			#Attempt to stamp...
-			stamp_data = StampRoomOntoSpace(floor_space, map_space, stamp_location )
+			#Attempt to stamp... Choose a random floor type
+			var floor_type = 2 + (2*(randi()%2)) #RANDOM floor tile type of 2 or 4
+			print(floor_type)
+			stamp_data = StampRoomOntoSpace(floor_space, map_space, stamp_location, floor_type )
 			#Make sure stamping succeeded 
 			if stamp_data["success"] == true:
 				print("yes stamp")
@@ -1085,8 +1090,10 @@ func GenerateMansion(space_dimensions):
 			#Calculate new stamp location
 			stamp_location.x = temp_wall.x - floor_dim_x
 			stamp_location.y = temp_wall.y - floor_coord.y
-			#Attempt to stamp...
-			stamp_data = StampRoomOntoSpace(floor_space, map_space, stamp_location )
+			#Attempt to stamp... Choose random floor type
+			var floor_type = 2 + (2*(randi()%2)) #RANDOM floor tile type of 2 or 4
+			print(floor_type)
+			stamp_data = StampRoomOntoSpace(floor_space, map_space, stamp_location , floor_type)
 			#Make sure stamping succeeded 
 			if stamp_data["success"] == true:
 				print("yes stamp")
@@ -1105,8 +1112,10 @@ func GenerateMansion(space_dimensions):
 			#Calculate new stamp location
 			stamp_location.x = temp_wall.x + 1
 			stamp_location.y = temp_wall.y - floor_coord.y
-			#Attempt to stamp...
-			stamp_data = StampRoomOntoSpace(floor_space, map_space, stamp_location )
+			#Attempt to stamp... Choose random floor type
+			var floor_type = 2 + (2*(randi()%2)) #RANDOM floor tile type of 2 or 4
+			print(floor_type)
+			stamp_data = StampRoomOntoSpace(floor_space, map_space, stamp_location, floor_type )
 			#Make sure stamping succeeded 
 			if stamp_data["success"] == true:
 				print("yes stamp")
@@ -1226,7 +1235,9 @@ func GenerateRoomAndOuterFloorCoord():
 # Will also make sure it's not stamping onto any exisiting floor/wall/door tiles
 # or else it will return FALSE...
 # returns TRUE otherwise...
-func StampRoomOntoSpace(room_array, space_array, location_coords):
+#
+# Specify what kind of room tile to place down with floor_index
+func StampRoomOntoSpace(room_array, space_array, location_coords, floor_index = 2):
 	
 	#First, make sure the room will fit into the space array in the first place...
 	#Return false if it doesn't
@@ -1270,7 +1281,7 @@ func StampRoomOntoSpace(room_array, space_array, location_coords):
 				var space_y = j + location_coords.y
 				#If it's clear, stamp down, otherwise return FALSE
 				if(space_array_copy[space_x][space_y]==0):
-					space_array_copy[space_x][space_y]=2
+					space_array_copy[space_x][space_y]=floor_index
 				else:
 					print("failed try overwrite")
 					print(space_array_copy[space_x][space_y])
@@ -1292,6 +1303,9 @@ func StampRoomOntoSpace(room_array, space_array, location_coords):
 	
 ##Function that creates walls around all empty floor space
 func SurroundExposedFloors(space_array):
+	
+	var valid_floor_tiles = [2,4] #all valid floor tiles that DONT count as empty space
+	
 	#Cycle through every element and identify empty spaces
 	# IF IT"S TOUCHING A FLOOR, TURN IT INTO A WALL!!
 	for i in range(space_array.size()):
@@ -1300,35 +1314,35 @@ func SurroundExposedFloors(space_array):
 				#Then we can start checking all of it's surrounding cells.... ALL 8...
 				#NW Tile
 				if i - 1 >= 0 and j - 1 >= 0:
-					if space_array[i-1][j-1] == 2:
+					if valid_floor_tiles.has(space_array[i-1][j-1]):
 						space_array[i][j] = 1
 				#N Tile
 				if j - 1 >= 0:
-					if space_array[i][j-1] == 2:
+					if valid_floor_tiles.has(space_array[i][j-1]):
 						space_array[i][j] = 1
 				#NE Tile
 				if i + 1 < space_array.size() and j - 1 >= 0:
-					if space_array[i+1][j-1] == 2:
+					if valid_floor_tiles.has(space_array[i+1][j-1]):
 						space_array[i][j] = 1
 				#W TILE
 				if i - 1 >= 0:
-					if space_array[i-1][j] == 2:
+					if valid_floor_tiles.has(space_array[i-1][j]):
 						space_array[i][j] = 1
 				#E TILE
 				if i + 1 < space_array.size():
-					if space_array[i+1][j] == 2:
+					if valid_floor_tiles.has(space_array[i+1][j]):
 						space_array[i][j] = 1
 				#SW TILE
 				if i - 1 >= 0 and j + 1 < space_array[0].size():
-					if space_array[i-1][j+1] == 2:
+					if valid_floor_tiles.has(space_array[i-1][j+1]):
 						space_array[i][j] = 1
 				#S TILE
 				if j + 1 < space_array[0].size():
-					if space_array[i][j+1] == 2:
+					if valid_floor_tiles.has(space_array[i][j+1]):
 						space_array[i][j] = 1
 				#SE TILE
 				if i + 1 < space_array.size() and j + 1 < space_array[0].size():
-					if space_array[i+1][j+1] == 2:
+					if valid_floor_tiles.has(space_array[i+1][j+1]):
 						space_array[i][j] = 1
 
 
@@ -1352,6 +1366,8 @@ func SurroundExposedFloors(space_array):
 func IdentifyExposedWalls(space_array):
 	
 	var candidate_list = [] #list of Vector3 of wall coods that can be latched on to...
+	
+	var valid_floor_tiles = [2,4] #all valid floor tiles that DONT count as empty space
 	
 	#Cycle through every element and identify exposed walls
 	# if it's a wall and has empty on one side and floor on the other 0 & 2
@@ -1377,19 +1393,19 @@ func IdentifyExposedWalls(space_array):
 					d_tile = space_array[i][j+1] 
 				
 				#Check for up direction
-				if u_tile == 0 and d_tile == 2:
+				if u_tile == 0 and valid_floor_tiles.has(d_tile):
 					var temp_vector = Vector3(i,j,0)
 					candidate_list.append(temp_vector)
 				#Check for down direction
-				if u_tile == 2 and d_tile == 0:
+				if valid_floor_tiles.has(u_tile) and d_tile == 0:
 					var temp_vector = Vector3(i,j,1)
 					candidate_list.append(temp_vector)
 				#Check for left direction
-				if r_tile == 2 and l_tile == 0:
+				if valid_floor_tiles.has(r_tile) and l_tile == 0:
 					var temp_vector = Vector3(i,j,2)
 					candidate_list.append(temp_vector)
 				#Check for right direction
-				if r_tile == 0 and l_tile == 2:
+				if r_tile == 0 and valid_floor_tiles.has(l_tile):
 					var temp_vector = Vector3(i,j,3)
 					candidate_list.append(temp_vector)
 	
