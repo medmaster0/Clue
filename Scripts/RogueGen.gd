@@ -1462,3 +1462,261 @@ func Copy2DArray(in_array):
 	
 	return(copy_array)
 	
+
+###MANSION REVISITED
+##Create a new floor based on the outline of existing building
+# -> to create nicely fit multi-story house for instance
+# MAP Legend
+# 0 - Empty Space
+# 1 - WALL
+# 2 - FLOOR
+# 3 - DOOR
+# 4 - KITCHEN FLOOR
+
+#Function to outline an existing building with walls and floors inside...
+# Accepts 2D map array as input
+# Returns every wall that is touching empty space as a wall 
+# Otherwise returns it as a floor
+# All other tiles are returned as floors as well
+# Returns the new modified map array containing walls and floors
+func OutlineBuilding(in_array):
+	
+	print("outlining")
+	
+	var outlined_map = [] #temp variable for outlined map...
+	
+	outlined_map = Copy2DArray(in_array)
+	
+	##Now... go through the whole map... tile by tile
+	#for every wall... check if its touching an empy space
+	# if it is, it stays a wall, otherwise, becomes a floor
+	# All other tiles will become floors...
+	for i in range(outlined_map.size()):
+		for j in range(outlined_map[0].size()):
+			match(outlined_map[i][j]):
+				0:
+					#EMPTY TILE
+					var z = 1
+				1:
+					#WALL TILE
+					#Then we can check each other its neighbors it they are empty space
+					var isTouchingEmpty = false
+					#NW Tile
+					if i - 1 >= 0 and j - 1 >= 0:
+						if outlined_map[i-1][j-1] == 0:
+							isTouchingEmpty = true
+					else:
+						isTouchingEmpty = true
+					#N Tile
+					if j - 1 >= 0:
+						if outlined_map[i][j-1] == 0:
+							isTouchingEmpty = true
+					else:
+						isTouchingEmpty = true
+					#NE Tile
+					if i + 1 < outlined_map.size() and j - 1 >= 0:
+						if outlined_map[i+1][j-1] == 0:
+							isTouchingEmpty = true
+					else:
+						isTouchingEmpty = true
+					#W TILE
+					if i - 1 >= 0:
+						if outlined_map[i-1][j] == 0:
+							isTouchingEmpty = true
+					else:
+						isTouchingEmpty = true
+					#E TILE
+					if i + 1 < outlined_map.size():
+						if outlined_map[i+1][j] == 0:
+							isTouchingEmpty = true
+					else:
+						isTouchingEmpty = true
+					#SW TILE
+					if i - 1 >= 0 and j + 1 < outlined_map[0].size():
+						if outlined_map[i-1][j+1] == 0:
+							isTouchingEmpty = true
+					else:
+						isTouchingEmpty = true
+					#S TILE
+					if j + 1 < outlined_map[0].size():
+						if outlined_map[i][j+1] == 0:
+							isTouchingEmpty = true
+					else:
+						isTouchingEmpty = true
+					#SE TILE
+					if i + 1 < outlined_map.size() and j + 1 < outlined_map[0].size():
+						if outlined_map[i+1][j+1] == 0:
+							isTouchingEmpty = true
+					else:
+						isTouchingEmpty = true
+					
+					##Now we can determine type based on if it's touching empty
+					if isTouchingEmpty == true:
+						outlined_map[i][j] = 1
+					else:
+						outlined_map[i][j] = 2
+					
+					
+					
+				_: #everything else
+					outlined_map[i][j] = 2
+	
+	return(outlined_map)
+	
+	
+
+
+###Function that will split an existing outline
+# by running a wall through it
+# The wall is ensured to have at least one empty space on each side
+# PSEUDO CODE:
+# 	Pick a random FLOOR tile in the outline
+#	Choose randomly to go up/down or left/right (or specified)
+# 	Go outward both directions until you hit a wall
+#	At each step, make sure there are empty floors on each side
+#Accepts same kind of 2D array as above
+#also can specify if the wall runs up down or left//right
+# 0 - up down
+# 1 - left right
+
+
+func WallLineBuilding(in_array, choice = randi()%2):
+	print("wall lining")
+	
+	var wall_lined_map = [] #temp variable for outlined map...
+	wall_lined_map = Copy2DArray(in_array)
+	
+	var wall_center_coords = Vector2(0,0) #the point where the wall walks from
+	
+	#Find a random floor point...
+	#Infinite loop until it finds one
+	while(true):
+		wall_center_coords.x = randi()%wall_lined_map.size()
+		wall_center_coords.y = randi()%wall_lined_map[0].size()
+		if(wall_lined_map[wall_center_coords.x][wall_center_coords.y] == 2):
+			print("found a floor")
+			break
+	
+	print(wall_center_coords)
+	
+	match(choice):
+		0:
+			#UP/DOWN
+			print("up down")
+			#Check if we can put a door down... Requires floor space on left and right
+			if(wall_lined_map[wall_center_coords.x-1][wall_center_coords.y] == 2 and
+				wall_lined_map[wall_center_coords.x+1][wall_center_coords.y] == 2):
+					wall_lined_map[wall_center_coords.x][wall_center_coords.y] = 3 #turn it into a door
+			else:
+				print("couldn't place door, pick a diff point...")
+				var return_data = {
+					"success" : false,
+					"out_array" : in_array
+				}
+				return(return_data)
+				
+			#walk through UP direction
+			var upCursor = wall_center_coords.y - 1
+			while(true):
+				#Check if we hit wall
+				if(wall_lined_map[wall_center_coords.x][upCursor] == 1):
+					break 
+				#Check if we can place a wall... requires floor space on left and right
+				if(wall_lined_map[wall_center_coords.x-1][upCursor] == 2 and
+					wall_lined_map[wall_center_coords.x+1][upCursor] == 2):
+						wall_lined_map[wall_center_coords.x][upCursor] = 1
+				else:
+					print("couldn't place NOT ENOUGH ROOM")
+					var return_data = {
+						"success" : false,
+						"out_array" : in_array
+					}
+					return(return_data)
+				#Update cursor
+				upCursor = upCursor - 1
+			
+			#walk through DOWN direction
+			var downCursor = wall_center_coords.y + 1
+			while(true):
+				#Check if we hit wall
+				if(wall_lined_map[wall_center_coords.x][downCursor] == 1):
+					break 
+				#Check if we can place a wall... requires floor space on left and right
+				if(wall_lined_map[wall_center_coords.x-1][downCursor] == 2 and
+					wall_lined_map[wall_center_coords.x+1][downCursor] == 2):
+						wall_lined_map[wall_center_coords.x][downCursor] = 1
+				else:
+					print("couldn't place NOT ENOUGH ROOM")
+					var return_data = {
+						"success" : false,
+						"out_array" : in_array
+					}
+					return(return_data)
+				#Update cursor
+				downCursor = downCursor + 1
+			
+		1:
+			#LEFT/RIGHT
+			print("left right")
+			#Check if we can put a door down... Requires floor space on up and down
+			if(wall_lined_map[wall_center_coords.x][wall_center_coords.y-1] == 2 and
+				wall_lined_map[wall_center_coords.x][wall_center_coords.y+1] == 2):
+					wall_lined_map[wall_center_coords.x][wall_center_coords.y] = 3 #turn it into a door
+			else:
+				print("couldn't place door, pick a diff point...")
+				var return_data = {
+					"success" : false,
+					"out_array" : in_array
+				}
+				return(return_data)
+				
+			#walk through LEFT direction
+			var leftCursor = wall_center_coords.x - 1
+			while(true):
+				#Check if we hit wall
+				if(wall_lined_map[leftCursor][wall_center_coords.y] == 1):
+					break 
+				#Check if we can place a wall... requires floor space on up and down
+				if(wall_lined_map[leftCursor][wall_center_coords.y+1] == 2 and
+					wall_lined_map[leftCursor][wall_center_coords.y-1] == 2):
+						wall_lined_map[leftCursor][wall_center_coords.y] = 1
+				else:
+					print("couldn't place NOT ENOUGH ROOM")
+					var return_data = {
+						"success" : false,
+						"out_array" : in_array
+					}
+					return(return_data)
+				#Update cursor
+				leftCursor = leftCursor - 1
+			
+			#walk through RIGHT direction
+			var rightCursor = wall_center_coords.x + 1
+			while(true):
+				#Check if we hit wall
+				if(wall_lined_map[rightCursor][wall_center_coords.y] == 1):
+					break 
+				#Check if we can place a wall... requires floor space on up and down
+				if(wall_lined_map[rightCursor][wall_center_coords.y+1] == 2 and
+					wall_lined_map[rightCursor][wall_center_coords.y-1] == 2):
+						wall_lined_map[rightCursor][wall_center_coords.y] = 1
+				else:
+					print("couldn't place NOT ENOUGH ROOM")
+					var return_data = {
+						"success" : false,
+						"out_array" : in_array
+					}
+					return(return_data)
+				#Update cursor
+				rightCursor = rightCursor + 1
+	
+	var return_data = {
+		"success" : true,
+		"out_array" : wall_lined_map
+	}
+	return(return_data)
+	
+	
+	
+	
+	
