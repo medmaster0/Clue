@@ -1481,8 +1481,6 @@ func Copy2DArray(in_array):
 # Returns the new modified map array containing walls and floors
 func OutlineBuilding(in_array):
 	
-	print("outlining")
-	
 	var outlined_map = [] #temp variable for outlined map...
 	
 	outlined_map = Copy2DArray(in_array)
@@ -1581,7 +1579,6 @@ func OutlineBuilding(in_array):
 
 
 func WallLineBuilding(in_array, choice = randi()%2):
-	print("wall lining")
 	
 	var wall_lined_map = [] #temp variable for outlined map...
 	wall_lined_map = Copy2DArray(in_array)
@@ -1594,7 +1591,6 @@ func WallLineBuilding(in_array, choice = randi()%2):
 		wall_center_coords.x = randi()%wall_lined_map.size()
 		wall_center_coords.y = randi()%wall_lined_map[0].size()
 		if(wall_lined_map[wall_center_coords.x][wall_center_coords.y] == 2):
-			print("found a floor")
 			break
 	
 	print(wall_center_coords)
@@ -1602,7 +1598,6 @@ func WallLineBuilding(in_array, choice = randi()%2):
 	match(choice):
 		0:
 			#UP/DOWN
-			print("up down")
 			#Check if we can put a door down... Requires floor space on left and right
 			if(wall_lined_map[wall_center_coords.x-1][wall_center_coords.y] == 2 and
 				wall_lined_map[wall_center_coords.x+1][wall_center_coords.y] == 2):
@@ -1657,7 +1652,6 @@ func WallLineBuilding(in_array, choice = randi()%2):
 			
 		1:
 			#LEFT/RIGHT
-			print("left right")
 			#Check if we can put a door down... Requires floor space on up and down
 			if(wall_lined_map[wall_center_coords.x][wall_center_coords.y-1] == 2 and
 				wall_lined_map[wall_center_coords.x][wall_center_coords.y+1] == 2):
@@ -1717,6 +1711,116 @@ func WallLineBuilding(in_array, choice = randi()%2):
 	return(return_data)
 	
 	
+
+#FUnction that will fill an area in a 2d array
+# it will change all cells identical to the cell specified, with another tile specified
+# Input:
+#	Input array we are editing
+#	Fill Location - Vector2
+#	Fill target tile type - int
+# Output:
+# 	2D array with the area specified filled in with new tile type...
+func FillTileArray(in_array, fill_location, fill_tile = 4):
+	
+	var out_array = Copy2DArray(in_array) #The array we return...
+	
+	var fill_locations = [] #a list of fill_locations that need to be changed
+	
+	var old_tile_type = in_array[fill_location.x][fill_location.y] #determine what the old tile type is we are changing from
+	
+	#Start with the first location. 
+	fill_locations.append(fill_location)
+	
+	#Keep cycling through the whole area...
+	while(fill_locations.size() > 0):
+		var current_location = fill_locations.pop_front()
+		
+		#Check each of its neighbors if they should be added to the list...
+		#UP
+		if(out_array[current_location.x][current_location.y - 1] == old_tile_type):
+			#Add it to the fill_list (Make sure it's not already there!)
+			var new_location = Vector2(current_location.x, current_location.y - 1)
+			if(!fill_locations.has(new_location)):
+				fill_locations.append(new_location)
+		#DOWN
+		if(out_array[current_location.x][current_location.y + 1] == old_tile_type):
+			#Add it to the fill_list (Make sure it's not already there!)
+			var new_location = Vector2(current_location.x, current_location.y + 1)
+			if(!fill_locations.has(new_location)):
+				fill_locations.append(new_location)
+		#LEFT
+		if(out_array[current_location.x - 1][current_location.y] == old_tile_type):
+			#Add it to the fill_list (Make sure it's not already there!)
+			var new_location = Vector2(current_location.x - 1, current_location.y)
+			if(!fill_locations.has(new_location)):
+				fill_locations.append(new_location)
+		#RIGHT
+		if(out_array[current_location.x + 1][current_location.y] == old_tile_type):
+			#Add it to the fill_list (Make sure it's not already there!)
+			var new_location = Vector2(current_location.x + 1, current_location.y)
+			if(!fill_locations.has(new_location)):
+				fill_locations.append(new_location)
+	
+		#Now fill this location in the out_array
+		out_array[current_location.x][current_location.y] = fill_tile
+	
+		#Now TRANSFER this location from the fill list to the done list
+		fill_locations.erase(current_location)
+
+	return(out_array)
+
+
+##Bounding Box Clip
+#FUnction that will analyze a floor and determine the minimum sized box that will surround the floor
+#It then removes all of the extra rows and columns and copies onto new box
+# Basically analyzes the in_array map for region with minimal 0 tiles!
+# Input:
+#	input array we are clipping
+# Output
+#	output array we are clippings
+#####
+### NOT OPTIMIZED>>> STILL SEARCHES THE WHOLE MAP... 
+func BoundingBoxClipArray(in_array):
+	
+	var out_array = []
+	
+	#Variables for the bounds of the building space...
+	var leftBound = 9999
+	var rightBound = -9999
+	var upBound = 9999
+	var downBound = -9999
+	
+	#Identify BOUNDS
+	for i in range(in_array.size()):
+		for j in range(in_array[0].size()):
+			if in_array[i][j] != 0: #means we found a non-empty tile
+				#IS it a LEFT BOUND?
+				if i < leftBound:
+					leftBound = i
+				#Is it a RIGHT BOUND?
+				if i > rightBound:
+					rightBound = i
+				#Is it an UP BOUND?
+				if j < upBound:
+					upBound = j
+				#Is it a DOWN BOUND?
+				if j > downBound:
+					downBound = j
+	
+	#Initialze the out array with the proper dimensions
+	for i in range(rightBound - leftBound + 1):
+		var temp_row = []
+		for j in range(downBound - upBound + 1):
+			temp_row.append(0)
+		out_array.append(temp_row)
+		
+	#Now copy into the new array
+	for i in range(out_array.size()):
+		for j in range(out_array[0].size()):
+			out_array[i][j] = in_array[leftBound+i][upBound+j]
+	
+	return(out_array)
 	
 	
-	
+
+

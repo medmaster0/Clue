@@ -22,6 +22,10 @@ func _ready():
 	randomize()
 	
 	mansion = RogueGen.GenerateMansion(Vector2(30,30))
+	
+	#Clip space for cleanliness and ease of use
+	mansion = RogueGen.BoundingBoxClipArray(mansion)
+	
 	# MANSION MPA Legend
 	# 0 - Empty Space
 	# 1 - WALL
@@ -38,9 +42,6 @@ func _ready():
 	kitchen_floor_color_prim = Color(randf(), randf(), randf())
 	kitchen_floor_color_seco = Color(randf(), randf(), randf())
 	
-	#Print out mansion 
-	for row in mansion:
-		print(row)
 	
 	#mansion = RogueGen.Rotate2DArray(mansion, "right")
 	
@@ -122,6 +123,24 @@ func _input(event):
 			new_room = wall_return_data["out_array"]
 			if wall_return_data["success"] == true:
 				split_counter = split_counter + 1
+		
+		##ALso change the tile types up...
+		var kitchen_rooms = 2 #how many times we will apply the fill alorithm to a floor...
+		var rooms_changed = 0 #counter to keep track
+		while(rooms_changed < kitchen_rooms):
+			#Try to find a floor tile...
+			var check_location = Vector2(0,0)
+			while(true):
+				#pick random location
+				check_location.x = randi()%new_room.size()
+				check_location.y = randi()%new_room[0].size()
+				#check if it's a floor tile 2
+				if(new_room[check_location.x][check_location.y] == 2):
+					break
+			#Now appliy the fill at this locaiton 
+			new_room = RogueGen.FillTileArray(new_room, check_location, 4)
+			rooms_changed = rooms_changed + 1
+		
 		
 		##Build out the new room
 		for i in range(new_room.size()):
