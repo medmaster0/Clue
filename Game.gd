@@ -177,6 +177,18 @@ func _input(event):
 					new_building_item.SetPrimColor(kitchen_floor_color_prim)
 					new_building_item.SetSecoColor(kitchen_floor_color_seco)
 			
+		#Delete old enemies
+		for i in range(map_enemies.size()):
+			remove_child(map_enemies[i])
+		#Generate new enemies
+		for i in range(num_enemies):
+			var new_enemy = Creature.instance()
+			add_child(new_enemy)
+			new_enemy.z_index = new_enemy.z_index + 1
+			new_enemy.position.y = 16
+			new_enemy.position.x = 16 * i
+			map_enemies.append(new_enemy)
+		
 		#Place map enemies in a random room...
 		for i in range(map_enemies.size()):
 			var floor_position = RogueGen.FindRandomTile(new_room, [2,4]) #find random floor pos
