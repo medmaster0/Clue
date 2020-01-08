@@ -1823,4 +1823,19 @@ func BoundingBoxClipArray(in_array):
 	
 	
 
-
+##Function to find the coords of a random tile of a given tile type in a map_array
+#Input:
+#	in_array : the 2d map array of tiles
+#	tileset	 : any valid tiles that can be randomly selected...
+# Output
+#	position : Vector2 , the positition of the randomly selected tile...
+#MAKE SURE THE ARRAY ACTUALLY CONTAINS THE TILETYPE OR INFINITE LOOP!!!!!
+func FindRandomTile(in_array, tileset = [2,4]):
+	#random coords to check
+	var check_x = 0
+	var check_y = 0 
+	while(true):
+		check_x = randi()%in_array.size()
+		check_y = randi()%in_array[0].size()
+		if tileset.has(in_array[check_x][check_y]):
+			return(Vector2(check_x,check_y))

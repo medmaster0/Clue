@@ -1,0 +1,409 @@
+[gd_scene load_steps=48 format=2]
+
+[ext_resource path="res://Scenes/Clothes.gd" type="Script" id=1]
+[ext_resource path="res://Tiles/clothes/angel_wings.png" type="Texture" id=2]
+[ext_resource path="res://Tiles/clothes/bandanaPrim.png" type="Texture" id=3]
+[ext_resource path="res://Tiles/clothes/bandanaSeco.png" type="Texture" id=4]
+[ext_resource path="res://Tiles/clothes/bigBow.pngPrim.png" type="Texture" id=5]
+[ext_resource path="res://Tiles/clothes/bigBow.pngSeco.png" type="Texture" id=6]
+[ext_resource path="res://Tiles/clothes/bigBow.pngTert.png" type="Texture" id=7]
+[ext_resource path="res://Tiles/clothes/capPrim.png" type="Texture" id=8]
+[ext_resource path="res://Tiles/clothes/capSeco.png" type="Texture" id=9]
+[ext_resource path="res://Tiles/clothes/crownPrim.png" type="Texture" id=10]
+[ext_resource path="res://Tiles/clothes/crownSeco.png" type="Texture" id=11]
+[ext_resource path="res://Tiles/clothes/demon_wings.png" type="Texture" id=12]
+[ext_resource path="res://Tiles/clothes/doc.pngPrim.png" type="Texture" id=13]
+[ext_resource path="res://Tiles/clothes/doc.pngSeco.png" type="Texture" id=14]
+[ext_resource path="res://Tiles/clothes/featherHat.pngPrim.png" type="Texture" id=15]
+[ext_resource path="res://Tiles/clothes/featherHat.pngSeco.png" type="Texture" id=16]
+[ext_resource path="res://Tiles/clothes/featherHat.pngTert.png" type="Texture" id=17]
+[ext_resource path="res://Tiles/clothes/featherHat.pngQuad.png" type="Texture" id=18]
+[ext_resource path="res://Tiles/clothes/hoodPrim.png" type="Texture" id=19]
+[ext_resource path="res://Tiles/clothes/hoodSeco.png" type="Texture" id=20]
+[ext_resource path="res://Tiles/clothes/jester.pngPrim.png" type="Texture" id=21]
+[ext_resource path="res://Tiles/clothes/jester.pngSeco.png" type="Texture" id=22]
+[ext_resource path="res://Tiles/clothes/jester.pngTert.png" type="Texture" id=23]
+[ext_resource path="res://Tiles/clothes/lilBowPrim.png" type="Texture" id=24]
+[ext_resource path="res://Tiles/clothes/lilBowSeco.png" type="Texture" id=25]
+[ext_resource path="res://Tiles/clothes/masq.pngPrim.png" type="Texture" id=26]
+[ext_resource path="res://Tiles/clothes/masq.pngSeco.png" type="Texture" id=27]
+[ext_resource path="res://Tiles/clothes/mohawkPrim.png" type="Texture" id=28]
+[ext_resource path="res://Tiles/clothes/mohawkSeco.png" type="Texture" id=29]
+[ext_resource path="res://Tiles/clothes/nurse.pngPrim.png" type="Texture" id=30]
+[ext_resource path="res://Tiles/clothes/nurse.pngSeco.png" type="Texture" id=31]
+[ext_resource path="res://Tiles/clothes/parasolHat.pngPrim.png" type="Texture" id=32]
+[ext_resource path="res://Tiles/clothes/parasolHat.pngSeco.png" type="Texture" id=33]
+[ext_resource path="res://Tiles/clothes/parasolHat.pngTert.png" type="Texture" id=34]
+[ext_resource path="res://Tiles/clothes/tiePrim.png" type="Texture" id=35]
+[ext_resource path="res://Tiles/clothes/tophatPrim.png" type="Texture" id=36]
+[ext_resource path="res://Tiles/clothes/tophatSeco.png" type="Texture" id=37]
+[ext_resource path="res://Tiles/clothes/veilDancer.pngPrim.png" type="Texture" id=38]
+[ext_resource path="res://Tiles/clothes/veilDancer.pngSeco.png" type="Texture" id=39]
+[ext_resource path="res://Tiles/clothes/veilDancer.pngTert.png" type="Texture" id=40]
+[ext_resource path="res://Tiles/clothes/witch.pngPrim.png" type="Texture" id=41]
+[ext_resource path="res://Tiles/clothes/witch.pngSeco.png" type="Texture" id=42]
+[ext_resource path="res://Tiles/clothes/witch.pngTert.png" type="Texture" id=43]
+[ext_resource path="res://Tiles/clothes/witchDoctor.png" type="Texture" id=44]
+[ext_resource path="res://Tiles/clothes/welderPrim.png" type="Texture" id=45]
+[ext_resource path="res://Tiles/clothes/welderSeco.png" type="Texture" id=46]
+[ext_resource path="res://Tiles/clothes/welderTert.png" type="Texture" id=47]
+
+[node name="Clothes" type="Node2D"]
+script = ExtResource( 1 )
+
+[node name="Angel" type="Node2D" parent="."]
+editor/display_folded = true
+visible = false
+
+[node name="Prim" type="Sprite" parent="Angel"]
+z_index = 1
+texture = ExtResource( 2 )
+centered = false
+offset = Vector2( -1, -19 )
+
+[node name="Bandana" type="Node2D" parent="."]
+editor/display_folded = true
+visible = false
+
+[node name="Prim" type="Sprite" parent="Bandana"]
+z_index = 1
+texture = ExtResource( 3 )
+centered = false
+offset = Vector2( 0, -8 )
+
+[node name="Seco" type="Sprite" parent="Bandana"]
+z_index = 1
+texture = ExtResource( 4 )
+centered = false
+offset = Vector2( 0, -8 )
+
+[node name="BigBow" type="Node2D" parent="."]
+editor/display_folded = true
+visible = false
+
+[node name="Prim" type="Sprite" parent="BigBow"]
+z_index = 1
+texture = ExtResource( 5 )
+centered = false
+offset = Vector2( -8, -8 )
+
+[node name="Seco" type="Sprite" parent="BigBow"]
+z_index = 1
+texture = ExtResource( 6 )
+centered = false
+offset = Vector2( -8, -8 )
+
+[node name="Tert" type="Sprite" parent="BigBow"]
+z_index = 1
+texture = ExtResource( 7 )
+centered = false
+offset = Vector2( -8, -8 )
+
+[node name="Cap" type="Node2D" parent="."]
+editor/display_folded = true
+visible = false
+
+[node name="Prim" type="Sprite" parent="Cap"]
+z_index = 1
+texture = ExtResource( 8 )
+centered = false
+offset = Vector2( 0, -8 )
+
+[node name="Seco" type="Sprite" parent="Cap"]
+z_index = 1
+texture = ExtResource( 9 )
+centered = false
+offset = Vector2( 0, -8 )
+
+[node name="Crown" type="Node2D" parent="."]
+editor/display_folded = true
+visible = false
+
+[node name="Prim" type="Sprite" parent="Crown"]
+z_index = 1
+texture = ExtResource( 10 )
+centered = false
+offset = Vector2( 0, -8 )
+
+[node name="Seco" type="Sprite" parent="Crown"]
+z_index = 1
+texture = ExtResource( 11 )
+centered = false
+offset = Vector2( 0, -8 )
+
+[node name="Demon" type="Node2D" parent="."]
+editor/display_folded = true
+visible = false
+
+[node name="Prim" type="Sprite" parent="Demon"]
+z_index = 1
+texture = ExtResource( 12 )
+centered = false
+offset = Vector2( -1, -19 )
+
+[node name="Doc" type="Node2D" parent="."]
+visible = false
+
+[node name="Prim" type="Sprite" parent="Doc"]
+z_index = 1
+texture = ExtResource( 13 )
+centered = false
+offset = Vector2( 0, -8 )
+
+[node name="Seco" type="Sprite" parent="Doc"]
+z_index = 1
+texture = ExtResource( 14 )
+centered = false
+offset = Vector2( 0, -8 )
+
+[node name="FeatherHat" type="Node2D" parent="."]
+editor/display_folded = true
+visible = false
+
+[node name="Prim" type="Sprite" parent="FeatherHat"]
+z_index = 1
+texture = ExtResource( 15 )
+centered = false
+offset = Vector2( -2, -8 )
+
+[node name="Seco" type="Sprite" parent="FeatherHat"]
+z_index = 1
+texture = ExtResource( 16 )
+centered = false
+offset = Vector2( -2, -8 )
+
+[node name="Tert" type="Sprite" parent="FeatherHat"]
+z_index = 1
+texture = ExtResource( 17 )
+centered = false
+offset = Vector2( -2, -8 )
+
+[node name="Quad" type="Sprite" parent="FeatherHat"]
+z_index = 1
+texture = ExtResource( 18 )
+centered = false
+offset = Vector2( -2, -8 )
+
+[node name="Hood" type="Node2D" parent="."]
+editor/display_folded = true
+visible = false
+
+[node name="Prim" type="Sprite" parent="Hood"]
+z_index = 1
+texture = ExtResource( 19 )
+centered = false
+offset = Vector2( 0, -8 )
+
+[node name="Seco" type="Sprite" parent="Hood"]
+z_index = 1
+texture = ExtResource( 20 )
+centered = false
+offset = Vector2( 0, -8 )
+
+[node name="Jester" type="Node2D" parent="."]
+editor/display_folded = true
+visible = false
+
+[node name="Prim" type="Sprite" parent="Jester"]
+z_index = 1
+texture = ExtResource( 21 )
+centered = false
+offset = Vector2( -2, -8 )
+
+[node name="Seco" type="Sprite" parent="Jester"]
+z_index = 1
+texture = ExtResource( 22 )
+centered = false
+offset = Vector2( -2, -8 )
+
+[node name="Tert" type="Sprite" parent="Jester"]
+z_index = 1
+texture = ExtResource( 23 )
+centered = false
+offset = Vector2( -2, -8 )
+
+[node name="LilBow" type="Node2D" parent="."]
+editor/display_folded = true
+visible = false
+
+[node name="Prim" type="Sprite" parent="LilBow"]
+z_index = 1
+texture = ExtResource( 24 )
+centered = false
+offset = Vector2( 0, -8 )
+
+[node name="Seco" type="Sprite" parent="LilBow"]
+z_index = 1
+texture = ExtResource( 25 )
+centered = false
+offset = Vector2( 0, -8 )
+
+[node name="Masq" type="Node2D" parent="."]
+editor/display_folded = true
+visible = false
+
+[node name="Prim" type="Sprite" parent="Masq"]
+z_index = 1
+texture = ExtResource( 26 )
+centered = false
+offset = Vector2( -8, -8 )
+
+[node name="Seco" type="Sprite" parent="Masq"]
+z_index = 1
+texture = ExtResource( 27 )
+centered = false
+offset = Vector2( -8, -8 )
+
+[node name="Mohawk" type="Node2D" parent="."]
+editor/display_folded = true
+visible = false
+
+[node name="Prim" type="Sprite" parent="Mohawk"]
+z_index = 1
+texture = ExtResource( 28 )
+centered = false
+offset = Vector2( 0, -8 )
+
+[node name="Seco" type="Sprite" parent="Mohawk"]
+z_index = 1
+texture = ExtResource( 29 )
+centered = false
+offset = Vector2( 0, -8 )
+
+[node name="Nurse" type="Node2D" parent="."]
+editor/display_folded = true
+visible = false
+
+[node name="Prim" type="Sprite" parent="Nurse"]
+z_index = 1
+texture = ExtResource( 30 )
+centered = false
+offset = Vector2( 0, -8 )
+
+[node name="Seco" type="Sprite" parent="Nurse"]
+z_index = 1
+texture = ExtResource( 31 )
+centered = false
+offset = Vector2( 0, -8 )
+
+[node name="ParasolHat" type="Node2D" parent="."]
+editor/display_folded = true
+visible = false
+
+[node name="Prim" type="Sprite" parent="ParasolHat"]
+z_index = 1
+texture = ExtResource( 32 )
+centered = false
+offset = Vector2( 0, -8 )
+
+[node name="Seco" type="Sprite" parent="ParasolHat"]
+z_index = 1
+texture = ExtResource( 33 )
+centered = false
+offset = Vector2( 0, -8 )
+
+[node name="Tert" type="Sprite" parent="ParasolHat"]
+scale = Vector2( 1, 0.994897 )
+z_index = 1
+texture = ExtResource( 34 )
+centered = false
+offset = Vector2( 0, -8 )
+
+[node name="Tie" type="Node2D" parent="."]
+editor/display_folded = true
+visible = false
+
+[node name="Prim" type="Sprite" parent="Tie"]
+z_index = 1
+texture = ExtResource( 35 )
+centered = false
+
+[node name="TopHat" type="Node2D" parent="."]
+editor/display_folded = true
+visible = false
+
+[node name="Prim" type="Sprite" parent="TopHat"]
+z_index = 1
+texture = ExtResource( 36 )
+centered = false
+offset = Vector2( 0, -8 )
+
+[node name="Seco" type="Sprite" parent="TopHat"]
+z_index = 1
+texture = ExtResource( 37 )
+centered = false
+offset = Vector2( 0, -8 )
+
+[node name="VeilDancer" type="Node2D" parent="."]
+editor/display_folded = true
+visible = false
+
+[node name="Prim" type="Sprite" parent="VeilDancer"]
+z_index = 1
+texture = ExtResource( 38 )
+centered = false
+offset = Vector2( -2, -8 )
+
+[node name="Seco" type="Sprite" parent="VeilDancer"]
+z_index = 1
+texture = ExtResource( 39 )
+centered = false
+offset = Vector2( -2, -8 )
+
+[node name="Tert" type="Sprite" parent="VeilDancer"]
+z_index = 1
+texture = ExtResource( 40 )
+centered = false
+offset = Vector2( -2, -8 )
+
+[node name="Witch" type="Node2D" parent="."]
+editor/display_folded = true
+visible = false
+
+[node name="Prim" type="Sprite" parent="Witch"]
+z_index = 1
+texture = ExtResource( 41 )
+centered = false
+offset = Vector2( -8, -16 )
+
+[node name="Seco" type="Sprite" parent="Witch"]
+z_index = 1
+texture = ExtResource( 42 )
+centered = false
+offset = Vector2( -8, -16 )
+
+[node name="Tert" type="Sprite" parent="Witch"]
+z_index = 1
+texture = ExtResource( 43 )
+centered = false
+offset = Vector2( -8, -16 )
+
+[node name="WitchDoctor" type="Node2D" parent="."]
+editor/display_folded = true
+visible = false
+z_index = 1
+
+[node name="Prim" type="Sprite" parent="WitchDoctor"]
+z_index = 1
+texture = ExtResource( 44 )
+centered = false
+offset = Vector2( -8, -8 )
+
+[node name="Welder" type="Node2D" parent="."]
+visible = false
+z_index = 1
+
+[node name="Prim" type="Sprite" parent="Welder"]
+texture = ExtResource( 45 )
+centered = false
+offset = Vector2( 0, -8 )
+
+[node name="Seco" type="Sprite" parent="Welder"]
+texture = ExtResource( 46 )
+centered = false
+offset = Vector2( 0, -8 )
+
+[node name="Tert" type="Sprite" parent="Welder"]
+texture = ExtResource( 47 )
+centered = false
+offset = Vector2( 0, -8 )

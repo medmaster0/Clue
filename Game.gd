@@ -1,6 +1,7 @@
 extends Node2D
 export (PackedScene) var CellTile
 export (PackedScene) var Item
+export (PackedScene) var Creature
 
 # Declare member variables here. Examples:
 # var a = 2
@@ -17,6 +18,9 @@ var basic_door_color_seco
 var kitchen_floor_color_prim
 var kitchen_floor_color_seco
 
+var map_enemies = [] #list of creatures
+var num_enemies = 3
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	randomize()
@@ -32,7 +36,7 @@ func _ready():
 	# 2 - FLOOR
 	# 3 - DOOR
 	
-	#######
+	####### COLOR INITIALIZATION
 	brick_color_prim = Color(randf(), randf(), randf())
 	brick_color_seco = Color(randf(), randf(), randf())
 	basic_floor_color_prim = Color(randf(), randf(), randf())
@@ -42,28 +46,14 @@ func _ready():
 	kitchen_floor_color_prim = Color(randf(), randf(), randf())
 	kitchen_floor_color_seco = Color(randf(), randf(), randf())
 	
-	
-	#mansion = RogueGen.Rotate2DArray(mansion, "right")
-	
-#	#Draw out the mansion...
-#	for i in range(mansion.size()):
-#		for j in range(mansion[0].size()):
-#			var new_cell = CellTile.instance()
-#			new_cell.position.x = 16 + i * $TileMap.cell_size.x
-#			new_cell.position.y = 16 + j * $TileMap.cell_size.y
-#			if mansion[i][j] == 0:
-#				new_cell.get_child(0).modulate = Color(1,0,0.78)
-#				add_child(new_cell)
-#			if mansion[i][j] == 1:
-#				new_cell.get_child(0).modulate = Color(0,0,0)
-#				add_child(new_cell)
-#			if mansion[i][j] == 2:
-#				new_cell.get_child(0).modulate = Color(1,1,1)
-#				add_child(new_cell)
-#			if mansion[i][j] == 3:
-#				new_cell.get_child(0).modulate = Color(0,1,0)
-#				add_child(new_cell)
-				
+	# Create the map enemies
+	for i in range(num_enemies):
+		var new_enemy = Creature.instance()
+		add_child(new_enemy)
+		new_enemy.z_index = new_enemy.z_index + 1
+		new_enemy.position.y = 16
+		new_enemy.position.x = 16 * i
+		map_enemies.append(new_enemy)
 	
 	##Build out the mansion...
 	for i in range(mansion.size()):
@@ -103,6 +93,12 @@ func _ready():
 				new_building_item.setTile(107)
 				new_building_item.SetPrimColor(kitchen_floor_color_prim)
 				new_building_item.SetSecoColor(kitchen_floor_color_seco)
+	
+	#Place map enemies in a random room...
+	for i in range(map_enemies.size()):
+		var floor_position = RogueGen.FindRandomTile(mansion, [2,4]) #find random floor pos
+		map_enemies[i].position.x = floor_position.x * 16 + 16
+		map_enemies[i].position.y = floor_position.y * 16 + 16
 	
 	pass # Replace with function body.
 
@@ -181,7 +177,11 @@ func _input(event):
 					new_building_item.SetPrimColor(kitchen_floor_color_prim)
 					new_building_item.SetSecoColor(kitchen_floor_color_seco)
 			
-		
+		#Place map enemies in a random room...
+		for i in range(map_enemies.size()):
+			var floor_position = RogueGen.FindRandomTile(new_room, [2,4]) #find random floor pos
+			map_enemies[i].position.x = floor_position.x * 16 + 16
+			map_enemies[i].position.y = floor_position.y * 16 + 16
 		
 		
 		
