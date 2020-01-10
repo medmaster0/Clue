@@ -62,8 +62,8 @@ func _ready():
 				continue #skip empty space...
 			if mansion[i][j] == 1:
 				var new_building_item = Item.instance()
-				new_building_item.position.y = 16 + j * $TileMap.cell_size.y
-				new_building_item.position.x = 16 + i * $TileMap.cell_size.x
+				new_building_item.position.y = j * $TileMap.cell_size.y
+				new_building_item.position.x = i * $TileMap.cell_size.x
 				add_child(new_building_item)
 				new_building_item.setTile(102)
 				new_building_item.SetPrimColor(brick_color_prim)
@@ -71,24 +71,24 @@ func _ready():
 				
 			if mansion[i][j] == 2:
 				var new_building_item = Item.instance()
-				new_building_item.position.y = 16 + j * $TileMap.cell_size.y
-				new_building_item.position.x = 16 + i * $TileMap.cell_size.x
+				new_building_item.position.y = j * $TileMap.cell_size.y
+				new_building_item.position.x = i * $TileMap.cell_size.x
 				add_child(new_building_item)
 				new_building_item.setTile(101)
 				new_building_item.SetPrimColor(basic_floor_color_prim)
 				new_building_item.SetSecoColor(basic_floor_color_seco)
 			if mansion[i][j] == 3:
 				var new_building_item = Item.instance()
-				new_building_item.position.y = 16 + j * $TileMap.cell_size.y
-				new_building_item.position.x = 16 + i * $TileMap.cell_size.x
+				new_building_item.position.y =  j * $TileMap.cell_size.y
+				new_building_item.position.x =  i * $TileMap.cell_size.x
 				add_child(new_building_item)
 				new_building_item.setTile(103)
 				new_building_item.SetPrimColor(basic_door_color_prim)
 				new_building_item.SetSecoColor(basic_door_color_seco)
 			if mansion[i][j] == 4:
 				var new_building_item = Item.instance()
-				new_building_item.position.y = 16 + j * $TileMap.cell_size.y
-				new_building_item.position.x = 16 + i * $TileMap.cell_size.x
+				new_building_item.position.y =  j * $TileMap.cell_size.y
+				new_building_item.position.x =  i * $TileMap.cell_size.x
 				add_child(new_building_item)
 				new_building_item.setTile(107)
 				new_building_item.SetPrimColor(kitchen_floor_color_prim)
@@ -97,8 +97,14 @@ func _ready():
 	#Place map enemies in a random room...
 	for i in range(map_enemies.size()):
 		var floor_position = RogueGen.FindRandomTile(mansion, [2,4]) #find random floor pos
-		map_enemies[i].position.x = floor_position.x * 16 + 16
-		map_enemies[i].position.y = floor_position.y * 16 + 16
+		map_enemies[i].position.x = floor_position.x * 16 
+		map_enemies[i].position.y = floor_position.y * 16
+	#For each enemy, find a clockwise path for it around it's room...
+	for i in range(map_enemies.size()):
+		#Need to translate position to MAP COORDS
+		var map_posiiton = $TileMap.world_to_map(map_enemies[i].position)
+		map_enemies[i].path = RogueGen.PathAroundRoom(mansion, map_posiiton)
+		print(map_enemies[i].path)
 	
 	pass # Replace with function body.
 
@@ -145,8 +151,8 @@ func _input(event):
 					continue #skip empty space...
 				if new_room[i][j] == 1:
 					var new_building_item = Item.instance()
-					new_building_item.position.y = 16 + j * $TileMap.cell_size.y
-					new_building_item.position.x = 16 + i * $TileMap.cell_size.x
+					new_building_item.position.y =  j * $TileMap.cell_size.y
+					new_building_item.position.x =  i * $TileMap.cell_size.x
 					add_child(new_building_item)
 					new_building_item.setTile(102)
 					new_building_item.SetPrimColor(brick_color_prim)
@@ -154,24 +160,24 @@ func _input(event):
 					
 				if new_room[i][j] == 2:
 					var new_building_item = Item.instance()
-					new_building_item.position.y = 16 + j * $TileMap.cell_size.y
-					new_building_item.position.x = 16 + i * $TileMap.cell_size.x
+					new_building_item.position.y =  j * $TileMap.cell_size.y
+					new_building_item.position.x =  i * $TileMap.cell_size.x
 					add_child(new_building_item)
 					new_building_item.setTile(101)
 					new_building_item.SetPrimColor(basic_floor_color_prim)
 					new_building_item.SetSecoColor(basic_floor_color_seco)
 				if new_room[i][j] == 3:
 					var new_building_item = Item.instance()
-					new_building_item.position.y = 16 + j * $TileMap.cell_size.y
-					new_building_item.position.x = 16 + i * $TileMap.cell_size.x
+					new_building_item.position.y = j * $TileMap.cell_size.y
+					new_building_item.position.x = i * $TileMap.cell_size.x
 					add_child(new_building_item)
 					new_building_item.setTile(103)
 					new_building_item.SetPrimColor(basic_door_color_prim)
 					new_building_item.SetSecoColor(basic_door_color_seco)
 				if new_room[i][j] == 4:
 					var new_building_item = Item.instance()
-					new_building_item.position.y = 16 + j * $TileMap.cell_size.y
-					new_building_item.position.x = 16 + i * $TileMap.cell_size.x
+					new_building_item.position.y =  j * $TileMap.cell_size.y
+					new_building_item.position.x =  i * $TileMap.cell_size.x
 					add_child(new_building_item)
 					new_building_item.setTile(107)
 					new_building_item.SetPrimColor(kitchen_floor_color_prim)
@@ -192,8 +198,12 @@ func _input(event):
 		#Place map enemies in a random room...
 		for i in range(map_enemies.size()):
 			var floor_position = RogueGen.FindRandomTile(new_room, [2,4]) #find random floor pos
-			map_enemies[i].position.x = floor_position.x * 16 + 16
-			map_enemies[i].position.y = floor_position.y * 16 + 16
-		
+			map_enemies[i].position.x = floor_position.x * 16 
+			map_enemies[i].position.y = floor_position.y * 16 
+		#For each enemy, find a clockwise path for it around it's room...
+		for i in range(map_enemies.size()):
+			#Need to translate position to MAP COORDS
+			var map_posiiton = $TileMap.world_to_map(map_enemies[i].position)
+			map_enemies[i].path = RogueGen.PathAroundRoom(new_room, map_posiiton)
 		
 		

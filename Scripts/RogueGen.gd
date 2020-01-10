@@ -1042,90 +1042,74 @@ func GenerateMansion(space_dimensions):
 		var stamp_location = Vector2(0,0)
 		# CASE 1: W up, F down
 		if wall_direction == 0 and floor_direction == 1:
-			print("case 1")
 			#Calculate new stamp location
 			stamp_location.x = temp_wall.x - floor_coord.x
 			stamp_location.y = temp_wall.y - floor_dim_y 
 			#Attempt to stamp... (choose a random floor type)
 			var floor_type = 2 + (2*(randi()%2)) #RANDOM floor tile type of 2 or 4
-			print(floor_type)
 			stamp_data = StampRoomOntoSpace(floor_space, map_space, stamp_location , floor_type)
 			#Make sure stamping succeeded 
 			if stamp_data["success"] == true:
-				print("yes stamp")
 				map_space = stamp_data["space_array"]
 				num_rooms = num_rooms + 1
 				#FINISHING UP/BOOKKEEPING after floor place
 				map_space[temp_wall.x][temp_wall.y] = 3 #turn into door
 				map_space = SurroundExposedFloors(map_space) #WALLIFY!
 			else:
-				print("no stamp")
 				continue
 
 		# CASE 2: W down, F up
 		if wall_direction == 1 and floor_direction == 0:
-			print("case 2")
 			#Calculate new stamp location
 			stamp_location.x = temp_wall.x - floor_coord.x
 			stamp_location.y = (temp_wall.y + 1) + floor_coord.y
 			#Attempt to stamp... Choose a random floor type
 			var floor_type = 2 + (2*(randi()%2)) #RANDOM floor tile type of 2 or 4
-			print(floor_type)
 			stamp_data = StampRoomOntoSpace(floor_space, map_space, stamp_location, floor_type )
 			#Make sure stamping succeeded 
 			if stamp_data["success"] == true:
-				print("yes stamp")
 				map_space = stamp_data["space_array"]
 				num_rooms = num_rooms + 1
 				#FINISHING UP/BOOKKEEPING after floor place
 				map_space[temp_wall.x][temp_wall.y] = 3 #turn into door
 				map_space = SurroundExposedFloors(map_space) #WALLIFY!
 			else:
-				print("no stamp")
 				continue
 				
 		# CASE 3: W left, F right
 		if wall_direction == 2 and floor_direction == 3:
-			print("case 3")
 			#Calculate new stamp location
 			stamp_location.x = temp_wall.x - floor_dim_x
 			stamp_location.y = temp_wall.y - floor_coord.y
 			#Attempt to stamp... Choose random floor type
 			var floor_type = 2 + (2*(randi()%2)) #RANDOM floor tile type of 2 or 4
-			print(floor_type)
 			stamp_data = StampRoomOntoSpace(floor_space, map_space, stamp_location , floor_type)
 			#Make sure stamping succeeded 
 			if stamp_data["success"] == true:
-				print("yes stamp")
 				map_space = stamp_data["space_array"]
 				num_rooms = num_rooms + 1
 				#FINISHING UP/BOOKKEEPING after floor place
 				map_space[temp_wall.x][temp_wall.y] = 3 #turn into door
 				map_space = SurroundExposedFloors(map_space) #WALLIFY!
 			else:
-				print("no stamp")
 				continue
 
 		# CASE 4: W right, F left
 		if wall_direction == 3 and floor_direction == 2:
-			print("case 4")
 			#Calculate new stamp location
 			stamp_location.x = temp_wall.x + 1
 			stamp_location.y = temp_wall.y - floor_coord.y
 			#Attempt to stamp... Choose random floor type
 			var floor_type = 2 + (2*(randi()%2)) #RANDOM floor tile type of 2 or 4
-			print(floor_type)
 			stamp_data = StampRoomOntoSpace(floor_space, map_space, stamp_location, floor_type )
 			#Make sure stamping succeeded 
 			if stamp_data["success"] == true:
-				print("yes stamp")
 				map_space = stamp_data["space_array"]
 				num_rooms = num_rooms + 1
 				#FINISHING UP/BOOKKEEPING after floor place
 				map_space[temp_wall.x][temp_wall.y] = 3 #turn into door
 				map_space = SurroundExposedFloors(map_space) #WALLIFY!
 			else:
-				print("no stamp")
 				continue
 
 #		#There are four cases...
@@ -1159,8 +1143,6 @@ func GenerateMansion(space_dimensions):
 		
 		#Recalculate exposed walls
 		exposed_walls = IdentifyExposedWalls(map_space)
-
-	print("Done making mansion")
 	
 	return(map_space)
 
@@ -1283,8 +1265,6 @@ func StampRoomOntoSpace(room_array, space_array, location_coords, floor_index = 
 				if(space_array_copy[space_x][space_y]==0):
 					space_array_copy[space_x][space_y]=floor_index
 				else:
-					print("failed try overwrite")
-					print(space_array_copy[space_x][space_y])
 					var return_data = {
 						"success" : false,
 						"space_array" : space_array
@@ -1839,3 +1819,210 @@ func FindRandomTile(in_array, tileset = [2,4]):
 		check_y = randi()%in_array[0].size()
 		if tileset.has(in_array[check_x][check_y]):
 			return(Vector2(check_x,check_y))
+
+######## PATROL PATH FUNCTIONS!!!
+
+#FUnction that will find a path around the perimeter
+# of the room that a given input paramter is in...
+# Walks around the room CLOCKWISE and returns the steps in that order
+# (Just iterate backwards if you want to do COUNTERCLOCKWISE)
+# Input
+# 	in_array : 2d array of tiles
+# 	start_location : a location in the room
+#	valid_tiles : tiles taht can be stepped on
+# OUtput
+#	paths : list of Vector2 coords of steps around room
+func PathAroundRoom(in_array, start_location, valid_tiles = [2,4]):
+	
+	#ALGOIRITHM
+	# Start by going left until you hit a wall
+	# Keep track of what direction you are going, start with UP
+	# (Use this cycle in the following: UP, RIGHT, DOWN, LEFT, UP again....
+	# Now, keep doing until you find full path:
+	#	Check if the next step is the one you started on (start_location) 
+	#	AND if the direction you are going is already UP,
+	#		then you are FINISHED! RETURN
+	
+	#	Try to step in the PREVIOUS direction in the cycle (ex. if UP, try LEFT. if RIGHT, try UP)
+	#	If you can, 
+	#		step in that direction
+	#		change direction to the one you just tried that was successful
+	#		move on to next step
+	#	If you can't, 
+	#		try stepping in the next direction in the cyle (the CURRENT DIRECTION)
+	#		if you can, 
+	#			step in that direction
+	#			change direction to the one you just tried that was successful
+	#			move on to next step
+	#		if you can't,
+	#			try stepping in NEXT direction,
+	#			if you can,
+	#				step in that direction
+	#				change direction
+	#				move on to next step
+	#			if you can't,
+	#				try stepping into NEXT NEXT direction
+	#				if you can,
+	#					step into that direction
+	#					change direction
+	#					move on to next step
+	#				if you can't,
+	#					I guess you are stuck?
+	#					shouldn't get here, so return error????
+	#				
+	
+	var around_path = [] #the path of steps we are constructing
+	
+	#Direction codes
+	# 0 - UP
+	# 1 - RIGHT
+	# 2 - DOWN
+	# 3 - LEFT
+	var cursor_direction = 0 #start  going in UP direction 
+	
+	#Start by going left until you hit a wall
+	var cursor_location = start_location
+	while(true):
+		#check if the tile to the left is a wall (then we can stop)
+		if(in_array[cursor_location.x-1][cursor_location.y] == 1): 
+			break
+		else:
+			cursor_location.x = cursor_location.x - 1
+	#Great, now we are at the left most wall and going up
+	var first_step = cursor_location
+	
+	while(true):
+		
+		##DEBUG
+		print("start of naew loop")
+		print(first_step)
+		print(cursor_direction)
+		
+		#Add current step to reutnr path
+		around_path.append(cursor_location)
+		
+		#Variables used for each point in while loop
+		var next_step #keeps track of the next step we check
+		var check_direction # keeps track of which direction we will be checking
+		
+		######### THIS IS TO CHECK IF THE NEXT STEP IS THE LAST ONE AND WE FINISH#####
+		#Figure out next step (put together cursor_direction and cursor_location)
+		next_step = cursor_location
+		match(cursor_direction):
+			0:
+				next_step.y = next_step.y - 1
+			1:
+				next_step.x = next_step.x + 1
+			2:
+				next_step.y = next_step.y + 1 
+			3:
+				next_step.x = next_step.x - 1
+		
+		print(cursor_location)
+		print(next_step)
+		
+		#Check if the step is at the first step and if we are going UP
+		if next_step == first_step and cursor_direction == 0:
+			print("we are done with path finding")
+			around_path.append(next_step)
+			return(around_path)
+			
+		####MESSES UP AT BOTTOM LEFT CORNER....
+		## DIRECITON going LEFT should be valid (as long as you can't go down also...)
+		if next_step == first_step and cursor_direction == 3 and \
+			!valid_tiles.has(in_array[next_step.x][next_step.y+1]):
+			print("we are done with path finding")
+			around_path.append(next_step)
+			return(around_path)
+			
+		##MESSES UP AT BOTTOM LEFT CORNER AND UP ONE
+			
+		############### END OF THAT STOP CONDITION STUFF
+			
+		#Now check if we can go in the PREVIOUS direciton in the cycle
+		#check_direction = (cursor_direction - 1) % 4
+		check_direction = int(fposmod(cursor_direction - 1, 4))
+		next_step = cursor_location
+		match(check_direction):
+			0:
+				next_step.y = next_step.y - 1
+			1:
+				next_step.x = next_step.x + 1
+			2:
+				next_step.y = next_step.y + 1 
+			3:
+				next_step.x = next_step.x - 1
+		#Check if it's a steppable tile
+		if valid_tiles.has(in_array[next_step.x][next_step.y]):
+			cursor_location = next_step
+			cursor_direction = check_direction
+			continue
+			
+		#Now check if we can go in the CURRENT direction in the cycle
+		check_direction = cursor_direction
+		next_step = cursor_location
+		match(check_direction):
+			0:
+				next_step.y = next_step.y - 1
+			1:
+				next_step.x = next_step.x + 1
+			2:
+				next_step.y = next_step.y + 1 
+			3:
+				next_step.x = next_step.x - 1
+		#Check if it's a steppable tile
+		if valid_tiles.has(in_array[next_step.x][next_step.y]):
+			cursor_location = next_step
+			cursor_direction = check_direction
+			continue
+	
+		#Now check if we can go in the NEXT direction in the cycle
+		#check_direction = (cursor_direction + 1) % 4
+		check_direction = int(fposmod(cursor_direction + 1, 4)) 
+		next_step = cursor_location
+		match(check_direction):
+			0:
+				next_step.y = next_step.y - 1
+			1:
+				next_step.x = next_step.x + 1
+			2:
+				next_step.y = next_step.y + 1 
+			3:
+				next_step.x = next_step.x - 1
+		#Check if it's a steppable tile
+		if valid_tiles.has(in_array[next_step.x][next_step.y]):
+			cursor_location = next_step
+			cursor_direction = check_direction
+			continue
+		
+		#Now check if we can go in the NEXT NEXT direction in the cycle
+		#check_direction = (cursor_direction + 2) % 4
+		check_direction = int(fposmod(cursor_direction + 2, 4)) 
+		next_step = cursor_location
+		match(check_direction):
+			0:
+				next_step.y = next_step.y - 1
+			1:
+				next_step.x = next_step.x + 1
+			2:
+				next_step.y = next_step.y + 1 
+			3:
+				next_step.x = next_step.x - 1
+		#Check if it's a steppable tile
+		if valid_tiles.has(in_array[next_step.x][next_step.y]):
+			cursor_location = next_step
+			cursor_direction = check_direction
+			continue
+		else:
+			print("its stuck")
+			return(around_path)
+	
+	
+	return(around_path)
+
+
+
+
+
+
+
