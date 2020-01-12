@@ -1884,59 +1884,25 @@ func PathAroundRoom(in_array, start_location, valid_tiles = [2,4]):
 	var cursor_location = start_location
 	while(true):
 		#check if the tile to the left is a wall (then we can stop)
-		if(in_array[cursor_location.x-1][cursor_location.y] == 1): 
+		if !valid_tiles.has(in_array[cursor_location.x-1][cursor_location.y]): 
 			break
 		else:
 			cursor_location.x = cursor_location.x - 1
 	#Great, now we are at the left most wall and going up
 	var first_step = cursor_location
+	around_path.append(first_step)
 	
 	while(true):
 		
-		##DEBUG
-		print("start of naew loop")
-		print(first_step)
-		print(cursor_direction)
-		
 		#Add current step to reutnr path
-		around_path.append(cursor_location)
+		#around_path.append(cursor_location)
 		
 		#Variables used for each point in while loop
 		var next_step #keeps track of the next step we check
 		var check_direction # keeps track of which direction we will be checking
 		
 		######### THIS IS TO CHECK IF THE NEXT STEP IS THE LAST ONE AND WE FINISH#####
-		#Figure out next step (put together cursor_direction and cursor_location)
-		next_step = cursor_location
-		match(cursor_direction):
-			0:
-				next_step.y = next_step.y - 1
-			1:
-				next_step.x = next_step.x + 1
-			2:
-				next_step.y = next_step.y + 1 
-			3:
-				next_step.x = next_step.x - 1
 		
-		print(cursor_location)
-		print(next_step)
-		
-		#Check if the step is at the first step and if we are going UP
-		if next_step == first_step and cursor_direction == 0:
-			print("we are done with path finding")
-			around_path.append(next_step)
-			return(around_path)
-			
-		####MESSES UP AT BOTTOM LEFT CORNER....
-		## DIRECITON going LEFT should be valid (as long as you can't go down also...)
-		if next_step == first_step and cursor_direction == 3 and \
-			!valid_tiles.has(in_array[next_step.x][next_step.y+1]):
-			print("we are done with path finding")
-			around_path.append(next_step)
-			return(around_path)
-			
-		##MESSES UP AT BOTTOM LEFT CORNER AND UP ONE
-			
 		############### END OF THAT STOP CONDITION STUFF
 			
 		#Now check if we can go in the PREVIOUS direciton in the cycle
@@ -1956,6 +1922,18 @@ func PathAroundRoom(in_array, start_location, valid_tiles = [2,4]):
 		if valid_tiles.has(in_array[next_step.x][next_step.y]):
 			cursor_location = next_step
 			cursor_direction = check_direction
+			#Add this step to output list
+			around_path.append(cursor_location)
+			#Stop Condition...
+			if cursor_location == first_step and cursor_direction == 0:
+				break
+			if cursor_location == first_step and cursor_direction == 3 and \
+				!valid_tiles.has(in_array[cursor_location.x][cursor_location.y + 1]):
+				break
+			if cursor_location == first_step and cursor_direction == 2 and \
+				!valid_tiles.has(in_array[cursor_location.x - 1][cursor_location.y]) and \
+				!valid_tiles.has(in_array[cursor_location.x][cursor_location.y + 1]):
+				break
 			continue
 			
 		#Now check if we can go in the CURRENT direction in the cycle
@@ -1974,6 +1952,18 @@ func PathAroundRoom(in_array, start_location, valid_tiles = [2,4]):
 		if valid_tiles.has(in_array[next_step.x][next_step.y]):
 			cursor_location = next_step
 			cursor_direction = check_direction
+			#Add this step to output list
+			around_path.append(cursor_location)
+			#Stop Condition...
+			if cursor_location == first_step and cursor_direction == 0:
+				break
+			if cursor_location == first_step and cursor_direction == 3 and \
+				!valid_tiles.has(in_array[cursor_location.x][cursor_location.y + 1]):
+				break
+			if cursor_location == first_step and cursor_direction == 2 and \
+				!valid_tiles.has(in_array[cursor_location.x - 1][cursor_location.y]) and \
+				!valid_tiles.has(in_array[cursor_location.x][cursor_location.y + 1]):
+				break
 			continue
 	
 		#Now check if we can go in the NEXT direction in the cycle
@@ -1993,6 +1983,18 @@ func PathAroundRoom(in_array, start_location, valid_tiles = [2,4]):
 		if valid_tiles.has(in_array[next_step.x][next_step.y]):
 			cursor_location = next_step
 			cursor_direction = check_direction
+			#Add this step to output list
+			around_path.append(cursor_location)
+			#Stop Condition...
+			if cursor_location == first_step and cursor_direction == 0:
+				break
+			if cursor_location == first_step and cursor_direction == 3 and \
+				!valid_tiles.has(in_array[cursor_location.x][cursor_location.y + 1]):
+				break
+			if cursor_location == first_step and cursor_direction == 2 and \
+				!valid_tiles.has(in_array[cursor_location.x - 1][cursor_location.y]) and \
+				!valid_tiles.has(in_array[cursor_location.x][cursor_location.y + 1]):
+				break
 			continue
 		
 		#Now check if we can go in the NEXT NEXT direction in the cycle
@@ -2012,11 +2014,22 @@ func PathAroundRoom(in_array, start_location, valid_tiles = [2,4]):
 		if valid_tiles.has(in_array[next_step.x][next_step.y]):
 			cursor_location = next_step
 			cursor_direction = check_direction
+			#Add this step to output list
+			around_path.append(cursor_location)
+			#Stop Condition...
+			if cursor_location == first_step and cursor_direction == 0:
+				break
+			if cursor_location == first_step and cursor_direction == 3 and \
+				!valid_tiles.has(in_array[cursor_location.x][cursor_location.y + 1]):
+				break
+			if cursor_location == first_step and cursor_direction == 2 and \
+				!valid_tiles.has(in_array[cursor_location.x - 1][cursor_location.y]) and \
+				!valid_tiles.has(in_array[cursor_location.x][cursor_location.y + 1]):
+				break
 			continue
 		else:
 			print("its stuck")
 			return(around_path)
-	
 	
 	return(around_path)
 

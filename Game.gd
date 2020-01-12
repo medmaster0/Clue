@@ -19,7 +19,9 @@ var kitchen_floor_color_prim
 var kitchen_floor_color_seco
 
 var map_enemies = [] #list of creatures
-var num_enemies = 3
+#var num_enemies = 3
+#DEBUG
+var num_enemies = 5
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -144,6 +146,7 @@ func _input(event):
 			rooms_changed = rooms_changed + 1
 		
 		
+		
 		##Build out the new room
 		for i in range(new_room.size()):
 			for j in range(new_room[0].size()):
@@ -182,6 +185,9 @@ func _input(event):
 					new_building_item.setTile(107)
 					new_building_item.SetPrimColor(kitchen_floor_color_prim)
 					new_building_item.SetSecoColor(kitchen_floor_color_seco)
+		
+		mansion = new_room
+		
 			
 		#Delete old enemies
 		for i in range(map_enemies.size()):
@@ -194,16 +200,18 @@ func _input(event):
 			new_enemy.position.y = 16
 			new_enemy.position.x = 16 * i
 			map_enemies.append(new_enemy)
-		
 		#Place map enemies in a random room...
 		for i in range(map_enemies.size()):
-			var floor_position = RogueGen.FindRandomTile(new_room, [2,4]) #find random floor pos
+			var floor_position = RogueGen.FindRandomTile(mansion, [2,4]) #find random floor pos
 			map_enemies[i].position.x = floor_position.x * 16 
 			map_enemies[i].position.y = floor_position.y * 16 
 		#For each enemy, find a clockwise path for it around it's room...
 		for i in range(map_enemies.size()):
 			#Need to translate position to MAP COORDS
 			var map_posiiton = $TileMap.world_to_map(map_enemies[i].position)
-			map_enemies[i].path = RogueGen.PathAroundRoom(new_room, map_posiiton)
+			map_enemies[i].path = RogueGen.PathAroundRoom(mansion, map_posiiton)
 		
 		
+		
+	
+	
