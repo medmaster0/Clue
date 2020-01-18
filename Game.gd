@@ -110,9 +110,22 @@ func _ready():
 	
 	pass # Replace with function body.
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+#Called every frame. 'delta' is the elapsed time since the previous frame.
+var room_timer = 0 #keeps track of when the current room was created
+func _process(delta):
+	
+	if room_timer > 2:
+		#Creature Tasking...
+		for enemy in map_enemies:
+			if enemy.path.size() == 0:
+				#Need to translate position to MAP COORDS
+				var map_posiiton = $TileMap.world_to_map(enemy.position)
+				enemy.path = RogueGen.PathAroundRoom(mansion, map_posiiton)
+	
+	#Update timers
+	room_timer = room_timer + delta
+	
+	pass
 
 
 func _input(event):
@@ -186,7 +199,9 @@ func _input(event):
 					new_building_item.SetPrimColor(kitchen_floor_color_prim)
 					new_building_item.SetSecoColor(kitchen_floor_color_seco)
 		
+		#update the date in the mansion layout
 		mansion = new_room
+		
 		
 			
 		#Delete old enemies
@@ -211,7 +226,5 @@ func _input(event):
 			var map_posiiton = $TileMap.world_to_map(map_enemies[i].position)
 			map_enemies[i].path = RogueGen.PathAroundRoom(mansion, map_posiiton)
 		
-		
-		
-	
-	
+		#Reset room timer
+		room_timer = 0

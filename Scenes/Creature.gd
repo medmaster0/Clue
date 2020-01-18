@@ -32,6 +32,10 @@ var fave_color = null; #the color the creature always likes going for
 #Dungeon Stuff - Every Creature has it's own dungeon it crawls through...
 var dungeon_map = null; #a pointer to the current dungeon creature is crawling through
 
+##GOD DAMN...
+## Stealth Mansion Stuff
+
+
 func _ready():
 	# Called when the node is added to the scene for the first time.
 	# Initialization here
