@@ -2,6 +2,8 @@ extends Node2D
 export (PackedScene) var CellTile
 export (PackedScene) var Item
 export (PackedScene) var Creature
+export (PackedScene) var ZodiacTile
+export (PackedScene) var Arrow
 
 # Declare member variables here. Examples:
 # var a = 2
@@ -107,6 +109,41 @@ func _ready():
 		var map_posiiton = $TileMap.world_to_map(map_enemies[i].position)
 		map_enemies[i].path = RogueGen.PathAroundRoom(mansion, map_posiiton)
 		print(map_enemies[i].path)
+	
+	####STORY MYSTERY GEENRATION!!!
+	# Create the characters....
+	var num_citizens = 20
+	for i in range(num_citizens):
+		var new_cre = Creature.instance()
+		add_child(new_cre)
+		new_cre.position.y = 16*30
+		new_cre.position.x = 32*i + 16
+		#Also generate an appropriate zodiac tile under them.
+		var new_zod_sym = ZodiacTile.instance()
+		add_child(new_zod_sym)
+		new_zod_sym.change_symbol(new_cre.zodiac_sign)
+		new_zod_sym.position.y = 16*31
+		new_zod_sym.position.x = new_cre.position.x
+	
+	#Generate the premise i.e. MURDER
+	var murderer_arrow = Arrow.instance()
+	add_child(murderer_arrow)
+	murderer_arrow.modulate = Color(1.0,0.0,0.7)
+	var murderer_index = randi()%20
+	murderer_arrow.change_direction(2)
+	murderer_arrow.position.y = 16*28 + 8
+	murderer_arrow.position.x = 32*murderer_index + 16
+	var victim_arrow = Arrow.instance()
+	add_child(victim_arrow)
+	victim_arrow.modulate = Color(0.7, 0.0, 1.0)
+	var victim_index = randi()%20
+	#Make sure it isn't the same as murderer (no suicide in this game)
+	while(victim_index == murderer_index):
+		victim_index = randi()%20
+	victim_arrow.change_direction(2)
+	victim_arrow.position.y = 16*28 + 8
+	victim_arrow.position.x = 32*victim_index + 16
+	
 	
 	pass # Replace with function body.
 
