@@ -23,6 +23,12 @@ config/icon="res://icon.png"
 
 MedAlgo="*res://Scripts/MedAlgo.gd"
 RogueGen="*res://Scripts/RogueGen.gd"
+Story="*res://Scripts/Story.gd"
+Laws="*res://Scripts/Laws.gd"
+
+[gui]
+
+theme/custom_font="res://Resources/Aracdy.tres"
 
 [importer_defaults]
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Game.gd" type="Script" id=1]
 [ext_resource path="res://Scenes/CellTile.tscn" type="PackedScene" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://Scenes/Creature.tscn" type="PackedScene" id=4]
 [ext_resource path="res://Scenes/ZodiacTile.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Scenes/Arrow.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Scenes/BattleHuntItem.tscn" type="PackedScene" id=7]
 
 [node name="Game" type="Node2D"]
 script = ExtResource( 1 )
@@ -14,7 +15,17 @@ Item = ExtResource( 3 )
 Creature = ExtResource( 4 )
 ZodiacTile = ExtResource( 5 )
 Arrow = ExtResource( 6 )
+BattleHuntItem = ExtResource( 7 )
 
 [node name="TileMap" type="TileMap" parent="."]
 cell_size = Vector2( 16, 16 )
 format = 1
+
+[node name="KillLabel" type="Label" parent="."]
+margin_left = 352.0
+margin_top = 528.0
+margin_right = 399.0
+margin_bottom = 600.0
+text = "killed
+
+ with"

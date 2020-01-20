@@ -619,11 +619,6 @@ func GenerateMazeShip(num_rows):
 		row_index = row_index + 1
 	
 	
-	
-	
-#	#Print Grid (backward so it displays upright
-#	for row_i in range(cell_grid.size()-1,-1,-1):
-#		print(cell_grid[row_i])
 
 	return(cell_grid)
 
@@ -1572,8 +1567,6 @@ func WallLineBuilding(in_array, choice = randi()%2):
 		wall_center_coords.y = randi()%wall_lined_map[0].size()
 		if(wall_lined_map[wall_center_coords.x][wall_center_coords.y] == 2):
 			break
-	
-	print(wall_center_coords)
 	
 	match(choice):
 		0:

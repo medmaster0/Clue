@@ -113,6 +113,12 @@ func SetPrimColor(color):
 	primColor = color; 
 	$Sprite.modulate = primColor
 
+#FUnction that copies everything about another creature...
+func CopyCreature(in_cre):
+	SetPrimColor(in_cre.primColor)
+	find_node("Clothes").copy_clothes(in_cre.find_node("Clothes"))
+	zodiac_sign = in_cre.zodiac_sign
+	fave_color = in_cre.fave_color
 
 func _on_SelectButton_pressed():
 	#Displaying the crature

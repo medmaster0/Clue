@@ -4,6 +4,7 @@ export (PackedScene) var Item
 export (PackedScene) var Creature
 export (PackedScene) var ZodiacTile
 export (PackedScene) var Arrow
+export (PackedScene) var BattleHuntItem
 
 # Declare member variables here. Examples:
 # var a = 2
@@ -108,22 +109,26 @@ func _ready():
 		#Need to translate position to MAP COORDS
 		var map_posiiton = $TileMap.world_to_map(map_enemies[i].position)
 		map_enemies[i].path = RogueGen.PathAroundRoom(mansion, map_posiiton)
-		print(map_enemies[i].path)
 	
-	####STORY MYSTERY GEENRATION!!!
+	####STORY MYSTERY GEENRATION!!!  ############################
+	########
+	#######	
+	
 	# Create the characters....
-	var num_citizens = 20
-	for i in range(num_citizens):
+	var num_neighbors = 20
+	var map_neighbors = [] 
+	for i in range(num_neighbors):
 		var new_cre = Creature.instance()
 		add_child(new_cre)
 		new_cre.position.y = 16*30
 		new_cre.position.x = 32*i + 16
-		#Also generate an appropriate zodiac tile under them.
-		var new_zod_sym = ZodiacTile.instance()
-		add_child(new_zod_sym)
-		new_zod_sym.change_symbol(new_cre.zodiac_sign)
-		new_zod_sym.position.y = 16*31
-		new_zod_sym.position.x = new_cre.position.x
+		map_neighbors.append(new_cre)
+#		#Also generate an appropriate zodiac tile under them.
+#		var new_zod_sym = ZodiacTile.instance()
+#		add_child(new_zod_sym)
+#		new_zod_sym.change_symbol(new_cre.zodiac_sign)
+#		new_zod_sym.position.y = 16*31
+#		new_zod_sym.position.x = new_cre.position.x
 	
 	#Generate the premise i.e. MURDER
 	var murderer_arrow = Arrow.instance()
@@ -137,15 +142,49 @@ func _ready():
 	add_child(victim_arrow)
 	victim_arrow.modulate = Color(0.7, 0.0, 1.0)
 	var victim_index = randi()%20
-	#Make sure it isn't the same as murderer (no suicide in this game)
+	#Make sure vicitm isn't the same as murderer (no suicide in this game)
 	while(victim_index == murderer_index):
 		victim_index = randi()%20
 	victim_arrow.change_direction(2)
 	victim_arrow.position.y = 16*28 + 8
 	victim_arrow.position.x = 32*victim_index + 16
 	
+	#Duplicate the murderer and the victim below
+	#Murderer
+	var temp_cre = map_neighbors[murderer_index].duplicate()
+	add_child(temp_cre)
+	temp_cre.position = Vector2(320,16*33)
+	temp_cre.CopyCreature(map_neighbors[murderer_index])
+	#Victim
+	temp_cre = map_neighbors[victim_index].duplicate()
+	add_child(temp_cre)
+	temp_cre.position = Vector2(320 + 6*16,16*33)
+	temp_cre.CopyCreature(map_neighbors[victim_index])
 	
+	#Identify motive (based on randomly chosen murderer's element)
+	var motive_element = Story.find_element(map_neighbors[murderer_index].zodiac_sign)
+	## Murder Weapon...
+	## IMPORTANT ITEMS:
+	## COIN - 107
+	## DAGGER - 117
+	## WAND - 130
+	## CUP - 106
+	var temp_weapon = BattleHuntItem.instance()
+	add_child(temp_weapon)
+	match(motive_element):
+		0:
+			temp_weapon.setTile(106)
+		1:
+			temp_weapon.setTile(130)
+		2:
+			temp_weapon.setTile(107)
+		3:
+			temp_weapon.setTile(117)
+	temp_weapon.position = Vector2(368,568)	
 	pass # Replace with function body.
+	
+	#Gener
+	
 
 #Called every frame. 'delta' is the elapsed time since the previous frame.
 var room_timer = 0 #keeps track of when the current room was created
