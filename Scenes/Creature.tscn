@@ -17,6 +17,7 @@ texture = ExtResource( 3 )
 centered = false
 
 [node name="SelectButton" type="Button" parent="."]
+visible = false
 margin_left = -6.0
 margin_top = -6.0
 margin_right = 22.0
