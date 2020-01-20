@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Game.gd" type="Script" id=1]
 [ext_resource path="res://Scenes/CellTile.tscn" type="PackedScene" id=2]
@@ -8,6 +8,7 @@
 [ext_resource path="res://Scenes/Arrow.tscn" type="PackedScene" id=6]
 [ext_resource path="res://Scenes/BattleHuntItem.tscn" type="PackedScene" id=7]
 [ext_resource path="res://DisplayWindows/WealthChart.tscn" type="PackedScene" id=8]
+[ext_resource path="res://DisplayWindows/LoveChart.tscn" type="PackedScene" id=9]
 
 [node name="Game" type="Node2D"]
 script = ExtResource( 1 )
@@ -23,6 +24,7 @@ cell_size = Vector2( 16, 16 )
 format = 1
 
 [node name="WealthChart" parent="." instance=ExtResource( 8 )]
+visible = false
 position = Vector2( 694.5, 0 )
 
 [node name="TextCanvasLayer" type="CanvasLayer" parent="."]
@@ -36,3 +38,7 @@ margin_bottom = 600.0
 text = "killed
 
  with"
+
+[node name="LoveChart" parent="." instance=ExtResource( 9 )]
+position = Vector2( 694.5, 0 )
+Creature = ExtResource( 4 )

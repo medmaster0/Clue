@@ -656,6 +656,16 @@ func generate_brown():
 	var brown = Color(r,g,b)
 	return(brown)
 
+#generate a sexy shade of pink
+func generate_pink():
+	
+	var r = 0.6 + rand_range(0,0.2)
+	var g = r - rand_range(0,0.2) - 0.4 
+	var b = rand_range(g,1) #more than g but less than r
+	
+	var brown = Color(r,g,b)
+	return(brown)
+
 #generate a pastel color -> lots of white
 func generate_pastel():
 	var r = rand_range(0.8, 1.0); 
