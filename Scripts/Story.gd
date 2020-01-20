@@ -101,6 +101,71 @@ func GenreateNeighborWealthChart(num_neighbors):
 	
 	return(chart_data)
 
+## LOVE CHART 
+# the secret is to not generate too too many love relationshiops (JEEZ rabbits)
+# web of creatures 
+# really, a list of lists of who that creature is attracted to
+# Only compatible lovers will form relationships...
+# ALSO,
+# WATER and FIRE are monogamous
+# EARTH and AIR are polyamorous
+func GenreateNeighborLoveChart(num_neighbors, creature_list):
+	
+	var initial_connections = 9 #how many connections there are...
+	
+	var chart_data = {
+		"num_creatures" : num_neighbors, #the amount of neighbors in the chart
+		"web_of_love" : [] #a list of lists of lvoers of each creature 
+	}
 
-
-
+	#initialize web
+	for i in num_neighbors:
+		chart_data["web_of_love"].append([])
+		
+	
+	#random connections
+	var num_connections = 0
+	while(num_connections < initial_connections):
+		var isStalker = false #flag that decides if the connections is one way or two way
+		#randomly select a pair
+		var lover_index = randi()%num_neighbors
+		var target_index = randi()%num_neighbors
+		while(target_index == lover_index):
+			target_index = randi()%num_neighbors
+		#Check their elements
+		var lover_element = find_element(creature_list[lover_index].zodiac_sign)
+		var target_element = find_element(creature_list[target_index].zodiac_sign)
+		#Check if the lover has room for more (monogamous or polyamorous)
+		if lover_element == 0 or lover_element == 1:
+			if chart_data["web_of_love"][lover_index].size() >= 1:
+				continue #try a different 
+		#Check if the target has room for more (monogamous or polyamorous)
+		if target_element == 0 or target_element == 1:
+			if chart_data["web_of_love"][target_index].size() >= 1:
+				#But we can still potentially create a stalker relationship if not available...
+				#random low chance of being a stalker
+				var choice = randi()%7
+				if choice == 0:
+					isStalker = true
+				else:
+					continue #otherwise just continue
+		#check if they are compatible
+		if zodiac_compatibility[lover_element][target_element] != 0:
+			#Decide if it's a one way or not... MOST LIKEY  a TWO way
+			var choice = randi()%7
+			if choice == 0:
+				isStalker = true
+			if isStalker == false:
+				#TWO WAY
+				#enter the data in the chart
+				chart_data["web_of_love"][lover_index].append( target_index )
+				chart_data["web_of_love"][target_index].append( lover_index )
+			else: #if isStalker == true
+				#ONE WAY
+				#enter the data in the chart
+				chart_data["web_of_love"][lover_index].append( target_index )
+			
+			#Also increment counter
+			num_connections = num_connections + 1
+				
+	return(chart_data)

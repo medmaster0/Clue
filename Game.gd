@@ -196,8 +196,9 @@ func _ready():
 	
 	#Generate the charts
 	var wealth_chart = Story.GenreateNeighborWealthChart(num_neighbors)
-	print(wealth_chart)
 	$WealthChart.load_data(wealth_chart,map_neighbors)
+	var love_chart = Story.GenreateNeighborLoveChart(num_neighbors, map_neighbors)
+	print(love_chart)
 	
 	#Seed the VITAL CHART
 	
