@@ -71,7 +71,35 @@ func give_element_sign(element_code):
 # Here we define the data structure -> the matrix containing all of the info
 # and also quick functions to access the data?
 
-
+## WEALTH CHART 
+# the easiest of the charts
+# list of creatures with their wealth
+# wealth can be across multiple currencies
+# This will generate all of them, and their colors
+func GenreateNeighborWealthChart(num_neighbors):
+	var chart_data = {
+		"num_creatures" : num_neighbors, #the amount of neighbors in the chart
+		"num_currencies" : 2 + randi()%3, #generate how many currencies there will be
+		"currency_colors_prim" : [], #A list of colors (prim) for each currency
+		"currency_colors_seco" : [], #A list of colors (seco) for each currency
+		"creature_wealth_chart" : [] #A 2D list containing wealth. access: chart[cre_index][currency_index] = how many coins of currency
+	}
+	
+	#Generate the colors
+	for i in range(chart_data["num_currencies"]):
+		var temp_col_prim = Color(randf(),randf(),randf())
+		chart_data["currency_colors_prim"].append(temp_col_prim)
+		var temp_col_seco = Color(randf(),randf(),randf())
+		chart_data["currency_colors_seco"].append(temp_col_seco)
+		
+	#Generate the wealth of each neighbor
+	for i in range(num_neighbors):
+		var currency_coins = [] #A list containing the amount of coins of each currency
+		for j in range(chart_data["num_currencies"]):
+			currency_coins.append(randi()%100 + 1)
+		chart_data["creature_wealth_chart"].append(currency_coins)
+	
+	return(chart_data)
 
 
 

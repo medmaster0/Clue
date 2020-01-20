@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://DisplayWindows/WealthChart.gd" type="Script" id=1]
+[ext_resource path="res://Scenes/Creature.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Scenes/BattleHuntItem.tscn" type="PackedScene" id=3]
+
+[node name="WealthChart" type="Node2D"]
+script = ExtResource( 1 )
+Creature = ExtResource( 2 )
+BattleHuntItem = ExtResource( 3 )
+
+[node name="TitleLabel" type="Label" parent="."]
+margin_left = -113.778
+margin_top = 8.0
+margin_right = -5.77774
+margin_bottom = 13.0
+text = "WEALTH CHART"

@@ -112,10 +112,22 @@ func _ready():
 	
 	####STORY MYSTERY GEENRATION!!!  ############################
 	########
+	# There are 4 possible VITAL World Relationship Charts
+	# Corresponding to murderer's element
+	# 
+	# First arrange the VITAL chart with the motive set up
+	# 	This will involve choosing and possibly arranging some of the other creature's elements
+	# Then randomly assign the remaining creatures elements
+	# Then generate the remaining charts
+	# 	Some charts can be straight up random
+	#	Others will be dependent on the neighbors' existing elements (shouldn't need to change elements at this point though)
+	# Introduce some red herrings?
+	# 	Change the color of other creatures to match the murderer (SPARINGLY - 3 tops)
+	#	Change the clothing of other creatures to match murderer (SPARINGLY - 3 tops) -> type but no color copy
 	#######	
 	
 	# Create the characters....
-	var num_neighbors = 20
+	var num_neighbors = 18
 	var map_neighbors = [] 
 	for i in range(num_neighbors):
 		var new_cre = Creature.instance()
@@ -134,17 +146,17 @@ func _ready():
 	var murderer_arrow = Arrow.instance()
 	add_child(murderer_arrow)
 	murderer_arrow.modulate = Color(1.0,0.0,0.7)
-	var murderer_index = randi()%20
+	var murderer_index = randi()%num_neighbors
 	murderer_arrow.change_direction(2)
 	murderer_arrow.position.y = 16*28 + 8
 	murderer_arrow.position.x = 32*murderer_index + 16
 	var victim_arrow = Arrow.instance()
 	add_child(victim_arrow)
 	victim_arrow.modulate = Color(0.7, 0.0, 1.0)
-	var victim_index = randi()%20
+	var victim_index = randi()%num_neighbors
 	#Make sure vicitm isn't the same as murderer (no suicide in this game)
 	while(victim_index == murderer_index):
-		victim_index = randi()%20
+		victim_index = randi()%num_neighbors
 	victim_arrow.change_direction(2)
 	victim_arrow.position.y = 16*28 + 8
 	victim_arrow.position.x = 32*victim_index + 16
@@ -180,7 +192,20 @@ func _ready():
 			temp_weapon.setTile(107)
 		3:
 			temp_weapon.setTile(117)
-	temp_weapon.position = Vector2(368,568)	
+	temp_weapon.position = Vector2(368,568)
+	
+	#Generate the charts
+	var wealth_chart = Story.GenreateNeighborWealthChart(num_neighbors)
+	print(wealth_chart)
+	$WealthChart.load_data(wealth_chart,map_neighbors)
+	
+	#Seed the VITAL CHART
+	
+	
+	##################### END STORY MYSTERY GEN
+	
+	
+	
 	pass # Replace with function body.
 	
 	#Gener
