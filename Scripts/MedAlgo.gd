@@ -763,7 +763,6 @@ func generateName():
 #SOme name-endings
 #ex, liyah, fiah, ,,,,
 
-
 #Human(ish) stuff
 
 #Generate a random hair color

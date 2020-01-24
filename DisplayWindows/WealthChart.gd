@@ -7,6 +7,8 @@ export (PackedScene) var BattleHuntItem
 # var a = 2
 # var b = "text"
 
+var my_chart_data #will store the chart data
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body
@@ -21,6 +23,9 @@ func _ready():
 #		"creature_wealth_chart" : [] #A 2D list containing wealth. access: chart[cre_index][currency_index] = how many coins of currency
 #	}
 func load_data(chart_data,map_creatures):
+	
+	my_chart_data = chart_data
+	
 	#Draw the creatures in an up and down line
 	for i in range(chart_data["num_creatures"]):
 		# Draw the creatures in a line

@@ -111,7 +111,7 @@ func GenreateNeighborWealthChart(num_neighbors):
 # EARTH and AIR are polyamorous
 func GenreateNeighborLoveChart(num_neighbors, creature_list):
 	
-	var initial_connections = 9 #how many connections there are...
+	var initial_connections = 6 #how many connections there are...
 	
 	var chart_data = {
 		"num_creatures" : num_neighbors, #the amount of neighbors in the chart
@@ -169,3 +169,129 @@ func GenreateNeighborLoveChart(num_neighbors, creature_list):
 			num_connections = num_connections + 1
 				
 	return(chart_data)
+
+## POWER CHART
+# Generates some political parties
+# and the structures of each...
+# There are three types of parties
+# 0 - Tree, one at top, spreads towards bottom
+# 1 - Ring, everyone answers to everyone.... in a ring
+# 2 - Chain of Command, single line... like a tree but no branching
+#
+# Trees are notated like this:
+# [top, alll its kids ]
+# [top, [top's kid1, grandchildren1], [top's kid2, grandchildren2] ] ]
+#
+# [top, top_mid, mid, bot_mid, bot]
+# [top, [second_lt1], mid1, bot1, [secon_lt2]]
+#
+# [top, top_mid, mid, bot_mid, bot]
+# [top, [second_lt_1, mid, bot], second_lt_2, mid, bot]
+# [top, [second_lt1], [second_lt2], second_lt3]
+#
+# Rings are just a list of everyone.... order doesn't really matter.
+func GenerateNeighborPowerChart(num_neighbors):
+	
+	var num_parties = randi()%3 + 2 
+	
+	var chart_data = {
+		"num_creatures" : num_neighbors, #the amount of neighbors in the chart
+		"num_parties" : num_parties, #amount of parties to generate
+		"party_names" : [], #list of all the party names...
+		"party_types" : [], #list of the party types... ints, see above for code
+		"party_members" : [], # a list of lists.... the second list is interpreted based on party type
+	}
+
+	#generate the parties
+	for i in range(num_parties):
+		var temp_name = Story.GeneratePartyName()
+		chart_data['party_names'].append(temp_name)
+		#Choose random structure
+		var temp_type = randi()%3
+		chart_data['party_types'].append(temp_type)
+		#Initialize a list for the member structure
+		chart_data['party_members'].append([])
+	
+	#Populate parties based on party type
+	var ids = range(num_neighbors) #a list with ids for each of the neaighbors
+	print(ids)
+	for i in range(ids.size()):
+		#Pcik a random element
+		var pick = ids[randi()%ids.size()]
+		
+		#Decide which party it will join... one after the other...
+		var party_pick = i%num_parties
+		#Add it to the chart
+		chart_data['party_members'][party_pick].append(pick)
+		
+		#Remove from list so we don't pick again
+		ids.erase(pick)
+	
+	
+	
+	return(chart_data)
+
+##More story stuff....
+var negative_earth_adjectives = ["bullheaded","colorless","compulsive","conventional","drab","gloomy","grim","grinding","hardheaded","humorless","inflexible","intractable","intransigent","materialistic","mulish","obdurate","obsessive","obstinate","ordinary","overcautious","overorganized","pedestrian","perfectionistic","pertinacious","pessimistic","pigheaded","prim","prosaic","rigid","staid","stiff","stiff-necked","stodgy","stubborn","timid","unadventurous","unbending","uncompromising","unexciting","unimaginative","unquestioning","unromantic","unspontaneous","unyielding"]
+var positive_earth_adjectives = ["able","adept","adroit","assiduous","bighearted","capable","careful","cautious","competent","concrete","conscientious","constant","dependable","determined","dogged","down-to-earth","efficient","enterprising","factual","firm","generous","handy","hardworking","industrious","loyal","magnanimous","meticulous","nurturing","orderly","organized","painstaking","persevering","practical","productive","proficient","prudent","realistic","reliable","resolute","resourceful","responsible","sensible","skillful","solid","stable","stalwart","staunch","steadfast","steady","sturdy","supporting","tenacious","thorough","trusting","trustworthy","unwavering"]
+var negative_water_adjectives = ["broody","delicate","doleful","escapist","fanciful","fragile","frail","gushy","huffy","hypersensitive","hysterical","impressionable","indolent","introverted","lazy","maudlin","melancholic","mopish","moody","morose","narcissistic","overemotional","overrefined","petulant","passive","sulky","sullen","temperamental","thin-skinned","touchy","vapory","waspish","wishy-washy"]
+var positive_water_adjectives = ["aesthetic","affectionate","agreeable","amiable","benevolent","calm","caring","compassionate","concerned","considerate","diplomatic","dreamy","emotional","empathetic","forbearing","gentle","good-hearted","gracious","healing","humane","imaginative","inner","intimate","introspective","intuitive","joyful","kind","loving","mellow","merciful","mild","nice","patient","peaceful","perceptive","psychic","quiet","refined","responsive","romantic","sensitive","soft","spiritual","subjective","sweet","sympathetic","telepathic","tenderhearted","tolerant","understanding","wise"]
+var negative_fire_adjectives = ["aggressive","brash","cocky","dare-devilish","devil-may-care","foolhardy","hasty","headstrong","heedless","hot-headed","hot-tempered","impatient","impetuous","impulsive","imprudent","incautious","irresponsible","nervy","overconfident","overzealous","precipitous","presumptuous","rash","reckless","restless","rootless","self-absorbed","superficial","thoughtless","unprepared"]
+var positive_fire_adjectives = ["adventurous","aggressive","ardent","attractive","audacious","avid","bold","brave","buoyant","charismatic","charming","cheerful","confident","courageous","creative","daring","eager","ebullient","energetic","enthusiastic","exuberant","extroverted","fiery","forceful","heroic","inspiring","intrepid","inventive","magnetic","optimistic","original","outgoing","passionate","risk-taking","self-assured","self-confident","undaunted","valiant","wholehearted"]
+var negative_air_adjectives = ["abstruse","aloof","arrogant","autocratic","biting","blunt","cold","condescending","controlling","cool","critical","cutting","detached","distant","dogmatic","domineering","high-handed","imperious","insensitive","intolerant","judgmental","opinionated","overbearing","overintellectualizing","patronizing","remote","standoffish","thoughtless","unaffectionate","unfeeling","unresponsive","unsparing"]
+var positive_air_adjectives = ["analytical","articulate","astute","authoritative","clearheaded","clever","dignified","direct","discerning","dispassionate","equitable","ethical","evenhanded","forthright","frank","honest","honorable","impartial","incisive","intellectual","just","keen-minded","knowledgeable","learned","literate","logical","lucid","magisterial","mental","moral","objective","observant","outspoken","penetrating","perspicacious","quick-witted","rational","reasonable","smart","trenchant","truthful","unbiased","unprejudiced","well-informed","witty"]
+
+#Name Monickers
+var post_monickers = ["Dopest","Dope","Baddest","Bad","Slickest","Slick","Mostest","Rad","Clown","Killa","Slizza","Blizza","Snow","Product","Biggie","Down","Chiller","Fuse","Bomb","Bombest","Funny","Punk","Chill","Junkhead","Cracker","Lowlife","Thug","Thuggin","Pimpin","Chief","Pill","Rocker","Baller","Insane","Moco","Snoop","JoJo","Fly","Real Deal","Peep","Pump","Smalls", "Illest","Dude","Duderino","Baby","Vato","Joker","Homie","Flow","Slug","Bastard","Flava","Bean"] 
+var pre_monickers = ["Mista", "Lil", "Supa", "Fitty", "Champ", "Kid", "Wiz", "Babyface","Cousin", "Filthy","Trashcan","Janky","Muthafucka"]
+
+##Generate Political Party names...
+# The [Adjective] [type of people] [type of organization]
+# Or The [organization] of [adj] [type of people]
+var adjectives = ["Good", "Bad", "Witchy", "Proud","Vile"]
+var types_of_people = ["Witches", "Warlocks","Magicians","Doctors","Witchdoctors",
+"Professors","Illusionists","Acolytes","Priests","Druids"]
+var organizations = ["Coven", "Brotherhood", "Sisterhood", "Confederation", "Tribunal",
+"Republic","Magistry","School","Family","Gang","Monarchy","Empire","League","Oligarchy"]
+
+#Generates politcal party names
+func GeneratePartyName():
+	var fullName = "" #the name of the party that will be returned
+	var adjective
+	var org_type
+	var people_type
+	
+	#Choose a random adjective... from the elemental adjectives (8 sets)
+	var element_choice = randi()%8
+	match(element_choice):
+		0:
+			adjective = positive_air_adjectives[randi()%positive_air_adjectives.size()]
+		1:
+			adjective = negative_air_adjectives[randi()%negative_air_adjectives.size()]
+		2:
+			adjective = positive_fire_adjectives[randi()%positive_fire_adjectives.size()]
+		3:
+			adjective = negative_fire_adjectives[randi()%negative_fire_adjectives.size()]
+		4:
+			adjective = positive_earth_adjectives[randi()%positive_earth_adjectives.size()]
+		5:
+			adjective = negative_earth_adjectives[randi()%negative_earth_adjectives.size()]
+		6:
+			adjective = positive_water_adjectives[randi()%positive_water_adjectives.size()]
+		7:
+			adjective = negative_water_adjectives[randi()%negative_water_adjectives.size()]	
+	
+	#random org type
+	org_type = organizations[randi()%organizations.size()]
+	
+	#random people
+	people_type = types_of_people[randi()%types_of_people.size()]
+	
+	#Pick format
+	if randi()%2 == 0:
+		fullName = "The " + org_type + " of " + adjective.capitalize() + " " + people_type
+	else:
+		fullName = "The " + adjective.capitalize() + " " + people_type + "'s " + org_type
+	
+	return(fullName)
+	
