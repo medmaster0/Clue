@@ -214,7 +214,6 @@ func GenerateNeighborPowerChart(num_neighbors):
 	
 	#Populate parties based on party type
 	var ids = range(num_neighbors) #a list with ids for each of the neaighbors
-	print(ids)
 	for i in range(ids.size()):
 		#Pcik a random element
 		var pick = ids[randi()%ids.size()]
@@ -295,3 +294,64 @@ func GeneratePartyName():
 	
 	return(fullName)
 	
+
+######### TREE FUNCTIONS 
+# Useful in chart gen
+
+#Function to generate a random Prufer Code sequence
+# "A tree with n nodes can be uniquely expressed by a 
+# sequence of n-2 integer numbers (in the range of [0, n-1]). 
+# This is called the Prüfer sequence."
+#					-Nico Schertler (StackOverFlow)
+func GeneratePruferCode(num_nodes):
+	
+	var code = []
+	#generate the sequence
+	for i in range(num_nodes-2):
+		code.append(randi()%(num_nodes-1))
+	return(code)
+
+## Function that returns all of teh edges given a Prufer Code Sequence
+func EdgesFromPruferCode(in_code):
+	
+	var edges = [] #list containing the edges of the tree of the prufer code
+	
+	#Algorithm uses two sets
+	var S_set = in_code
+	var L_set = range(in_code.size()+2)
+	
+	#Cycle through the S_Set
+	for i in range(S_set.size()):
+		
+		var temp_edge = Vector2(0,0) #Every iteration we create a new edge
+		
+		#Vertex 1 is the value in S_Set
+		temp_edge.x = S_set[i]
+		
+		#Vertex 2 is the smallest value in L that is not in the current S set
+		#Cycle through all of the L values
+		for j in range(L_set.size()):
+			#Cycle through the CURRENT S_set and check if j is in there
+			var inS_set = false
+			for k in range(i,S_set.size()):
+				if S_set[k] == L_set[j]:
+					inS_set = true
+			#Now that it's done cycling,
+			if inS_set == true:
+				#Then j is not the vertex and we need to keep searching 
+				continue
+			else:
+				# we found the vertex
+				temp_edge.y = L_set[j]
+				#remove from L_set
+				L_set.erase(L_set[j])
+				break
+		
+		#Now the edge is ready to be added to the edges array
+		edges.append(temp_edge)
+		#... And we move on to next value in the S-Set
+
+	#At this point, only two elements left in L set... they become the two vertices of the final edge
+	edges.append(Vector2(L_set[0], L_set[1]))
+
+	return(edges)

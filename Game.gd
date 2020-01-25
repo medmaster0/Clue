@@ -200,7 +200,7 @@ func _ready():
 	var love_chart = Story.GenreateNeighborLoveChart(num_neighbors, map_neighbors)
 	$LoveChart.load_data(love_chart,map_neighbors)
 	var power_chart = Story.GenerateNeighborPowerChart(num_neighbors)
-	print(power_chart)
+	#print(power_chart)
 	
 	#DEBUG
 	power_chart = Story.GenerateNeighborPowerChart(40)
