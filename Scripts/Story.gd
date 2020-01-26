@@ -470,26 +470,26 @@ func DoesKeyExistInNestedDict(search_dict,search_key):
 
 #Function that renames all of the nodes in a tree based on order
 # Each node has numberered children starting from 0 to num_children
-func TreePostOrderChildren(in_tree):
-	
-	#var return_data = {}
-	
-	#Run the algorithm for all of the children
-	var children_counter = 0 # counter for renaming each child
-	for key in in_tree.keys():
-		
-		#Rename the key
-		var temp_dict = deep_copy(in_tree[key]) #temp copy the key
-		in_tree.erase(key) #erase the old one
-		in_tree[children_counter] = temp_dict #add new key and dict
-		
-		
-		#Call algorithm on it's tree
-		in_tree[children_counter] = TreePostOrderChildren(in_tree[children_counter])
-		
-		children_counter = children_counter + 1
-	
-	return(in_tree)
+#func TreePostOrderChildren(in_tree):
+#
+#	#var return_data = {}
+#
+#	#Run the algorithm for all of the children
+#	var children_counter = 0 # counter for renaming each child
+#	for key in in_tree.keys():
+#
+#		#Rename the key
+#		var temp_dict = deep_copy(in_tree[key]) #temp copy the key
+#		in_tree.erase(key) #erase the old one
+#		in_tree[children_counter] = temp_dict #add new key and dict
+#
+#
+#		#Call algorithm on it's tree
+#		in_tree[children_counter] = TreePostOrderChildren(in_tree[children_counter])
+#
+#		children_counter = children_counter + 1
+#
+#	return(in_tree)
 
 #Creates a mod tree
 # A mod tree's nodes contain values that correspond to their offset
@@ -501,9 +501,15 @@ func TreePostOrderChildren(in_tree):
 # then calls the algorithm recursively on their children
 #
 # We want at least ONE UNIT between each child and it's following child (more if need be to fit subtrees)
+#
+# Data is written as strings to avoid unintentional overriding
 func CalculateModTree(in_tree):
 	
+	#return tree is separate from in_tree: we reference in_tree, but change return_tree
+#	var return_tree = deep_copy(in_tree)
+	
 	#Determine how many children the tree has
+	#BASE CASES
 	var num_children = in_tree.keys().size()
 	if(num_children == 0):
 		return
@@ -512,9 +518,9 @@ func CalculateModTree(in_tree):
 			#Rename the Key
 			var temp_dict = deep_copy(in_tree[key]) #temp copy the new key
 			in_tree.erase(key) #erase the old one
-			in_tree[0] = temp_dict #add the new one
+			in_tree["0"] = temp_dict #add the new one.. this might erase an existing one!!!
 		#Call the recursive function again
-		CalculateModTree(in_tree[0])
+		CalculateModTree(in_tree["0"])
 			
 	var span_size = num_children - 1
 	var step_size = float(span_size)/float(num_children)
@@ -523,16 +529,40 @@ func CalculateModTree(in_tree):
 	var key_count = 0 #keeps track of which key we are on
 	for key in in_tree.keys():
 		var value = ((-float(span_size))/2.0) + (float(key_count) )
+		value = str(value)
 		#Rename the Key
 		var temp_dict = deep_copy(in_tree[key]) #temp copy the new key
 		in_tree.erase(key) #erase the old one
-		in_tree[value] = temp_dict #add the new one
+		in_tree[value] = temp_dict #add the new one.. this might erase an existing one!!!
 		
 		#Call the recursive function again
 		CalculateModTree(in_tree[value])
 		
 		key_count = key_count + 1 #increment counter
+	
 	return(in_tree)
+
+# Calculates the positions based on the mod tree
+# takes a mod_tree and steps through each node, adding the proper values up...
+#
+# These key values are recorded as floats however!!!
+func CalculatePosTree(mod_tree, root_position):
+
+	#Get all of the children in the tree
+	for key in mod_tree.keys():
+		#calculate position
+		var pos_value = root_position + float(key)
+
+		#Rename the Key
+		var temp_dict = deep_copy(mod_tree[key]) #temp copy the new key
+		mod_tree.erase(key) #erase the old one
+		mod_tree[pos_value] = temp_dict #add the new one
+		
+		#Call the function on the next tree
+		CalculatePosTree(mod_tree[pos_value], pos_value)
+		
+	return(mod_tree)
+
 
 #Function that determines the depth of the key in the given tree
 # root key has depth of 0

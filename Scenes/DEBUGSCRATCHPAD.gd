@@ -21,13 +21,21 @@ func _ready():
 	print("Tree")
 	print(tree)
 	
-	var postorder_tree = Story.TreePostOrderChildren(deep_copy(tree))
-	print("PostOrder")
-	print(postorder_tree)
+#	var postorder_tree = Story.TreePostOrderChildren(deep_copy(tree))
+#	print("PostOrder")
+#	print(postorder_tree)
 
-	var mod_tree = Story.CalculateModTree(deep_copy(postorder_tree))
+#	var mod_tree = Story.CalculateModTree(deep_copy(postorder_tree))
+#	print("Mod Tree")
+#	print(mod_tree)
+	
+	var mod_tree = Story.CalculateModTree(deep_copy(tree))
 	print("Mod Tree")
 	print(mod_tree)
+	
+	var pos_tree = Story.CalculatePosTree(deep_copy(mod_tree), 0.0)
+	print("Pos tree")
+	print(pos_tree)
 
 #	var edges = [Vector2(0,1), Vector2(1,2)]
 #	var tree = Story.TreeFromEdges(edges)
