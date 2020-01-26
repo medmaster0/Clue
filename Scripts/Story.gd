@@ -391,23 +391,80 @@ func TreeFromEdges(in_edges):
 		temp_edge = in_edges.pop_front()
 		
 		#Check if the current tree has either of the nodes already
-		print(temp_edge)
-		if DoesKeyExistInNestedDict(out_tree,temp_edge.x):
-			print("already entered node")
-		if DoesKeyExistInNestedDict(out_tree,temp_edge.y):
-			print("alread ent nod")
+		###################
 		
+		#Check the X NODE
+		var check_exist = DoesKeyExistInNestedDict(out_tree,temp_edge.x)
+		if check_exist["has"] == true:
+			#Then follow the search path (in check_exist) to the node and add new child...
+			var temp_dict = out_tree
+			while(check_exist["path_to_root"].empty() == false):
+				temp_dict = temp_dict[check_exist["path_to_root"].pop_back()]
+			#final step into the leaf
+			temp_dict = temp_dict[temp_edge.x]
+			#temp_dict is at the the node...
+			
+			#Add the other node now
+			temp_dict[temp_edge.y] = {}
+			continue #now coninue 
+		
+		#Check the Y NODE
+		check_exist = DoesKeyExistInNestedDict(out_tree,temp_edge.y)
+		if check_exist["has"] == true:
+			#Then follow the search path (in check_exist) to the node and add new child...
+			var temp_dict = out_tree
+			while(check_exist["path_to_root"].empty() == false):
+				temp_dict = temp_dict[check_exist["path_to_root"].pop_back()]
+			#final step into the leaf
+			temp_dict = temp_dict[temp_edge.y]
+			#temp_dict is at the the node...
+
+			#Add the other node now
+			temp_dict[temp_edge.x] = {}
+			continue #now coninue 
+
+		#If it makes it down here, that means none of the edge's nodes have been added yet....
+		#add it to the back of the list and continue
+		in_edges.push_back(temp_edge)
+		
+		print()
 	
 	return(out_tree)
 
 ## Recursive function to search a tree dictionary for nodes
 # Checks if a key exists in a dictionary of dicts...
+# if it does, it will return a series of keys to follow to it
+# returns a data structure like so:
+#		var return_data = {
+#			"has" : true, #whether it had the key or not
+#			"path_to_key" : [] #a series of keys to follow from the key to the root (so backwards)
+#		}
 func DoesKeyExistInNestedDict(search_dict,search_key):
+	# Base Case
 	if search_dict.has(search_key):
-		return(true)
+		var return_data = {
+			"has" : true,
+			"path_to_root" : [] #a series of keys to follow from the key to the root (so backwards)
+		}
+		return(return_data)
+	# Recursive Case
 	else:
 		for key in search_dict.keys():
-			if DoesKeyExistInNestedDict(search_dict[key], search_key) == true:
-				return(true)
+			var check_data = DoesKeyExistInNestedDict(search_dict[key], search_key)
+			if check_data['has'] == true:
+				var return_data = {
+					"has" : true,
+					"path_to_root" : [] #a series of keys to follow from the key to the root (so backwards)
+				}
+				#need to copy the path from check_data to return_data
+				for existing_key in check_data["path_to_root"]:
+					return_data["path_to_root"].append(existing_key)
+				#Finally, add the current key to the path
+				return_data["path_to_root"].append(key)
+				return(return_data)
 	#If we make it here... then false...
-	return(false)
+	var return_data = {
+		"has" : false,
+		"path_to_root" : []#a series of keys to follow from the key to the root (so backwards)
+	}
+	return(return_data)
