@@ -355,3 +355,59 @@ func EdgesFromPruferCode(in_code):
 	edges.append(Vector2(L_set[0], L_set[1]))
 
 	return(edges)
+	
+
+## Function that creates a dictionary representation of a tree
+# given the set of it's edges. 
+# 3rd step in the pipeline: PruferCode -> EdgesFromPrufer -> TreeFromEdges
+#
+# Tree structure looks like:
+#tree = {
+#	"node" : {
+#		"sub_node1" : {
+#
+#		}
+#		"sub_node2" : {
+#
+#		}
+#
+#	{
+#}
+# leaves have empty dictioionary
+func TreeFromEdges(in_edges):
+	var out_tree = {}
+	
+	#Add the first edge... Each edge has a Parent node and a child node
+	var temp_edge = in_edges.pop_front()
+	#Register the parent node
+	out_tree[temp_edge.x] = {}
+	#Register the child node
+	out_tree[temp_edge.x][temp_edge.y] = {}
+	
+	#Now cycle through the rest of the edges...
+	print("cycling")
+	while(in_edges.size() != 0):
+		#pop the edge
+		temp_edge = in_edges.pop_front()
+		
+		#Check if the current tree has either of the nodes already
+		print(temp_edge)
+		if DoesKeyExistInNestedDict(out_tree,temp_edge.x):
+			print("already entered node")
+		if DoesKeyExistInNestedDict(out_tree,temp_edge.y):
+			print("alread ent nod")
+		
+	
+	return(out_tree)
+
+## Recursive function to search a tree dictionary for nodes
+# Checks if a key exists in a dictionary of dicts...
+func DoesKeyExistInNestedDict(search_dict,search_key):
+	if search_dict.has(search_key):
+		return(true)
+	else:
+		for key in search_dict.keys():
+			if DoesKeyExistInNestedDict(search_dict[key], search_key) == true:
+				return(true)
+	#If we make it here... then false...
+	return(false)
