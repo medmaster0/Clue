@@ -385,7 +385,6 @@ func TreeFromEdges(in_edges):
 	out_tree[temp_edge.x][temp_edge.y] = {}
 	
 	#Now cycle through the rest of the edges...
-	print("cycling")
 	while(in_edges.size() != 0):
 		#pop the edge
 		temp_edge = in_edges.pop_front()
@@ -468,3 +467,111 @@ func DoesKeyExistInNestedDict(search_dict,search_key):
 		"path_to_root" : []#a series of keys to follow from the key to the root (so backwards)
 	}
 	return(return_data)
+
+#Function that renames all of the nodes in a tree based on order
+# Each node has numberered children starting from 0 to num_children
+func TreePostOrderChildren(in_tree):
+	
+	#var return_data = {}
+	
+	#Run the algorithm for all of the children
+	var children_counter = 0 # counter for renaming each child
+	for key in in_tree.keys():
+		
+		#Rename the key
+		var temp_dict = deep_copy(in_tree[key]) #temp copy the key
+		in_tree.erase(key) #erase the old one
+		in_tree[children_counter] = temp_dict #add new key and dict
+		
+		
+		#Call algorithm on it's tree
+		in_tree[children_counter] = TreePostOrderChildren(in_tree[children_counter])
+		
+		children_counter = children_counter + 1
+	
+	return(in_tree)
+
+#Creates a mod tree
+# A mod tree's nodes contain values that correspond to their offset
+# RELATIVE to their PARENT 
+# input a post ordered tree...
+#
+# The tree determiens how many children it has
+# Then adjusts their position
+# then calls the algorithm recursively on their children
+#
+# We want at least ONE UNIT between each child and it's following child (more if need be to fit subtrees)
+func CalculateModTree(in_tree):
+	
+	#Determine how many children the tree has
+	var num_children = in_tree.keys().size()
+	if(num_children == 0):
+		return
+	if(num_children == 1):
+		for key in in_tree.keys():
+			#Rename the Key
+			var temp_dict = deep_copy(in_tree[key]) #temp copy the new key
+			in_tree.erase(key) #erase the old one
+			in_tree[0] = temp_dict #add the new one
+		#Call the recursive function again
+		CalculateModTree(in_tree[0])
+			
+	var span_size = num_children - 1
+	var step_size = float(span_size)/float(num_children)
+
+	#Rename and Run the algorithm for all of the children
+	var key_count = 0 #keeps track of which key we are on
+	for key in in_tree.keys():
+		var value = ((-float(span_size))/2.0) + (float(key_count) )
+		#Rename the Key
+		var temp_dict = deep_copy(in_tree[key]) #temp copy the new key
+		in_tree.erase(key) #erase the old one
+		in_tree[value] = temp_dict #add the new one
+		
+		#Call the recursive function again
+		CalculateModTree(in_tree[value])
+		
+		key_count = key_count + 1 #increment counter
+	return(in_tree)
+
+#Function that determines the depth of the key in the given tree
+# root key has depth of 0
+func KeyDepthInTree(in_tree, key):
+	var check_data = DoesKeyExistInNestedDict(in_tree,key)
+	
+	return(check_data["path_to_root"].size() )
+
+
+
+
+### UTILITY FOR COPYING DICTIONARIES ESPECIALLY
+static func deep_copy(v):
+    var t = typeof(v)
+
+    if t == TYPE_DICTIONARY:
+        var d = {}
+        for k in v:
+            d[k] = deep_copy(v[k])
+        return d
+
+    elif t == TYPE_ARRAY:
+        var d = []
+        d.resize(len(v))
+        for i in range(len(v)):
+            d[i] = deep_copy(v[i])
+        return d
+
+    elif t == TYPE_OBJECT:
+        if v.has_method("duplicate"):
+            return v.duplicate()
+        else:
+            print("Found an object, but I don't know how to copy it!")
+            return v
+
+    else:
+        # Other types should be fine,
+        # they are value types (except poolarrays maybe)
+        return v
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+#func _process(delta):
+#	pass
