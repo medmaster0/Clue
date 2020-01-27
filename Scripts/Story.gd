@@ -563,7 +563,6 @@ func CalculatePosTree(mod_tree, root_position):
 		
 	return(mod_tree)
 
-
 #Function that determines the depth of the key in the given tree
 # root key has depth of 0
 func KeyDepthInTree(in_tree, key):
@@ -571,8 +570,82 @@ func KeyDepthInTree(in_tree, key):
 	
 	return(check_data["path_to_root"].size() )
 
+## function to draw a graph
+# given a tree, and a pos_tree - containing
+# the step size is what to multiply positions by
+# game_object is the object we add the nodes as children to 
+#
+# Also recursive....
+func DrawGraphNodes(in_tree, pos_tree, step_vector, start_vector, game_object, tree_level):
+	print("drawling")
+	
+	#Draw the nodes, based on positiion
+	#And recursively draw the children chart
+	var key_index = 0 
+	for i in range(in_tree.keys().size()):
+		
+		#Draw Children...
+		var node_label = in_tree.keys()[i]
+		var node_pos = pos_tree.keys()[i]
+		#Create a new label
+		var temp_label = Label.new()
+		game_object.add_child(temp_label)
+		temp_label.text = str(node_label)
+		temp_label.margin_left = (node_pos * step_vector.x) + start_vector.x
+		temp_label.margin_top = (tree_level * step_vector.y) + start_vector.y
+		
+		
+		#Recursive call children Part
+		var next_tree_level = tree_level + 1
+		DrawGraphNodes( in_tree[in_tree.keys()[i]], pos_tree[pos_tree.keys()[i]], step_vector, start_vector, game_object, next_tree_level)
+	
 
-
+# Draw the lines between the nodes
+func DrawGraphLines(in_tree, pos_tree, step_vector, start_vector, game_object, tree_level):
+	var line_color = Color(randf(), randf(), randf())
+	
+	#intializze the return data
+	var return_data = {
+		"start_vects" : [],
+		"stop_vects" : []
+	}
+	
+	#Draw line across the children
+	var child_pos = pos_tree.keys()
+	var min_x = find_min(child_pos)
+	var max_x = find_max(child_pos)
+	
+	#Only draw a line if we have more than 1 child
+	if child_pos.size() > 1:
+		var start_v = Vector2(min_x * step_vector.x, tree_level * step_vector.y) + start_vector
+		return_data["start_vects"].append(start_v)
+		var stop_v = Vector2(max_x * step_vector.x, tree_level * step_vector.y) + start_vector
+		return_data["stop_vects"].append(stop_v)
+	
+	#Draw the graph
+	#CanvasItem.draw_line(start_v, stop_v, line_color, 4)
+	
+	#Recursive call function on all children
+	var key_index = 0 
+	for i in range(in_tree.keys().size()): #cycling through children
+		
+		#If the child has children, draw diagonal line
+		if in_tree[in_tree.keys()[i]].keys().size() > 0:
+			var child_pos_x = pos_tree.keys()[i]
+			var top_vect = Vector2(child_pos_x * step_vector.x, tree_level * step_vector.y) + start_vector
+			return_data["start_vects"].append(top_vect)
+			var bot_vect = Vector2(child_pos_x * step_vector.x, (tree_level+1) * step_vector.y) + start_vector
+			return_data["stop_vects"].append(bot_vect)
+		
+		var draw_return_data = DrawGraphLines( in_tree[in_tree.keys()[i]], pos_tree[pos_tree.keys()[i]], step_vector, start_vector, game_object, tree_level + 1)
+	
+		#Append the draw_return_data to the return_data
+		for sv in draw_return_data["start_vects"]:
+			return_data["start_vects"].append(sv)
+		for sv in draw_return_data["stop_vects"]:
+			return_data["stop_vects"].append(sv)
+	
+	return(return_data)
 
 ### UTILITY FOR COPYING DICTIONARIES ESPECIALLY
 static func deep_copy(v):
@@ -602,6 +675,20 @@ static func deep_copy(v):
         # Other types should be fine,
         # they are value types (except poolarrays maybe)
         return v
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+
+func find_max(in_array):
+	var array_max = -9999
+	for e in in_array:
+		if e > array_max:
+			array_max = e
+	
+	return(array_max)
+
+func find_min(in_array):
+	var array_min = 9999
+	for e in in_array:
+		if e < array_min:
+			array_min = e
+	
+	return(array_min)
+	

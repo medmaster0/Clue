@@ -4,20 +4,28 @@ extends Node2D
 # var a = 2
 # var b = "text"
 
+#GLOBAL VARS FOR GRAPH DRAWING
+var prufer_code
+var edges
+var tree
+var mod_tree
+var pos_tree
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	randomize()
 	
-	var prufer_code = Story.GeneratePruferCode(16)
+	prufer_code = Story.GeneratePruferCode(16)
 	#prufer_code = [3,0,2,3]
 	print("Prufer Code:")
 	print(prufer_code)
 
-	var edges = Story.EdgesFromPruferCode(prufer_code)
+	edges = Story.EdgesFromPruferCode(prufer_code)
 	print("Edges")
 	print(edges)
 
-	var tree = Story.TreeFromEdges(edges)
+	tree = Story.TreeFromEdges(edges)
 	print("Tree")
 	print(tree)
 	
@@ -29,13 +37,15 @@ func _ready():
 #	print("Mod Tree")
 #	print(mod_tree)
 	
-	var mod_tree = Story.CalculateModTree(deep_copy(tree))
+	mod_tree = Story.CalculateModTree(deep_copy(tree))
 	print("Mod Tree")
 	print(mod_tree)
 	
-	var pos_tree = Story.CalculatePosTree(deep_copy(mod_tree), 0.0)
+	pos_tree = Story.CalculatePosTree(deep_copy(mod_tree), 0.0)
 	print("Pos tree")
 	print(pos_tree)
+	
+	Story.DrawGraphNodes(tree, pos_tree, Vector2(50,50), Vector2(50,50), self, 0)
 
 #	var edges = [Vector2(0,1), Vector2(1,2)]
 #	var tree = Story.TreeFromEdges(edges)
@@ -45,6 +55,17 @@ func _ready():
 #	var test_dict = {2:{3:{0:{0:{ 0:{5:{}} , 1:{4:{}} }}}}}
 #	print(Story.KeyDepthInTree(test_dict,1))
 
+#called every time it's drawn
+func _draw():
+	
+	var line_color = Color(randf(), randf(), randf())
+	
+	#Draw the lines of the graph
+	var line_data = Story.DrawGraphLines(tree, pos_tree, Vector2(50,50), Vector2(50,50), self, 0)
+	print(line_data["start_vects"])
+	print(line_data["stop_vects"])
+	for i in range(line_data["start_vects"].size()):
+		draw_line(line_data["start_vects"][i], line_data["stop_vects"][i], line_color, 4)
 
 ### UTILITY FOR COPYING DICTIONARIES ESPECIALLY
 static func deep_copy(v):
