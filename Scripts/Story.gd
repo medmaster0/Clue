@@ -570,6 +570,97 @@ func KeyDepthInTree(in_tree, key):
 	
 	return(check_data["path_to_root"].size() )
 
+###Function that will determine the tree's contour. 
+# One for left and right
+# RECURSIVE ALGORITHM
+# The contour determines the left most node value in the tree
+# This assumes a "pos_tree" with float values
+func LeftContour(in_tree):
+
+	var contours = [] #return list
+	
+	#base case - make sure it actually has children
+	if in_tree.keys().size() <= 0:
+		return(["xxx"]) #indicates end of contour
+	
+	#Then it has some keys... determine left most
+	var left_most_child = in_tree.keys()[0]
+	contours.append(left_most_child)
+	
+	#Call the funciton on each key (child) and then merge them all together...
+	var list_of_contours = [] #stores the contour list of each child...
+	for key in in_tree.keys():
+		var temp_contour = LeftContour(in_tree[key])
+		list_of_contours.append(temp_contour)
+	
+	#Now merge all of the list of contours
+	#Determine longest size of list....
+	var max_size = -9999
+	for list in list_of_contours:
+		if list.size() > max_size:
+			max_size = list.size()
+			
+	#Now delve into each list, as far as the max_size
+	for i in range(max_size):
+		#At level i
+		var current_level_left = 9999 #will keep track of the left most value at this level
+		for list in list_of_contours:
+			if i < list.size(): #make sure we can actually access element
+				var check_value = list[i]
+				if typeof(check_value) == 4:
+					continue
+				#Otherwise...
+				if check_value < current_level_left:
+					current_level_left = check_value
+		#Aftter cycling through all of the lefts at this level
+		#We can say this is truly the smallest
+		contours.append(current_level_left)
+		
+	return(contours)
+		
+func RightContour(in_tree):
+	
+	var contours = [] #return list
+	
+	#base case - make sure it actually has children
+	if in_tree.keys().size() <= 0:
+		return(["xxx"]) #indicates end of contour
+	
+	#Then it has some keys... determine left most
+	var right_most_child = in_tree.keys()[in_tree.keys().size()-1]
+	contours.append(right_most_child)
+	
+	#Call the funciton on each key (child) and then merge them all together...
+	var list_of_contours = [] #stores the contour list of each child...
+	for key in in_tree.keys():
+		var temp_contour = RightContour(in_tree[key])
+		list_of_contours.append(temp_contour)
+	
+	#Now merge all of the list of contours
+	#Determine longest size of list....
+	var max_size = -9999
+	for list in list_of_contours:
+		if list.size() > max_size:
+			max_size = list.size()
+			
+	#Now delve into each list, as far as the max_size
+	for i in range(max_size):
+		#At level i
+		var current_level_right = -9999 #will keep track of the left most value at this level
+		for list in list_of_contours:
+			if i < list.size(): #make sure we can actually access element
+				var check_value = list[i]
+				if typeof(check_value) == 4:
+					continue
+				#Otherwise...
+				if check_value > current_level_right:
+					current_level_right = check_value
+		#Aftter cycling through all of the lefts at this level
+		#We can say this is truly the smallest
+		contours.append(current_level_right)
+		
+	return(contours)
+
 ## function to draw a graph
 # given a tree, and a pos_tree - containing
 # the step size is what to multiply positions by
@@ -577,8 +668,7 @@ func KeyDepthInTree(in_tree, key):
 #
 # Also recursive....
 func DrawGraphNodes(in_tree, pos_tree, step_vector, start_vector, game_object, tree_level):
-	print("drawling")
-	
+
 	#Draw the nodes, based on positiion
 	#And recursively draw the children chart
 	var key_index = 0 

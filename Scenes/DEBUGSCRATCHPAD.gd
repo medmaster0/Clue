@@ -45,7 +45,12 @@ func _ready():
 	print("Pos tree")
 	print(pos_tree)
 	
-	Story.DrawGraphNodes(tree, pos_tree, Vector2(50,50), Vector2(50,50), self, 0)
+	var left_contours = Story.LeftContour(pos_tree)
+	print(left_contours)
+	var right_contours = Story.RightContour(pos_tree)
+	print(right_contours)
+	
+	Story.DrawGraphNodes(tree, pos_tree, Vector2(50,50), Vector2(200,50), self, 0)
 
 #	var edges = [Vector2(0,1), Vector2(1,2)]
 #	var tree = Story.TreeFromEdges(edges)
@@ -61,9 +66,7 @@ func _draw():
 	var line_color = Color(randf(), randf(), randf())
 	
 	#Draw the lines of the graph
-	var line_data = Story.DrawGraphLines(tree, pos_tree, Vector2(50,50), Vector2(50,50), self, 0)
-	print(line_data["start_vects"])
-	print(line_data["stop_vects"])
+	var line_data = Story.DrawGraphLines(tree, pos_tree, Vector2(50,50), Vector2(200,50), self, 0)
 	for i in range(line_data["start_vects"].size()):
 		draw_line(line_data["start_vects"][i], line_data["stop_vects"][i], line_color, 4)
 
