@@ -16,7 +16,7 @@ var pos_tree
 func _ready():
 	randomize()
 	
-	prufer_code = Story.GeneratePruferCode(16)
+	prufer_code = Story.GeneratePruferCode(26)
 	#prufer_code = [3,0,2,3]
 	print("Prufer Code:")
 	print(prufer_code)
@@ -45,10 +45,12 @@ func _ready():
 	print("Pos tree")
 	print(pos_tree)
 	
-	var left_contours = Story.LeftContour(pos_tree)
-	print(left_contours)
-	var right_contours = Story.RightContour(pos_tree)
-	print(right_contours)
+#	var left_contours = Story.LeftContour(pos_tree)
+#	print(left_contours)
+#	var right_contours = Story.RightContour(pos_tree)
+#	print(right_contours)
+	
+	var space_tree = Story.TreeSpaceChildren(pos_tree, mod_tree)
 	
 	Story.DrawGraphNodes(tree, pos_tree, Vector2(50,50), Vector2(200,50), self, 0)
 

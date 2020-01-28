@@ -545,6 +545,7 @@ func CalculateModTree(in_tree):
 # Calculates the positions based on the mod tree
 # takes a mod_tree and steps through each node, adding the proper values up...
 #
+# Mod tree values are strings
 # These key values are recorded as floats however!!!
 func CalculatePosTree(mod_tree, root_position):
 
@@ -562,6 +563,7 @@ func CalculatePosTree(mod_tree, root_position):
 		CalculatePosTree(mod_tree[pos_value], pos_value)
 		
 	return(mod_tree)
+
 
 #Function that determines the depth of the key in the given tree
 # root key has depth of 0
@@ -626,7 +628,7 @@ func RightContour(in_tree):
 	if in_tree.keys().size() <= 0:
 		return(["xxx"]) #indicates end of contour
 	
-	#Then it has some keys... determine left most
+	#Then it has some keys... determine right most
 	var right_most_child = in_tree.keys()[in_tree.keys().size()-1]
 	contours.append(right_most_child)
 	
@@ -660,6 +662,70 @@ func RightContour(in_tree):
 		contours.append(current_level_right)
 		
 	return(contours)
+
+## Function that will space out a tree's children, based on contours of each child...
+# It analyzes the contours of the pos tree...
+# but adjusts the mod_tree accordingly.... 
+#
+# Mod trees store values as strings**
+# Pos tree store values as 
+#
+# **while modifying mod tree, we need to be careful not to overwrite existing data
+#
+# This function will modify a mod tree
+#
+# This function is NOT about spaced out children living in trees
+#
+# returns false if it didn't need to modify anything
+# returns true if it did
+func TreeSpaceChildren(pos_tree, mod_tree):
+	
+	#Don't need to space if it only has one child or less
+	if pos_tree.keys().size() == 0:
+		return
+	if pos_tree.keys().size() == 1:
+		TreeSpaceChildren(pos_tree[pos_tree.keys()[0]], mod_tree[mod_tree.keys()[0]])
+	
+	#Ensure that the contour of one child does not interfere with the contour of the next
+	#We skip the last since it won't have a contour
+	print("spacing") 
+	print(pos_tree.keys())
+	for k in range(pos_tree.keys().size()-1):
+		#dtermine right contour of current
+		var right_contour = RightContour(pos_tree[pos_tree.keys()[k]])
+		var left_contour = LeftContour(pos_tree[pos_tree.keys()[k+1]])
+		#Check if there are discrepancies
+		#Cycle through both contour arrays, only go as far as shortest...
+		var contour_depth 
+		if right_contour.size() < left_contour.size():
+			contour_depth = right_contour.size()
+		else:
+			contour_depth = left_contour.size()
+		var max_overlap = 0 #will keep track of the maximum overlap (bad) of contours
+		for i in range(contour_depth):
+			#if the value is 9999, -9999, or 'xxx' we continue
+			if typeof(left_contour[i]) == 4:
+				if left_contour[i] == "xxx":
+					continue
+			else:
+				if left_contour[i] == 9999 or left_contour[i] == -9999:
+					continue
+			if typeof(right_contour[i]) == 4:
+				if right_contour[i] == "xxx":
+					continue
+			else:
+				if right_contour[i] == 9999 or right_contour[i] == -9999:
+					continue
+			
+			if left_contour[i] - right_contour[i] < 0.5: #left contour needs to be at least 0.5 space away
+				var temp_overlap = left_contour[i] - right_contour[i] + 0.5
+				if temp_overlap > max_overlap:
+					max_overlap = temp_overlap
+		print("need to move next child "+str(max_overlap) + " steps over")
+	## recursive call on children
+	for k in range(pos_tree.keys().size()):
+		TreeSpaceChildren(pos_tree[pos_tree.keys()[k]], mod_tree[mod_tree.keys()[k]])
+	
 
 ## function to draw a graph
 # given a tree, and a pos_tree - containing
