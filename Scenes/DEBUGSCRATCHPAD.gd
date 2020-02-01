@@ -16,18 +16,18 @@ var pos_tree
 func _ready():
 	randomize()
 	
-	prufer_code = Story.GeneratePruferCode(26)
+	prufer_code = Story.GeneratePruferCode(36)
 	#prufer_code = [3,0,2,3]
-	print("Prufer Code:")
-	print(prufer_code)
+	#print("Prufer Code:")
+	#print(prufer_code)
 
 	edges = Story.EdgesFromPruferCode(prufer_code)
-	print("Edges")
-	print(edges)
+	#print("Edges")
+	#print(edges)
 
 	tree = Story.TreeFromEdges(edges)
-	print("Tree")
-	print(tree)
+	#print("Tree")
+	#print(tree)
 	
 #	var postorder_tree = Story.TreePostOrderChildren(deep_copy(tree))
 #	print("PostOrder")
@@ -39,24 +39,40 @@ func _ready():
 	
 	mod_tree = Story.CalculateModTree(deep_copy(tree))
 	print("Mod Tree")
-	print(mod_tree)
+	#print(mod_tree)
 	
 	pos_tree = Story.CalculatePosTree(deep_copy(mod_tree), 0.0)
 	print("Pos tree")
-	print(pos_tree)
+	#print(pos_tree)
 	
 #	var left_contours = Story.LeftContour(pos_tree)
 #	print(left_contours)
 #	var right_contours = Story.RightContour(pos_tree)
 #	print(right_contours)
 	
-	var space_tree = Story.TreeSpaceChildren(pos_tree, mod_tree)
+	Story.TreeSpaceChildren(pos_tree, mod_tree)
+	print("New Space Mod Tree")
+	#print(mod_tree)
+	
+	#After TreeSpaceChildren is called, we need to recalc pos_tree
+	pos_tree = Story.CalculatePosTree(deep_copy(mod_tree), 0.0)
+	print("New Space Pos Tree")
+	#print(pos_tree)
+	
+	##DEBUG
+#	Story.ShiftModIndex(mod_tree[mod_tree.keys()[0]], 0, 12.0)
+#	print(mod_tree)
+#	pos_tree = Story.CalculatePosTree(deep_copy(mod_tree), 0.0)
+#	print(pos_tree)
 	
 	Story.DrawGraphNodes(tree, pos_tree, Vector2(50,50), Vector2(200,50), self, 0)
 
 #	var edges = [Vector2(0,1), Vector2(1,2)]
 #	var tree = Story.TreeFromEdges(edges)
 #	print(tree)
+
+
+
 
 	
 #	var test_dict = {2:{3:{0:{0:{ 0:{5:{}} , 1:{4:{}} }}}}}
