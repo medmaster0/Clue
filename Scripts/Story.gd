@@ -572,6 +572,28 @@ func KeyDepthInTree(in_tree, key):
 	
 	return(check_data["path_to_root"].size() )
 
+
+#Function to count the elements in the tree
+func ElementsInTree(in_tree):
+	var e_count = 0 
+	
+	#DONT Count for the root
+	
+	for key in in_tree.keys():
+		e_count = e_count + 1
+		
+		e_count = e_count +  ElementsInTree(in_tree[key])
+	
+	return(e_count)
+
+#Goes into a tree and prints its keys
+func PrintTreeKeys(in_tree):
+	
+	print(in_tree.keys())
+	
+	for key in in_tree.keys():
+		PrintTreeKeys(in_tree[key])
+
 ###Function that will determine the tree's contour. 
 # One for left and right
 # RECURSIVE ALGORITHM
@@ -688,17 +710,16 @@ func RightContour(in_tree):
 # This function is NOT about spaced out children living in trees
 #
 func TreeSpaceChildren(pos_tree, mod_tree, min_space = 1.0):
-	
-	#DEBUGGGGGG
-	#for debug purposes min_space is 1.0
-	min_space = 1.0
-	
+
+	var didSpace = false
+
 	#From left to right, comparing the RIGHT Contour to the next's LEFT Contour
 	#Cycle through every key, But skip the last one!
 	for k in range(pos_tree.keys().size() - 1):
+		
+		var right_contour = RightContour(pos_tree[pos_tree.keys()[k]])
 		#For every key, compare it's right contour to it's neighbor's left contours
 		#Start from the last one andmove in closer
-		var right_contour = RightContour(pos_tree[pos_tree.keys()[k]])
 		for p in range(pos_tree.keys().size()-1, k, -1): #don't skip the last one!
 			var left_contour = LeftContour(pos_tree[pos_tree.keys()[p]])
 			var max_offset = 0 #keeps track of how much to shift the children
@@ -713,50 +734,32 @@ func TreeSpaceChildren(pos_tree, mod_tree, min_space = 1.0):
 							max_offset = temp_offset
 			#If there is a discrepancy, shift.
 			if max_offset > 0.0:
-				ShiftModIndex(mod_tree, p, max_offset)
+				#ShiftModIndex(mod_tree, p, max_offset)
+				ShiftModChildren(mod_tree, p, max_offset)
+				didSpace = true
+			#Recalculate the pos tree for the next round of calculations
+			#pos_tree = CalculatePosTree(deep_copy(mod_tree), 0.0)
 		#Recalculate the pos tree for the next round of calculations
-		pos_tree = CalculatePosTree(deep_copy(mod_tree), 0.0)
-			
+		#pos_tree = CalculatePosTree(deep_copy(mod_tree), 0.0)
+
 		#Recalculate the pos tree for the next round of calculations
-		pos_tree = CalculatePosTree(deep_copy(mod_tree), 0.0)
-	
-	#Now Go opposite direction
-	#From right to left, compare left contour with next's right contour...
-#	#Cycle through every key, but skip the last one, index 0!
-#	for k in range(pos_tree.keys().size() - 1, 0, -1):
-#		#For every key, compare it's right contour to a grid of left contours
-#		var left_contour = LeftContour(pos_tree[pos_tree.keys()[k]])
-#		for p in range(k-1,-1,-1): #don't skip the last one!
-#			var right_contour = RightContour(pos_tree[pos_tree.keys()[p]])
-#			var max_offset = 0 #keeps track of how much to shift the children
-#			#cycle through all elements of the contour
-#			for c in range(left_contour.size()):
-#				#Make sure right countour has that many elements
-#				if right_contour.size() > c:
-#					if left_contour[c] < right_contour[c] + min_space:
-#						var temp_offset = right_contour[c] + min_space - left_contour[c]
-#						#record this one if its higher than running max
-#						if temp_offset > max_offset:
-#							max_offset = temp_offset
-#			#If there is a discrepancy, shift.
-#			if max_offset > 0.0:
-#				ShiftModChildren(mod_tree, k, max_offset)
-#			#Recalculate the pos tree for the next round of calculations
-#			pos_tree = CalculatePosTree(deep_copy(mod_tree), 0.0)
-#
-#		#Recalculate the pos tree for the next round of calculations
-#		pos_tree = CalculatePosTree(deep_copy(mod_tree), 0.0)
-#
-							
+		#pos_tree = CalculatePosTree(deep_copy(mod_tree), 0.0)
+		#pos_tree[pos_tree.keys()[k]] = CalculatePosTree( deep_copy(mod_tree[mod_tree.keys()[k]]) ,0.0)
+
+
+
 	#Call Recursive on Children...
 	for k in range(pos_tree.keys().size()):
-		TreeSpaceChildren(pos_tree[pos_tree.keys()[k]], mod_tree[mod_tree.keys()[k]])
-		CalculatePosTree( deep_copy(mod_tree[mod_tree.keys()[k]]) ,0.0)
-			
-	
+		var check_data = TreeSpaceChildren(pos_tree[pos_tree.keys()[k]], mod_tree[mod_tree.keys()[k]])
+		#pos_tree[pos_tree.keys()[k]] = CalculatePosTree( deep_copy(mod_tree[mod_tree.keys()[k]]) ,0.0)
+		if check_data == true:
+			didSpace = true
+
 	#Now we can recalculate the pos_tree
-	return
-		
+	return(didSpace)
+
+
+
 
 ##Function to shift mod trees over by a certain amount....
 #
@@ -833,9 +836,6 @@ func ShiftModIndex(mod_tree, key_index, shift_amount):
 #
 # Also recursive....
 func DrawGraphNodes(in_tree, pos_tree, step_vector, start_vector, game_object, tree_level):
-
-	print(in_tree)
-	print(pos_tree)
 
 	#Draw the nodes, based on positiion
 	#And recursively draw the children chart

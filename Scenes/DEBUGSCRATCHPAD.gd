@@ -40,30 +40,43 @@ func _ready():
 	mod_tree = Story.CalculateModTree(deep_copy(tree))
 	print("Mod Tree")
 	#print(mod_tree)
+	Story.PrintTreeKeys(mod_tree)
 	
 	pos_tree = Story.CalculatePosTree(deep_copy(mod_tree), 0.0)
 	print("Pos tree")
 	#print(pos_tree)
+	#Story.PrintTreeKeys(pos_tree)
+	print(Story.ElementsInTree(pos_tree))
+	print(Story.ElementsInTree(mod_tree))
+	print(Story.ElementsInTree(tree))
 	
-#	var left_contours = Story.LeftContour(pos_tree)
-#	print(left_contours)
-#	var right_contours = Story.RightContour(pos_tree)
-#	print(right_contours)
-	
-	Story.TreeSpaceChildren(pos_tree, mod_tree)
+	while(Story.TreeSpaceChildren(pos_tree,mod_tree) == true):
+		pos_tree = Story.CalculatePosTree(deep_copy(mod_tree), 0.0)
+	#Story.TreeSpaceChildren(pos_tree, mod_tree)
 	print("New Space Mod Tree")
 	#print(mod_tree)
-	
+	Story.PrintTreeKeys(mod_tree)
+	print(Story.ElementsInTree(pos_tree))
+	print(Story.ElementsInTree(mod_tree))
+	print(Story.ElementsInTree(tree))
+
 	#After TreeSpaceChildren is called, we need to recalc pos_tree
 	pos_tree = Story.CalculatePosTree(deep_copy(mod_tree), 0.0)
 	print("New Space Pos Tree")
 	#print(pos_tree)
+	#Story.PrintTreeKeys(pos_tree)
+	print(Story.ElementsInTree(pos_tree))
+	print(Story.ElementsInTree(mod_tree))
+	print(Story.ElementsInTree(tree))
 	
 	##DEBUG
 #	Story.ShiftModIndex(mod_tree[mod_tree.keys()[0]], 0, 12.0)
 #	print(mod_tree)
 #	pos_tree = Story.CalculatePosTree(deep_copy(mod_tree), 0.0)
 #	print(pos_tree)
+
+	##DEBUG
+	
 	
 	Story.DrawGraphNodes(tree, pos_tree, Vector2(50,50), Vector2(200,50), self, 0)
 
@@ -71,7 +84,7 @@ func _ready():
 #	var tree = Story.TreeFromEdges(edges)
 #	print(tree)
 
-
+	
 
 
 	
