@@ -17,8 +17,8 @@ var quadColor
 func _ready():
 	randomize()
 	
-	tile_index = randi()%21
-	#tile_index = 20
+	tile_index = randi()%22
+	tile_index = 21
 	set_tile_index(tile_index)
 	
 	pass # Replace with function body.
@@ -184,7 +184,10 @@ func set_tile_index(index):
 			get_child(index).find_node("Seco").modulate = secoColor
 			get_child(index).find_node("Tert").modulate = tertColor
 			get_child(index).visible = true
-
+		21:
+			#Witch Doc... No need to set colors
+			get_child(index).visible = true
+			primColor = Color(1,1,1) #Don't change the color at all
 
 #Function that will copy all the parameters of a given nput clothes
 func copy_clothes(in_clothes):

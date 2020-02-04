@@ -16,7 +16,7 @@ var pos_tree
 func _ready():
 	randomize()
 	
-	prufer_code = Story.GeneratePruferCode(36)
+	prufer_code = Story.GeneratePruferCode(50)
 	#prufer_code = [3,0,2,3]
 	#print("Prufer Code:")
 	#print(prufer_code)
@@ -38,44 +38,28 @@ func _ready():
 #	print(mod_tree)
 	
 	mod_tree = Story.CalculateModTree(deep_copy(tree))
-	print("Mod Tree")
+	#print("Mod Tree")
 	#print(mod_tree)
 	Story.PrintTreeKeys(mod_tree)
 	
 	pos_tree = Story.CalculatePosTree(deep_copy(mod_tree), 0.0)
-	print("Pos tree")
+	#print("Pos tree")
 	#print(pos_tree)
 	#Story.PrintTreeKeys(pos_tree)
-	print(Story.ElementsInTree(pos_tree))
-	print(Story.ElementsInTree(mod_tree))
-	print(Story.ElementsInTree(tree))
 	
+	#Continuously space the tree until done
 	while(Story.TreeSpaceChildren(pos_tree,mod_tree) == true):
 		pos_tree = Story.CalculatePosTree(deep_copy(mod_tree), 0.0)
 	#Story.TreeSpaceChildren(pos_tree, mod_tree)
-	print("New Space Mod Tree")
 	#print(mod_tree)
 	Story.PrintTreeKeys(mod_tree)
-	print(Story.ElementsInTree(pos_tree))
-	print(Story.ElementsInTree(mod_tree))
-	print(Story.ElementsInTree(tree))
 
 	#After TreeSpaceChildren is called, we need to recalc pos_tree
 	pos_tree = Story.CalculatePosTree(deep_copy(mod_tree), 0.0)
-	print("New Space Pos Tree")
 	#print(pos_tree)
 	#Story.PrintTreeKeys(pos_tree)
-	print(Story.ElementsInTree(pos_tree))
-	print(Story.ElementsInTree(mod_tree))
-	print(Story.ElementsInTree(tree))
-	
-	##DEBUG
-#	Story.ShiftModIndex(mod_tree[mod_tree.keys()[0]], 0, 12.0)
-#	print(mod_tree)
-#	pos_tree = Story.CalculatePosTree(deep_copy(mod_tree), 0.0)
-#	print(pos_tree)
 
-	##DEBUG
+	
 	
 	
 	Story.DrawGraphNodes(tree, pos_tree, Vector2(50,50), Vector2(200,50), self, 0)
@@ -84,12 +68,6 @@ func _ready():
 #	var tree = Story.TreeFromEdges(edges)
 #	print(tree)
 
-	
-
-
-	
-#	var test_dict = {2:{3:{0:{0:{ 0:{5:{}} , 1:{4:{}} }}}}}
-#	print(Story.KeyDepthInTree(test_dict,1))
 
 #called every time it's drawn
 func _draw():
