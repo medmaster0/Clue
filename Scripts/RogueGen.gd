@@ -2105,7 +2105,7 @@ func FindOpenTileAdjWall(in_array, floor_type, wall_type = 1):
 				#x0
 				#0x <--- zipper clutter
 				if in_array[check_floor_tile.x + 1][check_floor_tile.y + 1] == floor_type and \
-				in_array[check_floor_tile.x + 1][check_floor_tile.y + 1] == floor_type and \
+				in_array[check_floor_tile.x + 1][check_floor_tile.y - 1] == floor_type and \
 				in_array[check_floor_tile.x][check_floor_tile.y + 1] == floor_type and \
 				in_array[check_floor_tile.x][check_floor_tile.y - 1] == floor_type:
 					return(check_floor_tile)
@@ -2118,7 +2118,7 @@ func FindOpenTileAdjWall(in_array, floor_type, wall_type = 1):
 				#x0
 				#0x <--- zipper clutter
 				if in_array[check_floor_tile.x - 1][check_floor_tile.y + 1] == floor_type and \
-				in_array[check_floor_tile.x - 1][check_floor_tile.y + 1] == floor_type and \
+				in_array[check_floor_tile.x - 1][check_floor_tile.y - 1] == floor_type and \
 				in_array[check_floor_tile.x][check_floor_tile.y + 1] == floor_type and \
 				in_array[check_floor_tile.x][check_floor_tile.y - 1] == floor_type:
 					return(check_floor_tile)
