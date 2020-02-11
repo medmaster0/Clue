@@ -2027,8 +2027,105 @@ func PathAroundRoom(in_array, start_location, valid_tiles = [2,4]):
 	return(around_path)
 
 
+## Functions for placements
+########
+### There are two types of FURNITURE: Kitchen and Personal (specifies which type of floor they go over)
+# MAP Legend
+# 0 - Empty Space
+# 1 - WALL
+# 2 - FLOOR
+# 3 - DOOR
+# 4 - KITCHEN FLOOR
+# 5 - PERSONAL ROOM FURNITURE (has floor, but also furniture)
+# 6 - PUBLIC ROOM FURNITURE (has floor, but also furniture)
+# 7 - PERSONAL ROOM ITEM (has floor, but also item)
+# 8 - PUBLIC ROOM ITEM (has floor, but also item)
 
+#This funciton takes an existing 2D mansion array and populates it with furniture
+func MansionFurnitureGen(in_array):
+	print("furnishing")
+	
+	#Place a PUBLIC furniture by a wall!
+	for i in range(4):
+		var open_tile_adj_wall = FindOpenTileAdjWall(in_array, 4)
+		in_array[open_tile_adj_wall.x][open_tile_adj_wall.y] = 6
+		
+	#Place a PERSONAL furniture by a wall!
+	for i in range(4):
+		var open_tile_adj_wall = FindOpenTileAdjWall(in_array, 2)
+		in_array[open_tile_adj_wall.x][open_tile_adj_wall.y] = 5
+		
+	
+	return(in_array)
 
-
-
-
+#FUnction to find a floor tile of a given type adjacent to a wall of a given type, but still free on each side
+func FindOpenTileAdjWall(in_array, floor_type, wall_type = 1):
+	
+	var loop_counter = 0 #a counter to prevent infinite loops
+	
+	while(loop_counter < 1500):
+		#Use existing function to find a tile of that type
+		var check_floor_tile = FindRandomTile(in_array, [floor_type])
+	
+		#Check if any of the neighbors are walls
+		# WE assume the room has been outlined so NO BOUNDS CHECKING
+		
+		#CHECK UP
+		if in_array[check_floor_tile.x][check_floor_tile.y - 1] == wall_type:
+			#Check if opposite tile is clear
+			if in_array[check_floor_tile.x][check_floor_tile.y + 1] == floor_type:
+				#Also have to check each of the four surrounding mid to diagonal spaces are clear....
+				#This prevents corners and "Zipper" clutter
+				#x0
+				#0x <--- zipper clutter
+				if in_array[check_floor_tile.x + 1][check_floor_tile.y + 1] == floor_type and \
+				in_array[check_floor_tile.x - 1][check_floor_tile.y + 1] == floor_type and \
+				in_array[check_floor_tile.x + 1][check_floor_tile.y] == floor_type and \
+				in_array[check_floor_tile.x - 1][check_floor_tile.y] == floor_type:
+					return(check_floor_tile)
+		#CHECK DOWN
+		if in_array[check_floor_tile.x][check_floor_tile.y + 1] == wall_type:
+			#Check if opposite tile is clear
+			if in_array[check_floor_tile.x][check_floor_tile.y - 1] == floor_type:
+				#Also have to check each of the four surrounding mid to diagonal spaces are clear....
+				#This prevents corners and "Zipper" clutter
+				#x0
+				#0x <--- zipper clutter
+				if in_array[check_floor_tile.x + 1][check_floor_tile.y - 1] == floor_type and \
+				in_array[check_floor_tile.x - 1][check_floor_tile.y - 1] == floor_type and \
+				in_array[check_floor_tile.x + 1][check_floor_tile.y] == floor_type and \
+				in_array[check_floor_tile.x - 1][check_floor_tile.y] == floor_type:
+					return(check_floor_tile)
+		#CHECK LEFT
+		if in_array[check_floor_tile.x - 1][check_floor_tile.y] == wall_type:
+			#Check if opposite tile is clear
+			if in_array[check_floor_tile.x + 1][check_floor_tile.y] == floor_type:
+				#Also have to check each of the four surrounding mid to diagonal spaces are clear....
+				#This prevents corners and "Zipper" clutter
+				#x0
+				#0x <--- zipper clutter
+				if in_array[check_floor_tile.x + 1][check_floor_tile.y + 1] == floor_type and \
+				in_array[check_floor_tile.x + 1][check_floor_tile.y + 1] == floor_type and \
+				in_array[check_floor_tile.x][check_floor_tile.y + 1] == floor_type and \
+				in_array[check_floor_tile.x][check_floor_tile.y - 1] == floor_type:
+					return(check_floor_tile)
+		#CHECK RIGHT
+		if in_array[check_floor_tile.x + 1][check_floor_tile.y] == wall_type:
+			#Check if opposite tile is clear
+			if in_array[check_floor_tile.x - 1][check_floor_tile.y] == floor_type:
+				#Also have to check each of the four surrounding mid to diagonal spaces are clear....
+				#This prevents corners and "Zipper" clutter
+				#x0
+				#0x <--- zipper clutter
+				if in_array[check_floor_tile.x - 1][check_floor_tile.y + 1] == floor_type and \
+				in_array[check_floor_tile.x - 1][check_floor_tile.y + 1] == floor_type and \
+				in_array[check_floor_tile.x][check_floor_tile.y + 1] == floor_type and \
+				in_array[check_floor_tile.x][check_floor_tile.y - 1] == floor_type:
+					return(check_floor_tile)
+		
+		#If we made it here, the tile was not eligible and we need to try another
+		#increment counter and start loop over
+		loop_counter = loop_counter + 1
+	
+	#Then counter went above limit
+	return(Vector2(9999,9999)) #error code

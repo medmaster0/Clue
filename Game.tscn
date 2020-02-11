@@ -40,5 +40,6 @@ text = "killed
  with"
 
 [node name="LoveChart" parent="." instance=ExtResource( 9 )]
+visible = false
 position = Vector2( 694.5, 0 )
 Creature = ExtResource( 4 )

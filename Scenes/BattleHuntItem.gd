@@ -572,7 +572,7 @@ func _ready():
 	#Pick random tile_index (set here for debug purposesssss)
 	tile_index = randi()%68
 	#tile_index = 27 + randi()%3
-	tile_index = 407 + randi()%3
+	#tile_index = 407 + randi()%3
 	setTile(tile_index)
 	
 	pass # Replace with function body.

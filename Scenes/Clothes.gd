@@ -18,7 +18,7 @@ func _ready():
 	randomize()
 	
 	tile_index = randi()%22
-	tile_index = 21
+	#tile_index = 21
 	set_tile_index(tile_index)
 	
 	pass # Replace with function body.
