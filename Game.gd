@@ -127,7 +127,7 @@ func _ready():
 				new_building_item.position.y =  j * $TileMap.cell_size.y
 				new_building_item.position.x =  i * $TileMap.cell_size.x
 				add_child(new_building_item)
-				var furniture_items = [402, 403, 404, 405, 406]
+				var furniture_items = [402, 403, 404, 405, 406, 410]
 				var choice = furniture_items[randi()%furniture_items.size()]
 				new_building_item.setTile(choice)
 				new_building_item.SetPrimColor(personal_room_furniture_prim)
@@ -147,7 +147,7 @@ func _ready():
 				new_building_item.position.y =  j * $TileMap.cell_size.y
 				new_building_item.position.x =  i * $TileMap.cell_size.x
 				add_child(new_building_item)
-				var furniture_items = [401, 407, 408, 409]
+				var furniture_items = [401, 407, 408, 409, 410]
 				var choice = furniture_items[randi()%furniture_items.size()]
 				new_building_item.setTile(choice)
 				new_building_item.SetPrimColor(public_room_furniture_prim)

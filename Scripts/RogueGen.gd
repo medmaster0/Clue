@@ -2041,25 +2041,50 @@ func PathAroundRoom(in_array, start_location, valid_tiles = [2,4]):
 # 7 - PERSONAL ROOM ITEM (has floor, but also item)
 # 8 - PUBLIC ROOM ITEM (has floor, but also item)
 
+# 101 - LEFT PUBLIC ROOM SET FURNITURE
+# 102 - MID PUBLIC ROOM SET FURNITURE
+# 103 - RIGHT PUBLIC ROOM SET FURNITURE
+# 104 - LEFT PRIVATE ROOM SET FURNITURE
+# 105 - MID PRIVATE ROOM SET FURNITURE
+# 106 - RIGHT PRIVATE ROOM SET FURNITURE
+
 #This funciton takes an existing 2D mansion array and populates it with furniture
 func MansionFurnitureGen(in_array):
 	print("furnishing")
 	
 	#Place a PUBLIC furniture by a wall!
 	for i in range(4):
-		var open_tile_adj_wall = FindOpenTileAdjWall(in_array, 4)
+		var open_tile_adj_wall = FindOpenTileAdjWall(in_array, 4)["tile_position"]
 		in_array[open_tile_adj_wall.x][open_tile_adj_wall.y] = 6
 		
 	#Place a PERSONAL furniture by a wall!
 	for i in range(4):
-		var open_tile_adj_wall = FindOpenTileAdjWall(in_array, 2)
+		var open_tile_adj_wall = FindOpenTileAdjWall(in_array, 2)["tile_position"]
 		in_array[open_tile_adj_wall.x][open_tile_adj_wall.y] = 5
 		
+	
+	#Place a PUBLIC furniture SET by a wall
+	var multi_tile_finding = FindMultipleOpenTilesAdjWalls(in_array, 4, 1, 3)
+	print(multi_tile_finding)
+	for step in multi_tile_finding["tile_positions"]:
+		in_array[step.x][step.y] = 101
 	
 	return(in_array)
 
 #FUnction to find a floor tile of a given type adjacent to a wall of a given type, but still free on each side
+# Wall direction code.....
+# 0 - Wall to the Right
+# 1 - Wall to the Left
+# 2 - Wall to the Up
+# 3 - Wall to the Down
+#
 func FindOpenTileAdjWall(in_array, floor_type, wall_type = 1):
+	
+	#initialize return structure
+	var return_dict = {
+		"tile_position" : Vector2(9999,9999), #the position of the tile
+		"wall_direction_code" : 9999 #which way wall is in relation to set
+	}
 	
 	var loop_counter = 0 #a counter to prevent infinite loops
 	
@@ -2082,7 +2107,9 @@ func FindOpenTileAdjWall(in_array, floor_type, wall_type = 1):
 				in_array[check_floor_tile.x - 1][check_floor_tile.y + 1] == floor_type and \
 				in_array[check_floor_tile.x + 1][check_floor_tile.y] == floor_type and \
 				in_array[check_floor_tile.x - 1][check_floor_tile.y] == floor_type:
-					return(check_floor_tile)
+					return_dict["tile_position"] = check_floor_tile
+					return_dict["wall_direction_code"] = 2
+					return(return_dict)
 		#CHECK DOWN
 		if in_array[check_floor_tile.x][check_floor_tile.y + 1] == wall_type:
 			#Check if opposite tile is clear
@@ -2095,7 +2122,9 @@ func FindOpenTileAdjWall(in_array, floor_type, wall_type = 1):
 				in_array[check_floor_tile.x - 1][check_floor_tile.y - 1] == floor_type and \
 				in_array[check_floor_tile.x + 1][check_floor_tile.y] == floor_type and \
 				in_array[check_floor_tile.x - 1][check_floor_tile.y] == floor_type:
-					return(check_floor_tile)
+					return_dict["tile_position"] = check_floor_tile
+					return_dict["wall_direction_code"] = 3
+					return(return_dict)
 		#CHECK LEFT
 		if in_array[check_floor_tile.x - 1][check_floor_tile.y] == wall_type:
 			#Check if opposite tile is clear
@@ -2108,7 +2137,9 @@ func FindOpenTileAdjWall(in_array, floor_type, wall_type = 1):
 				in_array[check_floor_tile.x + 1][check_floor_tile.y - 1] == floor_type and \
 				in_array[check_floor_tile.x][check_floor_tile.y + 1] == floor_type and \
 				in_array[check_floor_tile.x][check_floor_tile.y - 1] == floor_type:
-					return(check_floor_tile)
+					return_dict["tile_position"] = check_floor_tile
+					return_dict["wall_direction_code"] = 1
+					return(return_dict)
 		#CHECK RIGHT
 		if in_array[check_floor_tile.x + 1][check_floor_tile.y] == wall_type:
 			#Check if opposite tile is clear
@@ -2121,11 +2152,199 @@ func FindOpenTileAdjWall(in_array, floor_type, wall_type = 1):
 				in_array[check_floor_tile.x - 1][check_floor_tile.y - 1] == floor_type and \
 				in_array[check_floor_tile.x][check_floor_tile.y + 1] == floor_type and \
 				in_array[check_floor_tile.x][check_floor_tile.y - 1] == floor_type:
-					return(check_floor_tile)
+					return_dict["tile_position"] = check_floor_tile
+					return_dict["wall_direction_code"] = 0
+					return(return_dict)
 		
 		#If we made it here, the tile was not eligible and we need to try another
 		#increment counter and start loop over
 		loop_counter = loop_counter + 1
 	
 	#Then counter went above limit
-	return(Vector2(9999,9999)) #error code
+	return(return_dict) #error code still set
+
+#Function that will find A GROUP of open tiles adjacent to wall
+#REturn 
+# var return_type = {
+# 	list_of_tile_positions : [] list of Vector2s
+# 	wall_direction_code : integer
+# } 
+# Wall direction code.....
+# 0 - Wall to the Right
+# 1 - Wall to the Left
+# 2 - Wall to the Up
+# 3 - Wall to the Down
+#
+# Similar to above function
+# INput the number of tiles you want to group together
+func FindMultipleOpenTilesAdjWalls(in_array, floor_type, wall_type = 1, num_tiles = 3):
+	
+	#initialize return structure
+	var return_dict = {
+		"tile_positions" : [], #list of Vector2s 
+		"wall_direction_code" : 9999 #which way wall is in relation to set
+	}
+
+	var loop_counter = 0 #a counter to prevent infinite loops
+
+	while(loop_counter < 1500):
+		
+		#Use existing function to find a adjacent to open wall
+		var adjacent_wall_finding = FindOpenTileAdjWall(in_array, floor_type, wall_type)
+		#Unpack the dictionary
+		var wall_direction = adjacent_wall_finding["wall_direction_code"]
+		var tile_pos = adjacent_wall_finding["tile_position"]
+	
+		#The direction of the adjacent wall will help us decide how to check
+		var check_clear = true #a flag used in checking if the path is clear
+		match(wall_direction):
+			#For each case, in each swathe:
+			#	We know the first tile is clear
+			#	Check all of the middle tiles (only wall and opposite tile)
+			#	Check the last tile (all surrouning tile)
+			0:
+				#Wall to the Right
+				#(Check Downward)
+				
+				#Middle tiles of swathe
+				var num_mid_tiles = num_tiles - 2
+				for i in range(num_mid_tiles):
+					var new_tile_pos = tile_pos + Vector2(0,1)
+					#Check if this position is actually a floor tile
+					if in_array[new_tile_pos.x][new_tile_pos.y] != floor_type:
+						check_clear = false #then it is NOT clear
+					#Check if wall and opp are clear
+					if in_array[new_tile_pos.x + 1][new_tile_pos.y] != wall_type or \
+						in_array[new_tile_pos.x - 1][new_tile_pos.y] != floor_type:
+						check_clear = false #then they are NOT clear
+				#Last tile
+				var new_tile_pos = tile_pos + Vector2(0,num_tiles-1)
+				#Check if this position is actually a floor tile
+				if in_array[new_tile_pos.x][new_tile_pos.y] != floor_type:
+					check_clear = false #then it is NOT clear
+				#Check if wall and opp are clear
+				if in_array[new_tile_pos.x + 1][new_tile_pos.y] != wall_type or \
+					in_array[new_tile_pos.x - 1][new_tile_pos.y] != floor_type:
+					check_clear = false #then they are NOT clear
+				
+				#If the flag is still clear, we found our clear spaces
+				if check_clear == true:
+					#Add the steps to our return_dict
+					for i in range(num_tiles):
+						var temp_pos = tile_pos + Vector2(0,i)
+						return_dict["tile_positions"].append(temp_pos)
+					#Set the direciton code
+					return_dict["wall_direction_code"] = wall_direction
+					return(return_dict)
+				
+
+			1:
+				#Wall to the Left
+				#(Check Upward)
+				
+				#Middle tiles of swathe
+				var num_mid_tiles = num_tiles - 2
+				for i in range(num_mid_tiles):
+					var new_tile_pos = tile_pos + Vector2(0,-1)
+					#Check if this position is actually a floor tile
+					if in_array[new_tile_pos.x][new_tile_pos.y] != floor_type:
+						check_clear = false #then it is NOT clear
+					#Check if wall and opp are clear
+					if in_array[new_tile_pos.x - 1][new_tile_pos.y] != wall_type or \
+						in_array[new_tile_pos.x + 1][new_tile_pos.y] != floor_type:
+						check_clear = false #then they are NOT clear
+				#Last tile
+				var new_tile_pos = tile_pos - Vector2(0,num_tiles-1)
+				#Check if this position is actually a floor tile
+				if in_array[new_tile_pos.x][new_tile_pos.y] != floor_type:
+					check_clear = false #then it is NOT clear
+				#Check if wall and opp are clear
+				if in_array[new_tile_pos.x - 1][new_tile_pos.y] != wall_type or \
+					in_array[new_tile_pos.x + 1][new_tile_pos.y] != floor_type:
+					check_clear = false #then they are NOT clear
+				
+				#If the flag is still clear, we found our clear spaces
+				if check_clear == true:
+					#Add the steps to our return_dict
+					for i in range(num_tiles):
+						var temp_pos = tile_pos - Vector2(0,i)
+						return_dict["tile_positions"].append(temp_pos)
+					#Set the direciton code
+					return_dict["wall_direction_code"] = wall_direction
+					return(return_dict)
+				
+			2:
+				#Wall to the Up
+				#(Check Rightward)
+				
+				#Middle tiles of swathe
+				var num_mid_tiles = num_tiles - 2
+				for i in range(num_mid_tiles):
+					var new_tile_pos = tile_pos + Vector2(1,0)
+					#Check if this position is actually a floor tile
+					if in_array[new_tile_pos.x][new_tile_pos.y] != floor_type:
+						check_clear = false #then it is NOT clear
+					#Check if wall and opp are clear
+					if in_array[new_tile_pos.x][new_tile_pos.y - 1] != wall_type or \
+						in_array[new_tile_pos.x][new_tile_pos.y + 1] != floor_type:
+						check_clear = false #then they are NOT clear
+				#Last tile
+				var new_tile_pos = tile_pos + Vector2(num_tiles-1,0)
+				#Check if this position is actually a floor tile
+				if in_array[new_tile_pos.x][new_tile_pos.y] != floor_type:
+					check_clear = false #then it is NOT clear
+				#Check if wall and opp are clear
+				if in_array[new_tile_pos.x][new_tile_pos.y - 1] != wall_type or \
+					in_array[new_tile_pos.x][new_tile_pos.y + 1] != floor_type:
+					check_clear = false #then they are NOT clear
+				
+				#If the flag is still clear, we found our clear spaces
+				if check_clear == true:
+					#Add the steps to our return_dict
+					for i in range(num_tiles):
+						var temp_pos = tile_pos + Vector2(i,0)
+						return_dict["tile_positions"].append(temp_pos)
+					#Set the direciton code
+					return_dict["wall_direction_code"] = wall_direction
+					return(return_dict)
+				
+			3:
+				#Wall to the Down
+				#(Check Leftward)
+				
+				#Middle tiles of swathe
+				var num_mid_tiles = num_tiles - 2
+				for i in range(num_mid_tiles):
+					var new_tile_pos = tile_pos - Vector2(1,0)
+					#Check if this position is actually a floor tile
+					if in_array[new_tile_pos.x][new_tile_pos.y] != floor_type:
+						check_clear = false #then it is NOT clear
+					#Check if wall and opp are clear
+					if in_array[new_tile_pos.x][new_tile_pos.y + 1] != wall_type or \
+						in_array[new_tile_pos.x][new_tile_pos.y - 1] != floor_type:
+						check_clear = false #then they are NOT clear
+				#Last tile
+				var new_tile_pos = tile_pos - Vector2(num_tiles-1,0)
+				#Check if this position is actually a floor tile
+				if in_array[new_tile_pos.x][new_tile_pos.y] != floor_type:
+					check_clear = false #then it is NOT clear
+				#Check if wall and opp are clear
+				if in_array[new_tile_pos.x][new_tile_pos.y + 1] != wall_type or \
+					in_array[new_tile_pos.x][new_tile_pos.y - 1] != floor_type:
+					check_clear = false #then they are NOT clear
+				
+				#If the flag is still clear, we found our clear spaces
+				if check_clear == true:
+					#Add the steps to our return_dict
+					for i in range(num_tiles):
+						var temp_pos = tile_pos - Vector2(i,0)
+						return_dict["tile_positions"].append(temp_pos)
+					#Set the direciton code
+					return_dict["wall_direction_code"] = wall_direction
+					return(return_dict)
+			
+		
+		
+		#If we made it here, the tile was not eligible and we need to try another
+		#increment counter and start loop over
+		loop_counter = loop_counter + 1
