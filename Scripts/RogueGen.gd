@@ -2099,7 +2099,45 @@ func MansionFurnitureGen(in_array):
 				for pos in tile_positions:
 					in_array[pos.x][pos.y] = tile_pattern[count]
 					count = count + 1
-	
+
+	for i in range(2):
+		#Place a PRIVATE furniture SET by a wall
+		var multi_tile_finding = FindMultipleOpenTilesAdjWalls(in_array, 2, 1, 3)
+		var tile_positions = multi_tile_finding["tile_positions"]
+		var wall_direction_code = multi_tile_finding["wall_direction_code"]
+		#Layout depends on the direction of wall...
+		match(wall_direction_code):
+			0:
+				#Wall to right, so sweep down
+				var count = 0
+				var tile_pattern = [106,105,106] #pattern to lay down
+				for pos in tile_positions:
+					in_array[pos.x][pos.y] = tile_pattern[count]
+					count = count + 1
+			1:
+				#Wall to left, so sweep up
+				var count = 0
+				var tile_pattern = [104,105,104] #pattern to lay down
+				for pos in tile_positions:
+					in_array[pos.x][pos.y] = tile_pattern[count]
+					count = count + 1
+			2:
+				#Wall to up, so sweep left to right
+				var count = 0
+				var tile_pattern = [104,105,106] #pattern to lay down
+				for pos in tile_positions:
+					in_array[pos.x][pos.y] = tile_pattern[count]
+					count = count + 1
+			3:
+				#Wall to down, so sweep right to left
+				var count = 0
+				var tile_pattern = [106,105,104] #pattern to lay down
+				for pos in tile_positions:
+					in_array[pos.x][pos.y] = tile_pattern[count]
+					count = count + 1
+
+
+
 #	for step in multi_tile_finding["tile_positions"]:
 #		in_array[step.x][step.y] = 101
 	
