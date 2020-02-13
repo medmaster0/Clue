@@ -153,6 +153,67 @@ func _ready():
 				new_building_item.SetPrimColor(public_room_furniture_prim)
 				new_building_item.SetSecoColor(public_room_furniture_seco)
 
+			#SPECIFIC FURNITURE CODES!!!
+			#LEFT PUBLIC ROOM SET FURNITURE
+			if mansion[i][j] == 101:
+				#CREATE THE FLOOR ITEM
+				var new_building_item = Item.instance()
+				new_building_item.position.y =  j * $TileMap.cell_size.y
+				new_building_item.position.x =  i * $TileMap.cell_size.x
+				add_child(new_building_item)
+				new_building_item.setTile(107)
+				new_building_item.SetPrimColor(kitchen_floor_color_prim)
+				new_building_item.SetSecoColor(kitchen_floor_color_seco)
+				#CREATE THE FURNITURE ITEM
+				new_building_item = BattleHuntItem.instance()
+				new_building_item.position.y =  j * $TileMap.cell_size.y
+				new_building_item.position.x =  i * $TileMap.cell_size.x
+				add_child(new_building_item)
+				var furniture_items = [409]
+				var choice = furniture_items[randi()%furniture_items.size()]
+				new_building_item.setTile(choice)
+				new_building_item.SetPrimColor(public_room_furniture_prim)
+				new_building_item.SetSecoColor(public_room_furniture_seco)
+			#MID PUBLIC ROOM SET FURNITURE
+			if mansion[i][j] == 102:
+				#CREATE THE FLOOR ITEM
+				var new_building_item = Item.instance()
+				new_building_item.position.y =  j * $TileMap.cell_size.y
+				new_building_item.position.x =  i * $TileMap.cell_size.x
+				add_child(new_building_item)
+				new_building_item.setTile(107)
+				new_building_item.SetPrimColor(kitchen_floor_color_prim)
+				new_building_item.SetSecoColor(kitchen_floor_color_seco)
+				#CREATE THE FURNITURE ITEM
+				new_building_item = BattleHuntItem.instance()
+				new_building_item.position.y =  j * $TileMap.cell_size.y
+				new_building_item.position.x =  i * $TileMap.cell_size.x
+				add_child(new_building_item)
+				var furniture_items = [407]
+				var choice = furniture_items[randi()%furniture_items.size()]
+				new_building_item.setTile(choice)
+				new_building_item.SetPrimColor(public_room_furniture_prim)
+				new_building_item.SetSecoColor(public_room_furniture_seco)
+			#RIGHT PUBLIC ROOM SET FURNITURE
+			if mansion[i][j] == 103:
+				#CREATE THE FLOOR ITEM
+				var new_building_item = Item.instance()
+				new_building_item.position.y =  j * $TileMap.cell_size.y
+				new_building_item.position.x =  i * $TileMap.cell_size.x
+				add_child(new_building_item)
+				new_building_item.setTile(107)
+				new_building_item.SetPrimColor(kitchen_floor_color_prim)
+				new_building_item.SetSecoColor(kitchen_floor_color_seco)
+				#CREATE THE FURNITURE ITEM
+				new_building_item = BattleHuntItem.instance()
+				new_building_item.position.y =  j * $TileMap.cell_size.y
+				new_building_item.position.x =  i * $TileMap.cell_size.x
+				add_child(new_building_item)
+				var furniture_items = [408]
+				var choice = furniture_items[randi()%furniture_items.size()]
+				new_building_item.setTile(choice)
+				new_building_item.SetPrimColor(public_room_furniture_prim)
+				new_building_item.SetSecoColor(public_room_furniture_seco)
 
 	#Place map enemies in a random room...
 	for i in range(map_enemies.size()):

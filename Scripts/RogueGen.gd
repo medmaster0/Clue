@@ -2065,9 +2065,41 @@ func MansionFurnitureGen(in_array):
 	
 	#Place a PUBLIC furniture SET by a wall
 	var multi_tile_finding = FindMultipleOpenTilesAdjWalls(in_array, 4, 1, 3)
-	print(multi_tile_finding)
-	for step in multi_tile_finding["tile_positions"]:
-		in_array[step.x][step.y] = 101
+	var tile_positions = multi_tile_finding["tile_positions"]
+	var wall_direction_code = multi_tile_finding["wall_direction_code"]
+	#Layout depends on the direction of wall...
+	match(wall_direction_code):
+		0:
+			#Wall to right, so sweep down
+			var count = 0
+			var tile_pattern = [103,102,103] #pattern to lay down
+			for pos in tile_positions:
+				in_array[pos.x][pos.y] = tile_pattern[count]
+				count = count + 1
+		1:
+			#Wall to left, so sweep up
+			var count = 0
+			var tile_pattern = [101,102,101] #pattern to lay down
+			for pos in tile_positions:
+				in_array[pos.x][pos.y] = tile_pattern[count]
+				count = count + 1
+		2:
+			#Wall to up, so sweep left to right
+			var count = 0
+			var tile_pattern = [101,102,103] #pattern to lay down
+			for pos in tile_positions:
+				in_array[pos.x][pos.y] = tile_pattern[count]
+				count = count + 1
+		3:
+			#Wall to down, so sweep right to left
+			var count = 0
+			var tile_pattern = [103,102,101] #pattern to lay down
+			for pos in tile_positions:
+				in_array[pos.x][pos.y] = tile_pattern[count]
+				count = count + 1
+	
+#	for step in multi_tile_finding["tile_positions"]:
+#		in_array[step.x][step.y] = 101
 	
 	return(in_array)
 
@@ -2226,7 +2258,11 @@ func FindMultipleOpenTilesAdjWalls(in_array, floor_type, wall_type = 1, num_tile
 				if in_array[new_tile_pos.x + 1][new_tile_pos.y] != wall_type or \
 					in_array[new_tile_pos.x - 1][new_tile_pos.y] != floor_type:
 					check_clear = false #then they are NOT clear
-				
+				#Check if following block is clear (so no corners)
+				if in_array[new_tile_pos.x][new_tile_pos.y + 1] != floor_type or \
+					in_array[new_tile_pos.x - 1][new_tile_pos.y + 1] != floor_type:
+					check_clear = false #then they are NOT clear
+					
 				#If the flag is still clear, we found our clear spaces
 				if check_clear == true:
 					#Add the steps to our return_dict
@@ -2261,6 +2297,10 @@ func FindMultipleOpenTilesAdjWalls(in_array, floor_type, wall_type = 1, num_tile
 				#Check if wall and opp are clear
 				if in_array[new_tile_pos.x - 1][new_tile_pos.y] != wall_type or \
 					in_array[new_tile_pos.x + 1][new_tile_pos.y] != floor_type:
+					check_clear = false #then they are NOT clear
+				#Check if following block is clear (so no corners)
+				if in_array[new_tile_pos.x][new_tile_pos.y - 1] != floor_type or \
+					in_array[new_tile_pos.x + 1][new_tile_pos.y - 1] != floor_type:
 					check_clear = false #then they are NOT clear
 				
 				#If the flag is still clear, we found our clear spaces
@@ -2297,6 +2337,10 @@ func FindMultipleOpenTilesAdjWalls(in_array, floor_type, wall_type = 1, num_tile
 				if in_array[new_tile_pos.x][new_tile_pos.y - 1] != wall_type or \
 					in_array[new_tile_pos.x][new_tile_pos.y + 1] != floor_type:
 					check_clear = false #then they are NOT clear
+				#Check if following block is clear (so no corners)
+				if in_array[new_tile_pos.x + 1][new_tile_pos.y] != floor_type or \
+					in_array[new_tile_pos.x + 1][new_tile_pos.y + 1] != floor_type:
+					check_clear = false #then they are NOT clear
 				
 				#If the flag is still clear, we found our clear spaces
 				if check_clear == true:
@@ -2331,6 +2375,10 @@ func FindMultipleOpenTilesAdjWalls(in_array, floor_type, wall_type = 1, num_tile
 				#Check if wall and opp are clear
 				if in_array[new_tile_pos.x][new_tile_pos.y + 1] != wall_type or \
 					in_array[new_tile_pos.x][new_tile_pos.y - 1] != floor_type:
+					check_clear = false #then they are NOT clear
+				#Check if following block is clear (so no corners)
+				if in_array[new_tile_pos.x - 1][new_tile_pos.y] != floor_type or \
+					in_array[new_tile_pos.x - 1][new_tile_pos.y - 1] != floor_type:
 					check_clear = false #then they are NOT clear
 				
 				#If the flag is still clear, we found our clear spaces
