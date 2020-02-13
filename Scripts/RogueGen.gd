@@ -2062,41 +2062,43 @@ func MansionFurnitureGen(in_array):
 		var open_tile_adj_wall = FindOpenTileAdjWall(in_array, 2)["tile_position"]
 		in_array[open_tile_adj_wall.x][open_tile_adj_wall.y] = 5
 		
-	
-	#Place a PUBLIC furniture SET by a wall
-	var multi_tile_finding = FindMultipleOpenTilesAdjWalls(in_array, 4, 1, 3)
-	var tile_positions = multi_tile_finding["tile_positions"]
-	var wall_direction_code = multi_tile_finding["wall_direction_code"]
-	#Layout depends on the direction of wall...
-	match(wall_direction_code):
-		0:
-			#Wall to right, so sweep down
-			var count = 0
-			var tile_pattern = [103,102,103] #pattern to lay down
-			for pos in tile_positions:
-				in_array[pos.x][pos.y] = tile_pattern[count]
-				count = count + 1
-		1:
-			#Wall to left, so sweep up
-			var count = 0
-			var tile_pattern = [101,102,101] #pattern to lay down
-			for pos in tile_positions:
-				in_array[pos.x][pos.y] = tile_pattern[count]
-				count = count + 1
-		2:
-			#Wall to up, so sweep left to right
-			var count = 0
-			var tile_pattern = [101,102,103] #pattern to lay down
-			for pos in tile_positions:
-				in_array[pos.x][pos.y] = tile_pattern[count]
-				count = count + 1
-		3:
-			#Wall to down, so sweep right to left
-			var count = 0
-			var tile_pattern = [103,102,101] #pattern to lay down
-			for pos in tile_positions:
-				in_array[pos.x][pos.y] = tile_pattern[count]
-				count = count + 1
+
+
+	for i in range(2):
+		#Place a PUBLIC furniture SET by a wall
+		var multi_tile_finding = FindMultipleOpenTilesAdjWalls(in_array, 4, 1, 3)
+		var tile_positions = multi_tile_finding["tile_positions"]
+		var wall_direction_code = multi_tile_finding["wall_direction_code"]
+		#Layout depends on the direction of wall...
+		match(wall_direction_code):
+			0:
+				#Wall to right, so sweep down
+				var count = 0
+				var tile_pattern = [103,102,103] #pattern to lay down
+				for pos in tile_positions:
+					in_array[pos.x][pos.y] = tile_pattern[count]
+					count = count + 1
+			1:
+				#Wall to left, so sweep up
+				var count = 0
+				var tile_pattern = [101,102,101] #pattern to lay down
+				for pos in tile_positions:
+					in_array[pos.x][pos.y] = tile_pattern[count]
+					count = count + 1
+			2:
+				#Wall to up, so sweep left to right
+				var count = 0
+				var tile_pattern = [101,102,103] #pattern to lay down
+				for pos in tile_positions:
+					in_array[pos.x][pos.y] = tile_pattern[count]
+					count = count + 1
+			3:
+				#Wall to down, so sweep right to left
+				var count = 0
+				var tile_pattern = [103,102,101] #pattern to lay down
+				for pos in tile_positions:
+					in_array[pos.x][pos.y] = tile_pattern[count]
+					count = count + 1
 	
 #	for step in multi_tile_finding["tile_positions"]:
 #		in_array[step.x][step.y] = 101
@@ -2259,9 +2261,10 @@ func FindMultipleOpenTilesAdjWalls(in_array, floor_type, wall_type = 1, num_tile
 					in_array[new_tile_pos.x - 1][new_tile_pos.y] != floor_type:
 					check_clear = false #then they are NOT clear
 				#Check if following block is clear (so no corners)
-				if in_array[new_tile_pos.x][new_tile_pos.y + 1] != floor_type or \
-					in_array[new_tile_pos.x - 1][new_tile_pos.y + 1] != floor_type:
-					check_clear = false #then they are NOT clear
+				if new_tile_pos.y + 1 < in_array[0].size():
+					if in_array[new_tile_pos.x][new_tile_pos.y + 1] != floor_type or \
+						in_array[new_tile_pos.x - 1][new_tile_pos.y + 1] != floor_type:
+						check_clear = false #then they are NOT clear
 					
 				#If the flag is still clear, we found our clear spaces
 				if check_clear == true:
@@ -2299,9 +2302,10 @@ func FindMultipleOpenTilesAdjWalls(in_array, floor_type, wall_type = 1, num_tile
 					in_array[new_tile_pos.x + 1][new_tile_pos.y] != floor_type:
 					check_clear = false #then they are NOT clear
 				#Check if following block is clear (so no corners)
-				if in_array[new_tile_pos.x][new_tile_pos.y - 1] != floor_type or \
-					in_array[new_tile_pos.x + 1][new_tile_pos.y - 1] != floor_type:
-					check_clear = false #then they are NOT clear
+				if new_tile_pos.y - 1 >= 0:
+					if in_array[new_tile_pos.x][new_tile_pos.y - 1] != floor_type or \
+						in_array[new_tile_pos.x + 1][new_tile_pos.y - 1] != floor_type:
+						check_clear = false #then they are NOT clear
 				
 				#If the flag is still clear, we found our clear spaces
 				if check_clear == true:
@@ -2338,9 +2342,10 @@ func FindMultipleOpenTilesAdjWalls(in_array, floor_type, wall_type = 1, num_tile
 					in_array[new_tile_pos.x][new_tile_pos.y + 1] != floor_type:
 					check_clear = false #then they are NOT clear
 				#Check if following block is clear (so no corners)
-				if in_array[new_tile_pos.x + 1][new_tile_pos.y] != floor_type or \
-					in_array[new_tile_pos.x + 1][new_tile_pos.y + 1] != floor_type:
-					check_clear = false #then they are NOT clear
+				if new_tile_pos.x + 1 < in_array.size():
+					if in_array[new_tile_pos.x + 1][new_tile_pos.y] != floor_type or \
+						in_array[new_tile_pos.x + 1][new_tile_pos.y + 1] != floor_type:
+						check_clear = false #then they are NOT clear
 				
 				#If the flag is still clear, we found our clear spaces
 				if check_clear == true:
@@ -2377,9 +2382,10 @@ func FindMultipleOpenTilesAdjWalls(in_array, floor_type, wall_type = 1, num_tile
 					in_array[new_tile_pos.x][new_tile_pos.y - 1] != floor_type:
 					check_clear = false #then they are NOT clear
 				#Check if following block is clear (so no corners)
-				if in_array[new_tile_pos.x - 1][new_tile_pos.y] != floor_type or \
-					in_array[new_tile_pos.x - 1][new_tile_pos.y - 1] != floor_type:
-					check_clear = false #then they are NOT clear
+				if new_tile_pos.x - 1 >= 0:
+					if in_array[new_tile_pos.x - 1][new_tile_pos.y] != floor_type or \
+						in_array[new_tile_pos.x - 1][new_tile_pos.y - 1] != floor_type:
+						check_clear = false #then they are NOT clear
 				
 				#If the flag is still clear, we found our clear spaces
 				if check_clear == true:

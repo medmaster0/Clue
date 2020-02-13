@@ -34,7 +34,7 @@ var num_enemies = 5
 func _ready():
 	randomize()
 	
-	mansion = RogueGen.GenerateMansion(Vector2(30,30))
+	mansion = RogueGen.GenerateMansion(Vector2(30,29))
 	
 	#Clip space for cleanliness and ease of use
 	mansion = RogueGen.BoundingBoxClipArray(mansion)
