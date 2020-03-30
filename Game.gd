@@ -415,35 +415,7 @@ func _process(delta):
 
 func _input(event):
 	if event.is_action_pressed("ui_up_level"):
-		var new_room = RogueGen.OutlineBuilding(mansion)
-		
-		##How many successful splits to apply...
-		var num_splits = 5
-		var split_counter = 0
-		while(split_counter < num_splits):
-			var wall_return_data = RogueGen.WallLineBuilding(new_room)
-			new_room = wall_return_data["out_array"]
-			if wall_return_data["success"] == true:
-				split_counter = split_counter + 1
-		
-		##ALso change the tile types up...
-		var kitchen_rooms = 2 #how many times we will apply the fill alorithm to a floor...
-		var rooms_changed = 0 #counter to keep track
-		while(rooms_changed < kitchen_rooms):
-			#Try to find a floor tile...
-			var check_location = Vector2(0,0)
-			while(true):
-				#pick random location
-				check_location.x = randi()%new_room.size()
-				check_location.y = randi()%new_room[0].size()
-				#check if it's a floor tile 2
-				if(new_room[check_location.x][check_location.y] == 2):
-					break
-			#Now appliy the fill at this locaiton 
-			new_room = RogueGen.FillTileArray(new_room, check_location, 4)
-			rooms_changed = rooms_changed + 1
-		
-		
+		var new_room = RogueGen.GenerateMansionFloor(mansion, 5, 2)
 		
 		##Build out the new room
 		for i in range(new_room.size()):

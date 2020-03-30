@@ -17,10 +17,18 @@ extends Node2D
 
 #MEMBER VARIABLES
 var building_layout = [] #The 3D tile layout of the building
+var num_floors = 20
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	
+	# Generate the first floor
+	var first_floor = RogueGen.GenerateMansion(Vector2(30,29))
+	# Generate the other floors
+	#for i in range(num_floors - 1):
+		
+	
 	pass # Replace with function body.
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

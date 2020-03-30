@@ -1141,6 +1141,44 @@ func GenerateMansion(space_dimensions):
 	
 	return(map_space)
 
+#Function that will take a previously generated mansion
+#and create a new room from it by using the WallLineBuilding functions...
+#Input how many times you want to split
+#Also the number of rooms that will use the kitchen floor tile type
+# Return a 2D array
+func GenerateMansionFloor(mansion_floor, num_splits, num_kitchen_rooms = 2):
+	
+	#First make the outline
+	var new_room = OutlineBuilding(mansion_floor)
+	
+	#Now divide the room up
+	var split_counter = 0
+	while(split_counter < num_splits):
+		var wall_return_data = RogueGen.WallLineBuilding(new_room)
+		new_room = wall_return_data["out_array"]
+		if wall_return_data["success"] == true:
+			split_counter = split_counter + 1
+			
+	##ALso change the tile types up...
+	var rooms_changed = 0 #counter to keep track
+	while(rooms_changed < num_kitchen_rooms):
+		#Try to find a floor tile...
+		var check_location = Vector2(0,0)
+		while(true):
+			#pick random location
+			check_location.x = randi()%new_room.size()
+			check_location.y = randi()%new_room[0].size()
+			#check if it's a floor tile 2
+			if(new_room[check_location.x][check_location.y] == 2):
+				break
+		#Now appliy the fill at this locaiton 
+		new_room = FillTileArray(new_room, check_location, 4)
+		rooms_changed = rooms_changed + 1
+	
+	return(new_room)
+
+
+
 #Generates a Hallway and
 # ALSO returns a coord of a floor that can be spliced onto other walls...
 func GenerateHallwayAndOuterFloorCoord():	
