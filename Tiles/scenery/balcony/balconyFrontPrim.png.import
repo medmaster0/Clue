@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/adobePrim.png-bf69356d48ff45b59c102780afbae3e6.stex"
+path="res://.import/balconyFrontPrim.png-a9fd680364c863b70afd29e74e0d61bc.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Tiles/scenery/adobePrim.png"
-dest_files=[ "res://.import/adobePrim.png-bf69356d48ff45b59c102780afbae3e6.stex" ]
+source_file="res://Tiles/scenery/balcony/balconyFrontPrim.png"
+dest_files=[ "res://.import/balconyFrontPrim.png-a9fd680364c863b70afd29e74e0d61bc.stex" ]
 
 [params]
 

@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/adobePrim.png-bf69356d48ff45b59c102780afbae3e6.stex"
+path="res://.import/cloud2DPrim.png-c2caf1f21bafbbbf581e980fe4e81469.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Tiles/scenery/adobePrim.png"
-dest_files=[ "res://.import/adobePrim.png-bf69356d48ff45b59c102780afbae3e6.stex" ]
+source_file="res://Tiles/scenery/balcony/cloud2DPrim.png"
+dest_files=[ "res://.import/cloud2DPrim.png-c2caf1f21bafbbbf581e980fe4e81469.stex" ]
 
 [params]
 

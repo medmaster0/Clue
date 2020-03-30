@@ -1,6 +1,23 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Scenes/BalconyViewTest.gd" type="Script" id=1]
+[ext_resource path="res://Scenes/Item.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Scenes/BattleHuntItem.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Scenes/Creature.tscn" type="PackedScene" id=4]
 
 [node name="BalconyViewTest" type="Node2D"]
 script = ExtResource( 1 )
+Item = ExtResource( 2 )
+BattleHuntItem = ExtResource( 3 )
+
+[node name="TileMap" type="TileMap" parent="."]
+cell_size = Vector2( 16, 16 )
+format = 1
+
+[node name="Node2D" type="Node2D" parent="."]
+visible = false
+
+[node name="CanvasLayer" type="CanvasLayer" parent="Node2D"]
+
+[node name="Creature" parent="Node2D/CanvasLayer" instance=ExtResource( 4 )]
+visible = false
