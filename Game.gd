@@ -24,6 +24,7 @@ var personal_room_furniture_prim
 var personal_room_furniture_seco
 var public_room_furniture_prim
 var public_room_furniture_seco
+var window_prim
 
 var map_enemies = [] #list of creatures
 #var num_enemies = 3
@@ -39,6 +40,7 @@ func _ready():
 	#Clip space for cleanliness and ease of use
 	mansion = RogueGen.BoundingBoxClipArray(mansion)
 	mansion = RogueGen.MansionFurnitureGen(mansion)
+	mansion = RogueGen.MansionWindowGen(mansion, 10)
 	
 	# MANSION MPA Legend
 	# 0 - Empty Space
@@ -50,6 +52,7 @@ func _ready():
 	# 6 - PUBLIC ROOM FURNITURE (has floor, but also furniture)
 	# 7 - PERSONAL ROOM ITEM (has floor, but also item)
 	# 8 - PUBLIC ROOM ITEM (has floor, but also item)
+	# 9 - WINDOW
 	
 	####### COLOR INITIALIZATION
 	brick_color_prim = Color(randf(), randf(), randf())
@@ -64,6 +67,7 @@ func _ready():
 	personal_room_furniture_seco = Color(randf(), randf(), randf())
 	public_room_furniture_prim = Color(randf(), randf(), randf())
 	public_room_furniture_seco = Color(randf(), randf(), randf())
+	window_prim = Color(randf(), randf(), randf(), 0.75) #make it transparent
 	
 	# Create the map enemies
 	for i in range(num_enemies):
@@ -152,6 +156,15 @@ func _ready():
 				new_building_item.setTile(choice)
 				new_building_item.SetPrimColor(public_room_furniture_prim)
 				new_building_item.SetSecoColor(public_room_furniture_seco)
+			if mansion[i][j] == 9:
+				var new_building_item = Item.instance()
+				new_building_item.position.y =  j * $TileMap.cell_size.y
+				new_building_item.position.x =  i * $TileMap.cell_size.x
+				add_child(new_building_item)
+				new_building_item.setTile(108)
+				new_building_item.SetPrimColor(brick_color_prim)
+				new_building_item.SetSecoColor(brick_color_seco)
+				new_building_item.SetTertColor(window_prim)
 
 			#SPECIFIC FURNITURE CODES!!!
 			#LEFT PUBLIC ROOM SET FURNITURE

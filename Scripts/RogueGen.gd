@@ -968,6 +968,7 @@ func RowDeckTop(botRow, midRow):
 # 2 - FLOOR
 # 3 - DOOR
 # 4 - KITCHEN FLOOR
+# 9 - WINDOW
 #
 # Output:
 # 	a 2D indexed array [x][y] with tile data for the mansion (see legend)
@@ -1371,12 +1372,14 @@ func SurroundExposedFloors(space_array):
 # y - y coord
 # z - DIRECTION Code
 
-#Direction Codes:
+#Direction Codes (Which direction they are exposed, which has the empty) :
 # 0 - UP
 # 1 - DOWN
 # 2 - LEFT
 # 3 - RIGHT
-func IdentifyExposedWalls(space_array):
+
+#Add option to include map borders
+func IdentifyExposedWalls(space_array, include_borders = false):
 	
 	var candidate_list = [] #list of Vector3 of wall coods that can be latched on to...
 	
@@ -1395,15 +1398,52 @@ func IdentifyExposedWalls(space_array):
 				#UP Tile
 				if j - 1 >= 0:
 					u_tile = space_array[i][j-1]
+				else:
+					#Check if it's a border case....
+					if include_borders == true:
+						#Now check opposite side
+						d_tile = space_array[i][j+1]
+						if valid_floor_tiles.has(d_tile):
+							var temp_vector = Vector3(i,j,0) #UP Direction
+							candidate_list.append(temp_vector)
+							continue
+					print()
 				#LEFT TILE
 				if i - 1 >= 0:
 					l_tile = space_array[i-1][j]
+				else:
+					#Check if it's a border case....
+					if include_borders == true:
+						#Now check opposite side
+						r_tile = space_array[i+1][j]
+						if valid_floor_tiles.has(u_tile):
+							var temp_vector = Vector3(i,j,2) #LEFT Direction
+							candidate_list.append(temp_vector)
+							continue
 				#RIGHT TILE
 				if i + 1 < space_array.size():
 					r_tile = space_array[i+1][j]
+				else:
+					#Check if it's a border case....
+					if include_borders == true:
+						#Now check opposite side
+						r_tile = space_array[i-1][j]
+						if valid_floor_tiles.has(u_tile):
+							var temp_vector = Vector3(i,j,3) #RIGHT Direction
+							candidate_list.append(temp_vector)
+							continue
 				#DOWN TILE
 				if j + 1 < space_array[0].size():
 					d_tile = space_array[i][j+1] 
+				else:
+					#Check if it's a border case....
+					if include_borders == true:
+						#Now check opposite side
+						u_tile = space_array[i][j-1]
+						if valid_floor_tiles.has(u_tile):
+							var temp_vector = Vector3(i,j,1) #DOWN Direction
+							candidate_list.append(temp_vector)
+							continue
 				
 				#Check for up direction
 				if u_tile == 0 and valid_floor_tiles.has(d_tile):
@@ -2078,6 +2118,7 @@ func PathAroundRoom(in_array, start_location, valid_tiles = [2,4]):
 # 6 - PUBLIC ROOM FURNITURE (has floor, but also furniture)
 # 7 - PERSONAL ROOM ITEM (has floor, but also item)
 # 8 - PUBLIC ROOM ITEM (has floor, but also item)
+# 9 - WINDOW
 
 # 101 - LEFT PUBLIC ROOM SET FURNITURE
 # 102 - MID PUBLIC ROOM SET FURNITURE
@@ -2179,6 +2220,20 @@ func MansionFurnitureGen(in_array):
 #	for step in multi_tile_finding["tile_positions"]:
 #		in_array[step.x][step.y] = 101
 	
+	return(in_array)
+
+
+#This function will apply some windows along the outside walls
+func MansionWindowGen(in_array, num_windws):
+	var outside_walls = IdentifyExposedWalls(in_array, true)
+	for i in range(num_windws):
+		#Pick a random wall
+		var temp_wall_coord = outside_walls[randi()%outside_walls.size()]
+		#Remove from list
+		outside_walls.erase(temp_wall_coord) 
+		#Change That Wall to a Window
+		in_array[temp_wall_coord.x][temp_wall_coord.y] = 9
+		
 	return(in_array)
 
 #FUnction to find a floor tile of a given type adjacent to a wall of a given type, but still free on each side
@@ -2478,3 +2533,9 @@ func FindMultipleOpenTilesAdjWalls(in_array, floor_type, wall_type = 1, num_tile
 		#If we made it here, the tile was not eligible and we need to try another
 		#increment counter and start loop over
 		loop_counter = loop_counter + 1
+
+#FUnction that will place windows around the border of the mansino room
+func PlaceWindows():
+	print("get")
+
+

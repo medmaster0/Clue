@@ -21,6 +21,8 @@ extends Node2D
 # 105 - FLAG
 # 106 - DESK
 # 107 - KITCHEN FLOOR
+# 108 - BOTTOM WINDOW
+# 109 - TOP WINDOW
 
 ########### STREET ITEMS
 # 201 - ROAD_CENTER_CORNER_INNER
@@ -65,6 +67,14 @@ var doorPrim = preload("res://Tiles//scenery//doorPrim.png")
 var doorSeco = preload("res://Tiles//scenery//doorSeco.png")
 var kitchenFloorPrim = preload("res://Tiles//scenery//kitchenFloorPrim.png")
 var kitchenFloorSeco = preload("res://Tiles//scenery//kitchenFloorSeco.png")
+var bottomWindowPrim = preload("res://Tiles//scenery//balcony//windowBotPrim.png")
+var bottomWindowSeco = preload("res://Tiles//scenery//balcony//windowBotSeco.png")
+var bottomWindowTert = preload("res://Tiles//scenery//balcony//windowBotTert.png")
+var topWindowPrim = preload("res://Tiles//scenery//balcony//windowTopPrim.png")
+var topWindowSeco = preload("res://Tiles//scenery//balcony//windowTopSeco.png")
+var topWindowTert = preload("res://Tiles//scenery//balcony//windowTopTert.png")
+
+
 #var ladderPrim
 #var flagPrim
 #var flagSeco
@@ -134,7 +144,7 @@ func _ready():
 func SetPrimColor(color):
 	primColor = color
 	$Prim.modulate = primColor
-
+	
 func SetSecoColor(color):
 	secoColor = color
 	$Seco.modulate = secoColor
@@ -142,6 +152,7 @@ func SetSecoColor(color):
 func SetTertColor(color):
 	tertColor = color
 	$Tert.modulate = tertColor
+	
 
 func setTile(in_tile_index):
 	tile_index = in_tile_index
@@ -225,6 +236,18 @@ func setTile(in_tile_index):
 			$Prim.texture = kitchenFloorPrim
 			$Seco.texture = kitchenFloorSeco
 			$Tert.texture = null
+		108:
+			#BOTTOM WINDOW
+			item_name = "window"
+			$Prim.texture = bottomWindowPrim
+			$Seco.texture = bottomWindowSeco
+			$Tert.texture = bottomWindowTert
+		109:
+			#TOP WINDOW
+			item_name = "window"
+			$Prim.texture = topWindowPrim
+			$Seco.texture = topWindowSeco
+			$Tert.texture = topWindowTert
 		######STREET SHIT
 		201:
 			#ROAD_CENTER_CORNER_INNER
