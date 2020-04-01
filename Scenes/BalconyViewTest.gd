@@ -44,6 +44,7 @@ var personal_room_furniture_prim
 var personal_room_furniture_seco
 var public_room_furniture_prim
 var public_room_furniture_seco
+var window_prim
 
 #Store Canvas Layers
 #Here is the tricky part: There are list of node2D's. Each Node2D has canvas layer
@@ -70,14 +71,17 @@ func _ready():
 	personal_room_furniture_seco = Color(randf(), randf(), randf())
 	public_room_furniture_prim = Color(randf(), randf(), randf())
 	public_room_furniture_seco = Color(randf(), randf(), randf())
+	window_prim = Color(randf(), randf(), randf(), 0.7)
 	
 	# Generate the first floor
 	var first_floor = RogueGen.GenerateMansion(Vector2(30,29))
 	building_layout.append(first_floor)
+	building_layout[0] = RogueGen.MansionWindowGen(building_layout[0], 10)
 	# Generate the other floors
 	for i in range(num_floors - 1):
 		var new_room = RogueGen.GenerateMansionFloor(first_floor, 5, 2)
 		building_layout.append(new_room)
+		building_layout[i+1] = RogueGen.MansionWindowGen(building_layout[i+1],10)
 	
 	#Initialize canvas layers for each of the floors
 	#BIRDSEYE
@@ -170,6 +174,16 @@ func _ready():
 					new_building_item.setTile(choice)
 					new_building_item.SetPrimColor(public_room_furniture_prim)
 					new_building_item.SetSecoColor(public_room_furniture_seco)
+				if building_layout[z][x][y] == 9:
+					var new_building_item = Item.instance()
+					new_building_item.position.y =  y * $TileMap.cell_size.y
+					new_building_item.position.x =  x * $TileMap.cell_size.x
+					birdseyeLayers[z].add_child(new_building_item)
+					new_building_item.setTile(108)
+					new_building_item.SetPrimColor(brick_color_prim)
+					new_building_item.SetSecoColor(brick_color_seco)
+					new_building_item.SetTertColor(window_prim)
+			
 
 #	#BALCONY - Cycling through X layers
 #	for z in building_layout.size():
