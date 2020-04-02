@@ -28,6 +28,8 @@ enum VIEW_MODE{
 var building_layout = [] #The 3D tile layout of the building
 # ACCESS IS: building_layout[z_floor][x][y]
 var num_floors = 20
+var num_x_layers = 30
+var num_y_layers = 29
 var view_cursor_position = Vector3(0,0,0) #where we are currently viewing... x, y, z
 var view_mode = VIEW_MODE.birdseye #start in birds eye view
 
@@ -51,7 +53,11 @@ var window_prim
 #Basically, each node is a wrapper for the canvas layer
 #We use it to turn off each of the canvas layers quickly
 var birdseyeLayers = []
-var balconyLayers = [] 
+var balconyXZLayers = [] 
+
+#Control Stuff
+var balcony_begin_position 
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -73,8 +79,11 @@ func _ready():
 	public_room_furniture_seco = Color(randf(), randf(), randf())
 	window_prim = Color(randf(), randf(), randf(), 0.7)
 	
+	####### POSITION INITIALIZATION
+	balcony_begin_position = Vector2(30*($TileMap.cell_size.x),30*($TileMap.cell_size.y))
+	
 	# Generate the first floor
-	var first_floor = RogueGen.GenerateMansion(Vector2(30,29))
+	var first_floor = RogueGen.GenerateMansion(Vector2(num_x_layers,num_y_layers))
 	building_layout.append(first_floor)
 	building_layout[0] = RogueGen.MansionWindowGen(building_layout[0], 10)
 	# Generate the other floors
@@ -90,13 +99,14 @@ func _ready():
 		birdseyeLayers.append(temp_canvas_layer)
 		add_child(temp_canvas_layer)
 	#BALCONY
-	for temp_slice in building_layout[0]: #cycling through the x dimensions...
+	for temp_slice in building_layout[0][0]: #cycling through the y dimensions...
 		var temp_canvas_layer = CanvasLayer.new()
-		balconyLayers.append(temp_canvas_layer)
+		balconyXZLayers.append(temp_canvas_layer)
 		add_child(temp_canvas_layer)
+	print(balconyXZLayers.size())
 	
 	#Populate BOTH OF the sets of Canvas layers
-	#BIRDSEYE
+	#BIRDSEYE Canvas Layers
 	for z in building_layout.size():
 		for x in building_layout[0].size():
 			for y in building_layout[0][0].size():
@@ -184,95 +194,109 @@ func _ready():
 					new_building_item.SetSecoColor(brick_color_seco)
 					new_building_item.SetTertColor(window_prim)
 			
+	#BALCONY Canvas Layers
+	#Z layers are 2 tiles high
+	#So as we go through the building_layout, we need to put two items down
+	for z in building_layout.size():
+		for x in building_layout[0].size():
+			for y in building_layout[0][0].size():
+				if building_layout[z][x][y] == 0:
+					continue #skip empty space...
+				#CALCULATE SCREEN POSITION OF THE ITEM
+				var temp_position = Vector2()
+				temp_position.y = balcony_begin_position.y - (z * (2 * $TileMap.cell_size.y)) #z layers are two tiles wide!
+				temp_position.x = balcony_begin_position.x + x * $TileMap.cell_size.x
+				#WALL
+				if building_layout[z][x][y] == 1:
+					var new_building_item = Item.instance()
+					new_building_item.position = temp_position
+					balconyXZLayers[y].add_child(new_building_item)
+					new_building_item.setTile(102)
+					new_building_item.SetPrimColor(brick_color_prim)
+					new_building_item.SetSecoColor(brick_color_seco)
+					#Duplicate and put it in the TileMap on the upper cell
+					var top_building_item = new_building_item.duplicate()
+					top_building_item.position.y = top_building_item.position.y - $TileMap.cell_size.y
+					balconyXZLayers[y].add_child(new_building_item)
+				#FLOOR
+				if building_layout[z][x][y] == 2:
+					var new_building_item = Item.instance()
+					new_building_item.position = temp_position
+					balconyXZLayers[y].add_child(new_building_item)
+					new_building_item.setTile(101)
+					new_building_item.SetPrimColor(basic_floor_color_prim)
+					new_building_item.SetSecoColor(basic_floor_color_seco)
+				if building_layout[z][x][y] == 3:
+					var new_building_item = Item.instance()
+					new_building_item.position = temp_position
+					balconyXZLayers[y].add_child(new_building_item)
+					new_building_item.setTile(103)
+					new_building_item.SetPrimColor(basic_door_color_prim)
+					new_building_item.SetSecoColor(basic_door_color_seco)
+				if building_layout[z][x][y] == 4:
+					var new_building_item = Item.instance()
+					new_building_item.position = temp_position
+					balconyXZLayers[y].add_child(new_building_item)
+					new_building_item.setTile(107)
+					new_building_item.SetPrimColor(kitchen_floor_color_prim)
+					new_building_item.SetSecoColor(kitchen_floor_color_seco)
+				#PERSONAL ROOM (FLOOR) FURNITURE
+				if building_layout[z][x][y] == 5:
+					#CREATE THE FLOOR ITEM
+					var new_building_item = Item.instance()
+					new_building_item.position = temp_position
+					balconyXZLayers[y].add_child(new_building_item)
+					new_building_item.setTile(101)
+					new_building_item.SetPrimColor(basic_floor_color_prim)
+					new_building_item.SetSecoColor(basic_floor_color_seco)
+					#CREATE THE RANDOM FURNITURE ITEM
+					new_building_item = BattleHuntItem.instance()
+					new_building_item.position = temp_position
+					balconyXZLayers[y].add_child(new_building_item)
+					var furniture_items = [402, 403, 404, 405, 406, 410]
+					var choice = furniture_items[randi()%furniture_items.size()]
+					new_building_item.setTile(choice)
+					new_building_item.SetPrimColor(personal_room_furniture_prim)
+					new_building_item.SetSecoColor(personal_room_furniture_seco)
+				#PUBLIC ROOM (FLOOR) FURNITURE
+				if building_layout[z][x][y] == 6:
+					#CREATE THE FLOOR ITEM
+					var new_building_item = Item.instance()
+					new_building_item.position = temp_position
+					balconyXZLayers[y].add_child(new_building_item)
+					new_building_item.setTile(107)
+					new_building_item.SetPrimColor(kitchen_floor_color_prim)
+					new_building_item.SetSecoColor(kitchen_floor_color_seco)
+					#CREATE THE RANDOM FURNITURE ITEM
+					new_building_item = BattleHuntItem.instance()
+					new_building_item.position = temp_position
+					balconyXZLayers[y].add_child(new_building_item)
+					var furniture_items = [401, 407, 408, 409, 410]
+					var choice = furniture_items[randi()%furniture_items.size()]
+					new_building_item.setTile(choice)
+					new_building_item.SetPrimColor(public_room_furniture_prim)
+					new_building_item.SetSecoColor(public_room_furniture_seco)
+				if building_layout[z][x][y] == 9:
+					var new_building_item = Item.instance()
+					new_building_item.position = temp_position
+					balconyXZLayers[y].add_child(new_building_item)
+					new_building_item.setTile(108)
+					new_building_item.SetPrimColor(brick_color_prim)
+					new_building_item.SetSecoColor(brick_color_seco)
+					new_building_item.SetTertColor(window_prim)
 
-#	#BALCONY - Cycling through X layers
-#	for z in building_layout.size():
-#		for x in building_layout[0].size():
-#			for y in building_layout[0][0].size():
-#				if building_layout[z][x][y] == 0:
-#					continue #skip empty space...
-#				if building_layout[z][x][y] == 1:
-#					var new_building_item = Item.instance()
-#					new_building_item.position.y = y * $TileMap.cell_size.y
-#					new_building_item.position.x = x * $TileMap.cell_size.x
-#					birdseyeLayers[z].add_child(new_building_item)
-#					new_building_item.setTile(102)
-#					new_building_item.SetPrimColor(brick_color_prim)
-#					new_building_item.SetSecoColor(brick_color_seco)
-#				if building_layout[z][x][y] == 2:
-#					var new_building_item = Item.instance()
-#					new_building_item.position.y = y * $TileMap.cell_size.y
-#					new_building_item.position.x = x * $TileMap.cell_size.x
-#					birdseyeLayers[z].add_child(new_building_item)
-#					new_building_item.setTile(101)
-#					new_building_item.SetPrimColor(basic_floor_color_prim)
-#					new_building_item.SetSecoColor(basic_floor_color_seco)
-#				if building_layout[z][x][y] == 3:
-#					var new_building_item = Item.instance()
-#					new_building_item.position.y =  y * $TileMap.cell_size.y
-#					new_building_item.position.x =  x * $TileMap.cell_size.x
-#					birdseyeLayers[z].add_child(new_building_item)
-#					new_building_item.setTile(103)
-#					new_building_item.SetPrimColor(basic_door_color_prim)
-#					new_building_item.SetSecoColor(basic_door_color_seco)
-#				if building_layout[z][x][y] == 4:
-#					var new_building_item = Item.instance()
-#					new_building_item.position.y =  y * $TileMap.cell_size.y
-#					new_building_item.position.x =  x * $TileMap.cell_size.x
-#					birdseyeLayers[z].add_child(new_building_item)
-#					new_building_item.setTile(107)
-#					new_building_item.SetPrimColor(kitchen_floor_color_prim)
-#					new_building_item.SetSecoColor(kitchen_floor_color_seco)
-#				#PERSONAL ROOM (FLOOR) FURNITURE
-#				if building_layout[z][x][y] == 5:
-#					#CREATE THE FLOOR ITEM
-#					var new_building_item = Item.instance()
-#					new_building_item.position.y =  y * $TileMap.cell_size.y
-#					new_building_item.position.x =  x * $TileMap.cell_size.x
-#					birdseyeLayers[z].add_child(new_building_item)
-#					new_building_item.setTile(101)
-#					new_building_item.SetPrimColor(basic_floor_color_prim)
-#					new_building_item.SetSecoColor(basic_floor_color_seco)
-#					#CREATE THE RANDOM FURNITURE ITEM
-#					new_building_item = BattleHuntItem.instance()
-#					new_building_item.position.y = y * $TileMap.cell_size.y
-#					new_building_item.position.x = x * $TileMap.cell_size.x
-#					birdseyeLayers[z].add_child(new_building_item)
-#					var furniture_items = [402, 403, 404, 405, 406, 410]
-#					var choice = furniture_items[randi()%furniture_items.size()]
-#					new_building_item.setTile(choice)
-#					new_building_item.SetPrimColor(personal_room_furniture_prim)
-#					new_building_item.SetSecoColor(personal_room_furniture_seco)
-#				#PUBLIC ROOM (FLOOR) FURNITURE
-#				if building_layout[z][x][y] == 6:
-#					#CREATE THE FLOOR ITEM
-#					var new_building_item = Item.instance()
-#					new_building_item.position.y = y * $TileMap.cell_size.y
-#					new_building_item.position.x = x * $TileMap.cell_size.x
-#					birdseyeLayers[z].add_child(new_building_item)
-#					new_building_item.setTile(107)
-#					new_building_item.SetPrimColor(kitchen_floor_color_prim)
-#					new_building_item.SetSecoColor(kitchen_floor_color_seco)
-#					#CREATE THE RANDOM FURNITURE ITEM
-#					new_building_item = BattleHuntItem.instance()
-#					new_building_item.position.y = y * $TileMap.cell_size.y
-#					new_building_item.position.x = x * $TileMap.cell_size.x
-#					birdseyeLayers[z].add_child(new_building_item)
-#					var furniture_items = [401, 407, 408, 409, 410]
-#					var choice = furniture_items[randi()%furniture_items.size()]
-#					new_building_item.setTile(choice)
-#					new_building_item.SetPrimColor(public_room_furniture_prim)
-#					new_building_item.SetSecoColor(public_room_furniture_seco)
-
+	print("done")
 
 	
 	#INitially, turn off all canvas layers
 	for layer in birdseyeLayers:
 		CanvasLayerOff(layer)
-	for layer in balconyLayers:
+	for layer in balconyXZLayers:
 		CanvasLayerOff(layer)
 		
-	CanvasLayerOn(birdseyeLayers[0])
+	#CanvasLayerOn(birdseyeLayers[0])
+	CanvasLayerOn(balconyXZLayers[0])
+	view_mode = VIEW_MODE.balcony
 	
 	pass # Replace with function body.
 
@@ -281,30 +305,57 @@ func _ready():
 #	pass
 
 func _input(event):
-	if event.is_action_pressed("ui_up_level"):
-		
-		#TURN OFF OLD LAYER
-		CanvasLayerOff(birdseyeLayers[view_cursor_position.z])
-		
-		view_cursor_position = view_cursor_position + Vector3(0,0,1)
-		if view_cursor_position.z > num_floors - 1:
-			view_cursor_position.z = num_floors - 1
-		
-		#TURN ON NEW LAYER
-		CanvasLayerOn(birdseyeLayers[view_cursor_position.z])
-		
-	if event.is_action_pressed("ui_down_level"):
-		
-		#TURN OFF OLD LAYER
-		CanvasLayerOff(birdseyeLayers[view_cursor_position.z])
-		
-		view_cursor_position = view_cursor_position + Vector3(0,0,-1)
-		if view_cursor_position.z < 0:
-			view_cursor_position.z = 0
-		
-		#TURN ON NEW LAYER
-		CanvasLayerOn(birdseyeLayers[view_cursor_position.z])
-
+	#If in BIRDSEYE MODE
+	if view_mode == VIEW_MODE.birdseye:
+		if event.is_action_pressed("ui_up_level"):
+			
+			#TURN OFF OLD LAYER
+			CanvasLayerOff(birdseyeLayers[view_cursor_position.z])
+			
+			view_cursor_position = view_cursor_position + Vector3(0,0,1)
+			if view_cursor_position.z > num_floors - 1:
+				view_cursor_position.z = num_floors - 1
+			
+			#TURN ON NEW LAYER
+			CanvasLayerOn(birdseyeLayers[view_cursor_position.z])
+			
+		if event.is_action_pressed("ui_down_level"):
+			
+			#TURN OFF OLD LAYER
+			CanvasLayerOff(birdseyeLayers[view_cursor_position.z])
+			
+			view_cursor_position = view_cursor_position + Vector3(0,0,-1)
+			if view_cursor_position.z < 0:
+				view_cursor_position.z = 0
+			
+			#TURN ON NEW LAYER
+			CanvasLayerOn(birdseyeLayers[view_cursor_position.z])
+			
+	#If in BALCONY MODE
+	if view_mode == VIEW_MODE.balcony:
+		if event.is_action_pressed("ui_up_level"):
+			
+			#TURN OFF OLD LAYER
+			CanvasLayerOff(balconyXZLayers[view_cursor_position.y])
+			
+			view_cursor_position = view_cursor_position + Vector3(0,1,0)
+			if view_cursor_position.y > num_y_layers - 1:
+				view_cursor_position.y = num_y_layers - 1
+			
+			#TURN ON NEW LAYER
+			CanvasLayerOn(balconyXZLayers[view_cursor_position.y])
+			
+		if event.is_action_pressed("ui_down_level"):
+			
+			#TURN OFF OLD LAYER
+			CanvasLayerOff(balconyXZLayers[view_cursor_position.y])
+			
+			view_cursor_position = view_cursor_position + Vector3(0,-1,0)
+			if view_cursor_position.y < 0:
+				view_cursor_position.y = 0
+			
+			#TURN ON NEW LAYER
+			CanvasLayerOn(balconyXZLayers[view_cursor_position.y])
 
 #Utility Functions To TOGGLE Canvas Layers
 func CanvasLayerOff(canvas_layer):

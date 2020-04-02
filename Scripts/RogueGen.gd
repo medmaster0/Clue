@@ -1654,7 +1654,6 @@ func WallLineBuilding(in_array, choice = randi()%2):
 				wall_lined_map[wall_center_coords.x+1][wall_center_coords.y] == 2):
 					wall_lined_map[wall_center_coords.x][wall_center_coords.y] = 3 #turn it into a door
 			else:
-				print("couldn't place door, pick a diff point...")
 				var return_data = {
 					"success" : false,
 					"out_array" : in_array
@@ -1672,7 +1671,6 @@ func WallLineBuilding(in_array, choice = randi()%2):
 					wall_lined_map[wall_center_coords.x+1][upCursor] == 2):
 						wall_lined_map[wall_center_coords.x][upCursor] = 1
 				else:
-					print("couldn't place NOT ENOUGH ROOM")
 					var return_data = {
 						"success" : false,
 						"out_array" : in_array
@@ -1692,7 +1690,6 @@ func WallLineBuilding(in_array, choice = randi()%2):
 					wall_lined_map[wall_center_coords.x+1][downCursor] == 2):
 						wall_lined_map[wall_center_coords.x][downCursor] = 1
 				else:
-					print("couldn't place NOT ENOUGH ROOM")
 					var return_data = {
 						"success" : false,
 						"out_array" : in_array
@@ -1708,7 +1705,6 @@ func WallLineBuilding(in_array, choice = randi()%2):
 				wall_lined_map[wall_center_coords.x][wall_center_coords.y+1] == 2):
 					wall_lined_map[wall_center_coords.x][wall_center_coords.y] = 3 #turn it into a door
 			else:
-				print("couldn't place door, pick a diff point...")
 				var return_data = {
 					"success" : false,
 					"out_array" : in_array
@@ -1726,7 +1722,6 @@ func WallLineBuilding(in_array, choice = randi()%2):
 					wall_lined_map[leftCursor][wall_center_coords.y-1] == 2):
 						wall_lined_map[leftCursor][wall_center_coords.y] = 1
 				else:
-					print("couldn't place NOT ENOUGH ROOM")
 					var return_data = {
 						"success" : false,
 						"out_array" : in_array
@@ -1746,7 +1741,6 @@ func WallLineBuilding(in_array, choice = randi()%2):
 					wall_lined_map[rightCursor][wall_center_coords.y-1] == 2):
 						wall_lined_map[rightCursor][wall_center_coords.y] = 1
 				else:
-					print("couldn't place NOT ENOUGH ROOM")
 					var return_data = {
 						"success" : false,
 						"out_array" : in_array
