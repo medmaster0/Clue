@@ -321,6 +321,16 @@ func _ready():
 	CanvasLayerOn(balconyXZLayers[0])
 	view_mode = VIEW_MODE.balcony
 	
+	
+	#################################################
+	#DEBUG SHIT
+	var space_array = RogueGen.GenerateEmptySpaceArray(Vector2(30,30))
+	space_array = RogueGen.StampCircleRoomOntoSpace(space_array, Vector2(15,13), 4)
+	#space_array = RogueGen.OutlineBuilding(space_array)
+	for row in space_array:
+		print(row)
+	
+	
 	pass # Replace with function body.
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

@@ -2529,7 +2529,85 @@ func FindMultipleOpenTilesAdjWalls(in_array, floor_type, wall_type = 1, num_tile
 		loop_counter = loop_counter + 1
 
 #FUnction that will place windows around the border of the mansino room
-func PlaceWindows():
-	print("get")
+#func PlaceWindows():
+#	print("get")
 
 
+#Function that willstamp out a circular structure with walls and floors inside
+##Input a space array, the radius, and center
+#space_array = 2D array
+#center = Vector2
+#radius = int
+#
+#We use the MidPOint Circle Algorithm
+# We start at the first point, (r,0)
+#The next steps are either (r,1)or(r-1,1)
+#More general:
+# At point (x,y)
+# Next step is either (x,y+1) or (x-1,y+1)... since we go up and CW
+#
+#Utilize Error Circle Expression
+#   RE(xi,yi) = ( | xi^2 + yi^2 + r^2 | )
+#E.X. At point (r,0), RE= | r^2 + 0^2 - r^2 | = 0
+
+# IF ( RE(x-1,y+1) < RE(x,y+1) ) THEN plot (x-1,y-1) ELSE plot (x,y-1)
+# This simplifies to 
+# IF 2( RE(x,y) + 1 ) + 1 > 0  (notice sign change) THEN plot (x-1,y-1) ELSE plot (x, y-1)
+
+###AFTER ALL of this
+# We we fill the cetner area with floor
+# Then we surround the area with walls
+
+func StampCircleRoomOntoSpace(space_array, center, radius):
+	print("stamping")
+	
+	var current_pos = Vector2(radius, 0)
+	
+	while(current_pos.y < current_pos.x): #once y is greater than x, we are done with the 1st quadrant
+		#Stamp out the floor in the space_array - One for each half Quadrant, 8 in total
+		space_array[center.x + current_pos.x][center.y + current_pos.y] = 2
+		space_array[center.x + current_pos.x][center.y - current_pos.y] = 2
+		space_array[center.x + current_pos.y][center.y + current_pos.x] = 2
+		space_array[center.x + current_pos.y][center.y - current_pos.x] = 2
+		space_array[center.x - current_pos.x][center.y + current_pos.y] = 2
+		space_array[center.x - current_pos.x][center.y - current_pos.y] = 2
+		space_array[center.x - current_pos.y][center.y + current_pos.x] = 2
+		space_array[center.x - current_pos.y][center.y - current_pos.x] = 2
+		
+		#Determine Which pixel to use next
+		#We know we'll use y + 1
+		# But do we do x or x - 1
+		#Caclulate the error radius
+		var err = pow(current_pos.x,2.0) + pow(current_pos.y,2.0) - pow(radius,2.0)
+		var check_value = 2*(err+1) + 1
+		if check_value > 0:
+			current_pos.x = current_pos.x - 1
+		else:
+			current_pos.x = current_pos.x
+		current_pos.y = current_pos.y + 1
+	
+	#Fill the whole area with floor
+	space_array = FillTileArray(space_array, center, 2)
+	
+	#Surround the space with walls
+	space_array = SurroundExposedFloors(space_array)
+	
+	
+		
+	return(space_array)
+
+
+###Utility function that will make an empty space_array of an empty size
+#space_size is a vector
+func GenerateEmptySpaceArray(space_size):
+	
+	var return_array = []
+	
+	for i in range(space_size.x):
+		var temp_row = []
+		for j in range(space_size.y):
+			temp_row.append(0)
+		return_array.append(temp_row)
+	
+	return(return_array)
+	
