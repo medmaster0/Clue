@@ -214,18 +214,23 @@ func _ready():
 					new_building_item.setTile(102)
 					new_building_item.SetPrimColor(brick_color_prim)
 					new_building_item.SetSecoColor(brick_color_seco)
-					#Duplicate and put it in the TileMap on the upper cell
-					var top_building_item = new_building_item.duplicate()
-					top_building_item.position.y = top_building_item.position.y - $TileMap.cell_size.y
-					balconyXZLayers[y].add_child(new_building_item)
+					#Create Another wall on top
+					var top_building_item = Item.instance()
+					top_building_item.position = temp_position
+					top_building_item.position.y = temp_position.y - $TileMap.cell_size.y
+					balconyXZLayers[y].add_child(top_building_item)
+					top_building_item.setTile(102)
+					top_building_item.SetPrimColor(brick_color_prim)
+					top_building_item.SetSecoColor(brick_color_seco)
 				#FLOOR
 				if building_layout[z][x][y] == 2:
 					var new_building_item = Item.instance()
 					new_building_item.position = temp_position
 					balconyXZLayers[y].add_child(new_building_item)
-					new_building_item.setTile(101)
+					new_building_item.setTile(110)
 					new_building_item.SetPrimColor(basic_floor_color_prim)
 					new_building_item.SetSecoColor(basic_floor_color_seco)
+				#DOOR
 				if building_layout[z][x][y] == 3:
 					var new_building_item = Item.instance()
 					new_building_item.position = temp_position
@@ -233,49 +238,58 @@ func _ready():
 					new_building_item.setTile(103)
 					new_building_item.SetPrimColor(basic_door_color_prim)
 					new_building_item.SetSecoColor(basic_door_color_seco)
+					#Create Another wall on top
+					var top_building_item = Item.instance()
+					top_building_item.position = temp_position
+					top_building_item.position.y = temp_position.y - $TileMap.cell_size.y
+					balconyXZLayers[y].add_child(top_building_item)
+					top_building_item.setTile(102)
+					top_building_item.SetPrimColor(brick_color_prim)
+					top_building_item.SetSecoColor(brick_color_seco)
+				#KITCHEN FLOOR
 				if building_layout[z][x][y] == 4:
 					var new_building_item = Item.instance()
 					new_building_item.position = temp_position
 					balconyXZLayers[y].add_child(new_building_item)
-					new_building_item.setTile(107)
+					new_building_item.setTile(111)
 					new_building_item.SetPrimColor(kitchen_floor_color_prim)
 					new_building_item.SetSecoColor(kitchen_floor_color_seco)
-				#PERSONAL ROOM (FLOOR) FURNITURE
-				if building_layout[z][x][y] == 5:
-					#CREATE THE FLOOR ITEM
-					var new_building_item = Item.instance()
-					new_building_item.position = temp_position
-					balconyXZLayers[y].add_child(new_building_item)
-					new_building_item.setTile(101)
-					new_building_item.SetPrimColor(basic_floor_color_prim)
-					new_building_item.SetSecoColor(basic_floor_color_seco)
-					#CREATE THE RANDOM FURNITURE ITEM
-					new_building_item = BattleHuntItem.instance()
-					new_building_item.position = temp_position
-					balconyXZLayers[y].add_child(new_building_item)
-					var furniture_items = [402, 403, 404, 405, 406, 410]
-					var choice = furniture_items[randi()%furniture_items.size()]
-					new_building_item.setTile(choice)
-					new_building_item.SetPrimColor(personal_room_furniture_prim)
-					new_building_item.SetSecoColor(personal_room_furniture_seco)
-				#PUBLIC ROOM (FLOOR) FURNITURE
-				if building_layout[z][x][y] == 6:
-					#CREATE THE FLOOR ITEM
-					var new_building_item = Item.instance()
-					new_building_item.position = temp_position
-					balconyXZLayers[y].add_child(new_building_item)
-					new_building_item.setTile(107)
-					new_building_item.SetPrimColor(kitchen_floor_color_prim)
-					new_building_item.SetSecoColor(kitchen_floor_color_seco)
-					#CREATE THE RANDOM FURNITURE ITEM
-					new_building_item = BattleHuntItem.instance()
-					new_building_item.position = temp_position
-					balconyXZLayers[y].add_child(new_building_item)
-					var furniture_items = [401, 407, 408, 409, 410]
-					var choice = furniture_items[randi()%furniture_items.size()]
-					new_building_item.setTile(choice)
-					new_building_item.SetPrimColor(public_room_furniture_prim)
-					new_building_item.SetSecoColor(public_room_furniture_seco)
+#				#PERSONAL ROOM (FLOOR) FURNITURE
+#				if building_layout[z][x][y] == 5:
+#					#CREATE THE FLOOR ITEM
+#					var new_building_item = Item.instance()
+#					new_building_item.position = temp_position
+#					balconyXZLayers[y].add_child(new_building_item)
+#					new_building_item.setTile(110)
+#					new_building_item.SetPrimColor(basic_floor_color_prim)
+#					new_building_item.SetSecoColor(basic_floor_color_seco)
+#					#CREATE THE RANDOM FURNITURE ITEM
+#					new_building_item = BattleHuntItem.instance()
+#					new_building_item.position = temp_position
+#					balconyXZLayers[y].add_child(new_building_item)
+#					var furniture_items = [402, 403, 404, 405, 406, 410]
+#					var choice = furniture_items[randi()%furniture_items.size()]
+#					new_building_item.setTile(choice)
+#					new_building_item.SetPrimColor(personal_room_furniture_prim)
+#					new_building_item.SetSecoColor(personal_room_furniture_seco)
+#				#PUBLIC ROOM (FLOOR) FURNITURE
+#				if building_layout[z][x][y] == 6:
+#					#CREATE THE FLOOR ITEM
+#					var new_building_item = Item.instance()
+#					new_building_item.position = temp_position
+#					balconyXZLayers[y].add_child(new_building_item)
+#					new_building_item.setTile(111)
+#					new_building_item.SetPrimColor(kitchen_floor_color_prim)
+#					new_building_item.SetSecoColor(kitchen_floor_color_seco)
+#					#CREATE THE RANDOM FURNITURE ITEM
+#					new_building_item = BattleHuntItem.instance()
+#					new_building_item.position = temp_position
+#					balconyXZLayers[y].add_child(new_building_item)
+#					var furniture_items = [401, 407, 408, 409, 410]
+#					var choice = furniture_items[randi()%furniture_items.size()]
+#					new_building_item.setTile(choice)
+#					new_building_item.SetPrimColor(public_room_furniture_prim)
+#					new_building_item.SetSecoColor(public_room_furniture_seco)
 				if building_layout[z][x][y] == 9:
 					var new_building_item = Item.instance()
 					new_building_item.position = temp_position
@@ -284,6 +298,15 @@ func _ready():
 					new_building_item.SetPrimColor(brick_color_prim)
 					new_building_item.SetSecoColor(brick_color_seco)
 					new_building_item.SetTertColor(window_prim)
+					#Create Another window on top
+					var top_building_item = Item.instance()
+					top_building_item.position = temp_position
+					top_building_item.position.y = temp_position.y - $TileMap.cell_size.y
+					balconyXZLayers[y].add_child(top_building_item)
+					top_building_item.setTile(109)
+					top_building_item.SetPrimColor(brick_color_prim)
+					top_building_item.SetSecoColor(brick_color_seco)
+					top_building_item.SetTertColor(window_prim)
 
 	print("done")
 

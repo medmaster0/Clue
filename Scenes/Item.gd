@@ -23,6 +23,7 @@ extends Node2D
 # 107 - KITCHEN FLOOR
 # 108 - BOTTOM WINDOW
 # 109 - TOP WINDOW
+# 110 - FLOOR (BALCONY)
 
 ########### STREET ITEMS
 # 201 - ROAD_CENTER_CORNER_INNER
@@ -73,6 +74,10 @@ var bottomWindowTert = preload("res://Tiles//scenery//balcony//windowBotTert.png
 var topWindowPrim = preload("res://Tiles//scenery//balcony//windowTopPrim.png")
 var topWindowSeco = preload("res://Tiles//scenery//balcony//windowTopSeco.png")
 var topWindowTert = preload("res://Tiles//scenery//balcony//windowTopTert.png")
+var balconyFloorPrim = preload("res://Tiles//scenery//balcony/floor2DPrim.png")
+var balconyFloorSeco = preload("res://Tiles//scenery//balcony/floor2DSeco.png")
+var balconyKitchenFloorPrim = preload("res://Tiles//scenery//balcony/kitchenFloor2DPrim.png")
+var balconyKitchenFloorSeco = preload("res://Tiles//scenery//balcony/kitchenFloor2DSeco.png")
 
 
 #var ladderPrim
@@ -248,6 +253,18 @@ func setTile(in_tile_index):
 			$Prim.texture = topWindowPrim
 			$Seco.texture = topWindowSeco
 			$Tert.texture = topWindowTert
+		110:
+			#FLOOR (BALCONY)
+			item_name = "floor"
+			$Prim.texture = balconyFloorPrim
+			$Seco.texture = balconyFloorSeco
+			$Tert.texture = null
+		111:
+			#KITCHEN FLOOR (BALCONY)
+			item_name = "kitchen floor"
+			$Prim.texture = balconyKitchenFloorPrim
+			$Seco.texture = balconyKitchenFloorSeco
+			$Tert.texture = null
 		######STREET SHIT
 		201:
 			#ROAD_CENTER_CORNER_INNER
