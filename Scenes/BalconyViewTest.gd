@@ -33,6 +33,13 @@ var num_y_layers = 29
 var view_cursor_position = Vector3(0,0,0) #where we are currently viewing... x, y, z
 var view_mode = VIEW_MODE.birdseye #start in birds eye view
 
+#STANDARD GAME SCENE GLOBALS
+var world_width #the size of the map (in pixels)
+var world_height #the size of the map (in pixels)
+var map_width #the size of the map (in cells/tiles) SCREEN DIMS!!
+var map_height #the size of the map (in cells/tiles) SCREEN DIMS!!
+var background_color #The color of the background
+
 #Building Specific
 var brick_color_prim
 var brick_color_seco
@@ -47,6 +54,16 @@ var personal_room_furniture_seco
 var public_room_furniture_prim
 var public_room_furniture_seco
 var window_prim
+
+##Distance Shade  Sprites
+#Initialize Distance Shade Sprites
+#This is an array of sprites to give the distance depth effect
+#An array of sprites stretched out to screen
+#Transparency to 1/15th 
+#Color is same as background
+#Layers stacked across z layers
+#These shouldn't change during the course of things...
+var distanceShadeSprites = []
 
 #Store Canvas Layers
 #Here is the tricky part: There are list of node2D's. Each Node2D has canvas layer
@@ -79,6 +96,15 @@ func _ready():
 	public_room_furniture_seco = Color(randf(), randf(), randf())
 	window_prim = Color(randf(), randf(), randf(), 0.7)
 	
+	#DEBUG
+	#window_prim = Color(1,1,1)
+	
+	#Screen Dimension stuff
+	world_width = get_viewport().size.x
+	world_height = get_viewport().size.y
+	map_width = int($TileMap.world_to_map(Vector2(world_width,0)).x)
+	map_height = int($TileMap.world_to_map(Vector2(0,world_height)).y)
+	
 	####### POSITION INITIALIZATION
 	balcony_begin_position = Vector2(30*($TileMap.cell_size.x),30*($TileMap.cell_size.y))
 	
@@ -92,6 +118,19 @@ func _ready():
 		building_layout.append(new_room)
 		building_layout[i+1] = RogueGen.MansionWindowGen(building_layout[i+1],10)
 	
+	#Background
+	background_color = Color(randf(), randf(), randf())
+	VisualServer.set_default_clear_color(background_color)
+	
+	#Initialize Distance Shade Sprites
+	#This is an array of sprites to give the distance depth effect
+	#An array of sprites stretched out to screen
+	#Transparency to 1/15th 
+	#Color is same as background
+	#These shouldn't change during the course of things...
+	$DepthSprite.scale = Vector2(map_width + 1, map_height + 1) #Stretch the template one to size of screen
+	$DepthSprite.modulate = Color(background_color.r, background_color.g, background_color.b, 0.07)
+	
 	#Initialize canvas layers for each of the floors
 	#BIRDSEYE
 	for temp_floor in building_layout:
@@ -99,13 +138,25 @@ func _ready():
 		birdseyeLayers.append(temp_canvas_layer)
 		add_child(temp_canvas_layer)
 	#BALCONY
+	var layer_index = 0 #used to set the layers 
 	for temp_slice in building_layout[0][0]: #cycling through the y dimensions...
 		var temp_canvas_layer = CanvasLayer.new()
 		balconyXZLayers.append(temp_canvas_layer)
 		add_child(temp_canvas_layer)
+		#also set the layer index....
+		temp_canvas_layer.layer = layer_index
+		#update counter... we go backwards, depper into the z levels 
+		layer_index = layer_index - 1
 	print(balconyXZLayers.size())
 	
-	#Populate BOTH OF the sets of Canvas layers
+	#Add a depth Sprite into each layer... This gives the haze effect since they are transparent
+	for balcony_layer in balconyXZLayers:
+		var temp_sprite = $DepthSprite.duplicate()
+		balcony_layer.add_child(temp_sprite)
+		distanceShadeSprites.append(temp_sprite)
+		temp_sprite.visible = true
+	
+	#Populate BOTH OF the sets of Canvas layers with ITEMS from Builidng Layout Plan
 	#BIRDSEYE Canvas Layers
 	for z in building_layout.size():
 		for x in building_layout[0].size():
@@ -318,18 +369,16 @@ func _ready():
 		CanvasLayerOff(layer)
 		
 	#CanvasLayerOn(birdseyeLayers[0])
-	CanvasLayerOn(balconyXZLayers[0])
+	#CanvasLayerOn(balconyXZLayers[0])
 	view_mode = VIEW_MODE.balcony
 	
 	
 	#################################################
 	#DEBUG SHIT
-	var space_array = RogueGen.GenerateEmptySpaceArray(Vector2(30,30))
-	space_array = RogueGen.StampCircleRoomOntoSpace(space_array, Vector2(15,13), 4)
-	#space_array = RogueGen.OutlineBuilding(space_array)
-	for row in space_array:
-		print(row)
+	ConfigLayers(view_cursor_position)
 	
+#	for layer in balconyXZLayers:
+#		CanvasLayerAlpha(layer, 0.05)
 	
 	pass # Replace with function body.
 
@@ -349,7 +398,7 @@ func _input(event):
 			if view_cursor_position.z > num_floors - 1:
 				view_cursor_position.z = num_floors - 1
 			
-			#TURN ON NEW LAYER
+			#TURN ON NEW LAYERS
 			CanvasLayerOn(birdseyeLayers[view_cursor_position.z])
 			
 		if event.is_action_pressed("ui_down_level"):
@@ -375,8 +424,9 @@ func _input(event):
 			if view_cursor_position.y > num_y_layers - 1:
 				view_cursor_position.y = num_y_layers - 1
 			
-			#TURN ON NEW LAYER
-			CanvasLayerOn(balconyXZLayers[view_cursor_position.y])
+			#TURN ON NEW LAYERS
+			#CanvasLayerOn(balconyXZLayers[view_cursor_position.y])
+			ConfigLayers(view_cursor_position)
 			
 		if event.is_action_pressed("ui_down_level"):
 			
@@ -387,8 +437,9 @@ func _input(event):
 			if view_cursor_position.y < 0:
 				view_cursor_position.y = 0
 			
-			#TURN ON NEW LAYER
-			CanvasLayerOn(balconyXZLayers[view_cursor_position.y])
+			#TURN ON NEW LAYERS
+			#CanvasLayerOn(balconyXZLayers[view_cursor_position.y])
+			ConfigLayers(view_cursor_position)
 
 #Utility Functions To TOGGLE Canvas Layers
 func CanvasLayerOff(canvas_layer):
@@ -397,3 +448,50 @@ func CanvasLayerOff(canvas_layer):
 func CanvasLayerOn(canvas_layer):
 	for child in canvas_layer.get_children():
 		child.show()
+
+##Function that will ajust the alpha of all items in the Canvas layer
+#func CanvasLayerAlpha(canvas_layer, alpha):
+#	var temp_col #will temp hold the color we change
+#	for child in canvas_layer.get_children():
+#		temp_col = Color(child.primColor.r, child.primColor.g, child.primColor.b, alpha)
+#		child.SetPrimColor(temp_col)
+#		temp_col = Color(child.secoColor.r, child.secoColor.g, child.secoColor.b, alpha)
+#		child.SetSecoColor(temp_col)
+#		temp_col = Color(child.tertColor.r, child.tertColor.g, child.tertColor.b, alpha)
+#		child.SetTertColor(temp_col)
+
+#Function that will configure the proper layers for a given position
+#This includes
+# Turning On/OFF proper layers
+# Setting layer index / z-index
+# setting alpha
+func ConfigLayers(view_position):
+
+	if view_mode == VIEW_MODE.balcony:
+		
+		var current_layer = view_position.y + 14
+		for i in range(15): #We will be turning on 15 layers, starting with the last
+		
+			#Bounds check
+			if current_layer < balconyXZLayers.size():
+				#Turn on layer
+				CanvasLayerOn(balconyXZLayers[current_layer])
+			
+			#Set the proper alpha for the layer
+			#CanvasLayerAlpha(balconyXZLayers[current_layer], )
+			
+			#Cycle on to the next one
+			current_layer = current_layer - 1 #moving backwards
+			
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
