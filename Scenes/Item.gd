@@ -5,6 +5,7 @@ extends Node2D
 # var b = "text"
 
 #MASTER ITEM LIST
+# 999 - BLANK (COLOR) TILE
 # 0 - WEED
 # 1 - STONE
 # 2 - LADDER
@@ -43,9 +44,15 @@ extends Node2D
 # 215 - SIDEWALK_FRONT
 # 216 - SIDEWALK_INSIDE_CORNER_BACK
 
+## GROWTH PATTERNS
+# 301 - Foliage Num1 Lvl1
+# 302 - Foliage Num1 Lvl2
+# 303 - Foliage Num1 Lvl3
+
 #LOAD UP ALL THE SPRITES>>>>
 
 #Resources Load
+var blankPrim = preload("res://Tiles//blank.png")
 var weedPrim = preload("res://Tiles//item//weedPrim.png")
 var weedSeco = preload("res://Tiles//item//weedSeco.png")
 var stonePrim = preload("res://Tiles//item//stonePrim.png")
@@ -78,7 +85,6 @@ var balconyFloorPrim = preload("res://Tiles//scenery//balcony/floor2DPrim.png")
 var balconyFloorSeco = preload("res://Tiles//scenery//balcony/floor2DSeco.png")
 var balconyKitchenFloorPrim = preload("res://Tiles//scenery//balcony/kitchenFloor2DPrim.png")
 var balconyKitchenFloorSeco = preload("res://Tiles//scenery//balcony/kitchenFloor2DSeco.png")
-
 
 #var ladderPrim
 #var flagPrim
@@ -116,6 +122,11 @@ var sidewalkFrontPrim = preload("res://Tiles//street//SidewalkFrontPrim.png")
 var sidewalkFrontSeco = preload("res://Tiles//street//SidewalkFrontSeco.png")
 var sidewalkInsideCornerBackPrim = preload("res://Tiles//street//SidewalkInsideCornerBackPrim.png")
 var sidewalkInsideCornerBackSeco = preload("res://Tiles//street//SidewalkInsideCornerBackSeco.png")
+
+#Scenery - Growth Patterns
+var folliage_num1_lvl1Prim = preload("res://Tiles//scenery//foliage//pattern_num1_lvl1.png")
+var folliage_num1_lvl2Prim = preload("res://Tiles//scenery//foliage//pattern_num1_lvl2.png")
+var folliage_num1_lvl3Prim = preload("res://Tiles//scenery//foliage//pattern_num1_lvl3.png")
 
 #Class Variables
 var primColor
@@ -162,6 +173,12 @@ func SetTertColor(color):
 func setTile(in_tile_index):
 	tile_index = in_tile_index
 	match tile_index:
+		999:
+			#BLANK
+			item_name = "empty tile"
+			$Prim.texture = blankPrim
+			$Seco.texture = null
+			$Tert.texture = null
 		0:
 			#WEED
 			item_name = "weed"
@@ -361,6 +378,26 @@ func setTile(in_tile_index):
 			item_name = "sidewalk"
 			$Prim.texture = sidewalkInsideCornerBackPrim
 			$Seco.texture = sidewalkInsideCornerBackSeco
+			$Tert.texture = null
+		
+		## GROWTH PATTERNS
+		301:
+			# Foliage Num1 Lvl1
+			item_name = "foliage (light)"
+			$Prim.texture = folliage_num1_lvl1Prim
+			$Seco.texture = null
+			$Tert.texture = null
+		302:
+			# Foliage Num1 Lvl2
+			item_name = "foliage (medium)"
+			$Prim.texture = folliage_num1_lvl2Prim
+			$Seco.texture = null
+			$Tert.texture = null
+		303:
+			# Foliage Num1 Lvl3
+			item_name = "foliage (heavy)"
+			$Prim.texture = folliage_num1_lvl3Prim
+			$Seco.texture = null
 			$Tert.texture = null
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

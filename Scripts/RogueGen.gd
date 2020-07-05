@@ -975,6 +975,10 @@ func RowDeckTop(botRow, midRow):
 #
 # Input: 
 # 	Vector2 Space dimensions where rooms can be placed
+#
+# NOTES:
+# The size should be at least 25 x 25!
+#
 func GenerateMansion(space_dimensions):
 	
 	#Function Vars
@@ -2600,6 +2604,7 @@ func StampCircleRoomOntoSpace(space_array, center, radius):
 		
 	return(space_array)
 
+###UTILITIES
 
 ###Utility function that will make an empty space_array of an empty size
 #space_size is a vector
@@ -2615,16 +2620,62 @@ func GenerateEmptySpaceArray(space_size):
 	
 	return(return_array)
 
+##Utility functino that will copy everything in on array onto another at the specified position
+func StampSpaceOntoSpace(stamp_array, big_array, position):
+	
+	if stamp_array.size() + position.x > big_array.size():
+		print("Stamp Out of Bounds!!!")
+		return
+	if stamp_array[0].size() + position.y > big_array[0].size():
+		print("Stamp Out of Bounds!!!")
+		return
+	
+	#Now do the copy
+	for i in stamp_array.size():
+		for j in stamp_array[0].size():
+			big_array[i+position.x][j+position.y] = stamp_array[i][j]
+			
+	return(big_array)
+
 #########FOLIAGE GEN
 ## GENERATES A PATCH (2D ARRAY) of data for foliage
 
 ##Encoded by levels
 # 0 - none
-# 1 - light foliage
-# 2 - medium foliage
-# 3 - heavy foliage
+#PATTERN 1
+# 301 - light foliage
+# 302 - medium foliage
+# 303 - heavy foliage
+
+#Funciton that will sprinkle foliage seeds in a space array
+#Will keep randomly picking tiles until it finds an empty space to put seed in
+func InitializeFoliageSeeds(field_map, pattern_type, num_seeds):
+	var seed_counter = 0 #keeps track of how many seeds have been places
+	#keep going until we have the desired amount of seeds places
+	while seed_counter < num_seeds:
+		#Pick random tile in space array
+		var temp_position = Vector2(randi()%field_map.size(), randi()%field_map[0].size())
+		#Check if it's empty
+		if field_map[temp_position.x][temp_position.y] ==  0:
+			#Then we can place a seed... depending on pattern type
+			if pattern_type == 1:
+				field_map[temp_position.x][temp_position.y] = 301
+				seed_counter = seed_counter + 1
+	
+	return(field_map)
 
 #FUnctions that scan the array and make foliage denser and denser
+
+#This function will scan a map and identify all foliage tiles
+#It will then spread the foliage based on the rules
+#The rule is any tiles adjacent to a foliage tile will grow foliage the next generation
+#Existing foliage will advance to next generation (unless lvl3)
+
+func AdvanceGenerationsFoliageSeeds(field_map, pattern_type, num_generations):
+	print("hey im on the radio")
+	
+func AdvanceSingleGenerationFoliageSeeds(field_map, pattern_type):
+	print("dfsafdsa")
 
 #####NOISE FUNCTIONS
 #Generate (2D) PERLIN noise...

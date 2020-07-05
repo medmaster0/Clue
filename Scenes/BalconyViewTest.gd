@@ -235,6 +235,7 @@ func _ready():
 					new_building_item.setTile(choice)
 					new_building_item.SetPrimColor(public_room_furniture_prim)
 					new_building_item.SetSecoColor(public_room_furniture_seco)
+				#WINDOW
 				if building_layout[z][x][y] == 9:
 					var new_building_item = Item.instance()
 					new_building_item.position.y =  y * $TileMap.cell_size.y
