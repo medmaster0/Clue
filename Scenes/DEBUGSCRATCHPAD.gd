@@ -12,68 +12,81 @@ var pos_tree
 func _ready():
 	randomize()
 	
-	prufer_code = Story.GeneratePruferCode(50)
-	#prufer_code = [3,0,2,3]
-	#print("Prufer Code:")
-	#print(prufer_code)
+	#FOLIAGE TEST...
+	
+#	#####SAVE THIS CODE OMG BAD I KNOW
+#	## TREE GRAPH HIERARCHY DISPLAY
+#	##VvvVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+#
+#
+#	prufer_code = Story.GeneratePruferCode(50)
+#	#prufer_code = [3,0,2,3]
+#	#print("Prufer Code:")
+#	#print(prufer_code)
+#
+#	edges = Story.EdgesFromPruferCode(prufer_code)
+#	#print("Edges")
+#	#print(edges)
+#
+#	tree = Story.TreeFromEdges(edges)
+#	#print("Tree")
+#	#print(tree)
+#
+##	var postorder_tree = Story.TreePostOrderChildren(deep_copy(tree))
+##	print("PostOrder")
+##	print(postorder_tree)
+#
+##	var mod_tree = Story.CalculateModTree(deep_copy(postorder_tree))
+##	print("Mod Tree")
+##	print(mod_tree)
+#
+#	mod_tree = Story.CalculateModTree(deep_copy(tree))
+#	#print("Mod Tree")
+#	#print(mod_tree)
+#	Story.PrintTreeKeys(mod_tree)
+#
+#	pos_tree = Story.CalculatePosTree(deep_copy(mod_tree), 0.0)
+#	#print("Pos tree")
+#	#print(pos_tree)
+#	#Story.PrintTreeKeys(pos_tree)
+#
+#	#Continuously space the tree until done
+#	while(Story.TreeSpaceChildren(pos_tree,mod_tree) == true):
+#		pos_tree = Story.CalculatePosTree(deep_copy(mod_tree), 0.0)
+#	#Story.TreeSpaceChildren(pos_tree, mod_tree)
+#	#print(mod_tree)
+#	Story.PrintTreeKeys(mod_tree)
+#
+#	#After TreeSpaceChildren is called, we need to recalc pos_tree
+#	pos_tree = Story.CalculatePosTree(deep_copy(mod_tree), 0.0)
+#	#print(pos_tree)
+#	#Story.PrintTreeKeys(pos_tree)
+#
+#
+#	Story.DrawGraphNodes(tree, pos_tree, Vector2(50,50), Vector2(200,50), self, 0)
+#
+##	var edges = [Vector2(0,1), Vector2(1,2)]
+##	var tree = Story.TreeFromEdges(edges)
+##	print(tree)
+#
+#
+#	#######END TREE HIERARCHY DRAW
 
-	edges = Story.EdgesFromPruferCode(prufer_code)
-	#print("Edges")
-	#print(edges)
-
-	tree = Story.TreeFromEdges(edges)
-	#print("Tree")
-	#print(tree)
-	
-#	var postorder_tree = Story.TreePostOrderChildren(deep_copy(tree))
-#	print("PostOrder")
-#	print(postorder_tree)
-
-#	var mod_tree = Story.CalculateModTree(deep_copy(postorder_tree))
-#	print("Mod Tree")
-#	print(mod_tree)
-	
-	mod_tree = Story.CalculateModTree(deep_copy(tree))
-	#print("Mod Tree")
-	#print(mod_tree)
-	Story.PrintTreeKeys(mod_tree)
-	
-	pos_tree = Story.CalculatePosTree(deep_copy(mod_tree), 0.0)
-	#print("Pos tree")
-	#print(pos_tree)
-	#Story.PrintTreeKeys(pos_tree)
-	
-	#Continuously space the tree until done
-	while(Story.TreeSpaceChildren(pos_tree,mod_tree) == true):
-		pos_tree = Story.CalculatePosTree(deep_copy(mod_tree), 0.0)
-	#Story.TreeSpaceChildren(pos_tree, mod_tree)
-	#print(mod_tree)
-	Story.PrintTreeKeys(mod_tree)
-
-	#After TreeSpaceChildren is called, we need to recalc pos_tree
-	pos_tree = Story.CalculatePosTree(deep_copy(mod_tree), 0.0)
-	#print(pos_tree)
-	#Story.PrintTreeKeys(pos_tree)
-
-	
-	
-	
-	Story.DrawGraphNodes(tree, pos_tree, Vector2(50,50), Vector2(200,50), self, 0)
-
-#	var edges = [Vector2(0,1), Vector2(1,2)]
-#	var tree = Story.TreeFromEdges(edges)
-#	print(tree)
 
 
 #called every time it's drawn
-func _draw():
+#func _draw():
 	
-	var line_color = Color(randf(), randf(), randf())
-	
-	#Draw the lines of the graph
-	var line_data = Story.DrawGraphLines(tree, pos_tree, Vector2(50,50), Vector2(200,50), self, 0)
-	for i in range(line_data["start_vects"].size()):
-		draw_line(line_data["start_vects"][i], line_data["stop_vects"][i], line_color, 4)
+#	### TREE HIERARCHY DRAWW
+#
+#	var line_color = Color(randf(), randf(), randf())
+#
+#	#Draw the lines of the graph
+#	var line_data = Story.DrawGraphLines(tree, pos_tree, Vector2(50,50), Vector2(200,50), self, 0)
+#	for i in range(line_data["start_vects"].size()):
+#		draw_line(line_data["start_vects"][i], line_data["stop_vects"][i], line_color, 4)
+#
+#	##END HIERARCHY DRAWW
 
 ### UTILITY FOR COPYING DICTIONARIES ESPECIALLY
 static func deep_copy(v):

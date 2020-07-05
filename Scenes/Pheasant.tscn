@@ -1,0 +1,90 @@
+[gd_scene load_steps=17 format=2]
+
+[ext_resource path="res://Scenes/Pheasant.gd" type="Script" id=1]
+[ext_resource path="res://Tiles/animals/pheasant/peacockONEtailPrim.png" type="Texture" id=2]
+[ext_resource path="res://Tiles/animals/pheasant/peacockONEtailSeco.png" type="Texture" id=3]
+[ext_resource path="res://Tiles/animals/pheasant/peacockONEtailTert.png" type="Texture" id=4]
+[ext_resource path="res://Tiles/animals/pheasant/peacockONEtailQuad.png" type="Texture" id=5]
+[ext_resource path="res://Tiles/animals/pheasant/peacockONEtailQuin.png" type="Texture" id=6]
+[ext_resource path="res://Tiles/animals/pheasant/peacockTWOtailPrim.png" type="Texture" id=7]
+[ext_resource path="res://Tiles/animals/pheasant/peacockTWOtailSeco.png" type="Texture" id=8]
+[ext_resource path="res://Tiles/animals/pheasant/peacockTWOtailTert.png" type="Texture" id=9]
+[ext_resource path="res://Tiles/animals/pheasant/peacockTWOtailQuad.png" type="Texture" id=10]
+[ext_resource path="res://Tiles/animals/pheasant/peacockTWOtailQuin.png" type="Texture" id=11]
+[ext_resource path="res://Tiles/animals/pheasant/peacockTREtailPrim.png" type="Texture" id=12]
+[ext_resource path="res://Tiles/animals/pheasant/peacockTREtailSeco.png" type="Texture" id=13]
+[ext_resource path="res://Tiles/animals/pheasant/peacockTREtailTert.png" type="Texture" id=14]
+[ext_resource path="res://Tiles/animals/pheasant/peacockTREtailQuad.png" type="Texture" id=15]
+[ext_resource path="res://Tiles/animals/pheasant/peacockTREtailQuin.png" type="Texture" id=16]
+
+[node name="Pheasant" type="Node2D"]
+script = ExtResource( 1 )
+
+[node name="ONE_Tail" type="Node2D" parent="."]
+visible = false
+
+[node name="Prim" type="Sprite" parent="ONE_Tail"]
+texture = ExtResource( 2 )
+offset = Vector2( 16, 0 )
+
+[node name="Seco" type="Sprite" parent="ONE_Tail"]
+texture = ExtResource( 3 )
+offset = Vector2( 16, 0 )
+
+[node name="Tert" type="Sprite" parent="ONE_Tail"]
+texture = ExtResource( 4 )
+offset = Vector2( 16, 0 )
+
+[node name="Quad" type="Sprite" parent="ONE_Tail"]
+texture = ExtResource( 5 )
+offset = Vector2( 16, 0 )
+
+[node name="Quin" type="Sprite" parent="ONE_Tail"]
+texture = ExtResource( 6 )
+offset = Vector2( 16, 0 )
+
+[node name="TWO_Tail" type="Node2D" parent="."]
+visible = false
+
+[node name="Prim" type="Sprite" parent="TWO_Tail"]
+texture = ExtResource( 7 )
+offset = Vector2( 16, 0 )
+
+[node name="Seco" type="Sprite" parent="TWO_Tail"]
+texture = ExtResource( 8 )
+offset = Vector2( 16, 0 )
+
+[node name="Tert" type="Sprite" parent="TWO_Tail"]
+texture = ExtResource( 9 )
+offset = Vector2( 16, 0 )
+
+[node name="Quad" type="Sprite" parent="TWO_Tail"]
+texture = ExtResource( 10 )
+offset = Vector2( 16, 0 )
+
+[node name="Quin" type="Sprite" parent="TWO_Tail"]
+texture = ExtResource( 11 )
+offset = Vector2( 16, 0 )
+
+[node name="TRE_Tail" type="Node2D" parent="."]
+visible = false
+
+[node name="Prim" type="Sprite" parent="TRE_Tail"]
+texture = ExtResource( 12 )
+offset = Vector2( 16, 0 )
+
+[node name="Seco" type="Sprite" parent="TRE_Tail"]
+texture = ExtResource( 13 )
+offset = Vector2( 16, 0 )
+
+[node name="Tert" type="Sprite" parent="TRE_Tail"]
+texture = ExtResource( 14 )
+offset = Vector2( 16, 0 )
+
+[node name="Quad" type="Sprite" parent="TRE_Tail"]
+texture = ExtResource( 15 )
+offset = Vector2( 16, 0 )
+
+[node name="Quin" type="Sprite" parent="TRE_Tail"]
+texture = ExtResource( 16 )
+offset = Vector2( 16, 0 )

@@ -2140,6 +2140,8 @@ func MansionFurnitureGen(in_array):
 	for i in range(2):
 		#Place a PUBLIC furniture SET by a wall
 		var multi_tile_finding = FindMultipleOpenTilesAdjWalls(in_array, 4, 1, 3)
+		if multi_tile_finding == null: #check for success
+			continue
 		var tile_positions = multi_tile_finding["tile_positions"]
 		var wall_direction_code = multi_tile_finding["wall_direction_code"]
 		#Layout depends on the direction of wall...
@@ -2176,6 +2178,8 @@ func MansionFurnitureGen(in_array):
 	for i in range(2):
 		#Place a PRIVATE furniture SET by a wall
 		var multi_tile_finding = FindMultipleOpenTilesAdjWalls(in_array, 2, 1, 3)
+		if multi_tile_finding == null: #check for success
+			continue
 		var tile_positions = multi_tile_finding["tile_positions"]
 		var wall_direction_code = multi_tile_finding["wall_direction_code"]
 		#Layout depends on the direction of wall...
@@ -2610,4 +2614,261 @@ func GenerateEmptySpaceArray(space_size):
 		return_array.append(temp_row)
 	
 	return(return_array)
+
+#########FOLIAGE GEN
+## GENERATES A PATCH (2D ARRAY) of data for foliage
+
+##Encoded by levels
+# 0 - none
+# 1 - light foliage
+# 2 - medium foliage
+# 3 - heavy foliage
+
+#FUnctions that scan the array and make foliage denser and denser
+
+#####NOISE FUNCTIONS
+#Generate (2D) PERLIN noise...
+# Returns a 2D array with different height maps
+# The values range from -1 to 1
+func GeneratePerlinImage(img_width, img_height, grid_pts_x, grid_pts_y):
 	
+	#Intitialize 2D image array we are returning
+	var perlin_noise_values = [] #The 2D array being returned
+	for i in range(img_width):
+		var row = [] # a new row
+		for j in range(img_height):
+			row.append(0)
+		perlin_noise_values.append(row)
+			
+	# Create Grid of random vectors....
+	var random_vector_grid = []
+	for i in range(grid_pts_x + 1):
+		var row = [] # a new row
+		for j in range(grid_pts_y + 1):
+			var choice = randi()%4
+			if choice == 0:
+				row.append(Vector2(-1,-1))
+			if choice == 1:
+				row.append(Vector2(-1,1))
+			if choice == 2:
+				row.append(Vector2(1,-1))
+			if choice == 3:
+				row.append(Vector2(1,1))
+		random_vector_grid.append(row)
+
+	# Important grid calculations
+	# Calculate how many pixels/cells are in between each grid point
+	var grid_step_cells_x = img_width / grid_pts_x
+	var grid_step_cells_y = img_height / grid_pts_y
+	## Calculate the grid step_size percentage
+	var grid_step_percent_x = 1.0/(grid_step_cells_x - 1.0)
+	var grid_step_percent_y = 1.0/(grid_step_cells_y - 1.0)
+
+	#Cycle through every single value in the noise image
+	for i in range(perlin_noise_values.size()):
+		for j in range(perlin_noise_values[0].size()):
+			
+			#Determine which grid points (random vectors) we will dot procudt to
+			var upper_left_grid_pt = Vector2(0.0,0.0)
+			var upper_right_grid_pt = Vector2(0.0,0.0)
+			var lower_left_grid_pt = Vector2(0.0,0.0)
+			var lower_right_grid_pt = Vector2(0.0,0.0)
+			
+			upper_left_grid_pt.x = floor( float(i) / float(grid_step_cells_x))
+			upper_left_grid_pt.y = floor( float(j) / float(grid_step_cells_y))
+
+			upper_right_grid_pt.x = ceil( float(i) / float(grid_step_cells_x))
+			upper_right_grid_pt.y = floor( float(j) / float(grid_step_cells_y))
+			
+			lower_left_grid_pt.x = floor( float(i) / float(grid_step_cells_x))
+			lower_left_grid_pt.y = ceil( float(j) / float(grid_step_cells_y))
+
+			lower_right_grid_pt.x = ceil( float(i) / float(grid_step_cells_x))
+			lower_right_grid_pt.y = ceil( float(j) / float(grid_step_cells_y))
+			
+			## Determine it's RELATIVE_POSITION_VECTOR (relative to upper left GRID point, in PIXEL distance)
+			## Here, the reference vector is the upper left grid point
+			var local_postion = Vector2(0.0,0.0)
+			local_postion.x = float(i) - (upper_left_grid_pt.x * grid_step_cells_x)
+			local_postion.y = float(j) - (upper_left_grid_pt.y * grid_step_cells_y)
+			## Now normalize the position vector in terms of percentage between each grid point
+			var normalized_position = Vector2(0.0,0.0)
+			normalized_position.x = local_postion.x * grid_step_percent_x
+			normalized_position.y = local_postion.y * grid_step_percent_y
+
+			#Now we can start crunching them numbers
+			var input_position_vector = Vector2(0,0) #a helper variable for calculating the position vector to be dot producted with random vect
+			
+			#Dot Product of Point A
+			input_position_vector = normalized_position
+			var DotA = input_position_vector.dot(random_vector_grid[upper_left_grid_pt.x][upper_left_grid_pt.y])
+			
+			#Dot Product of Point B
+			input_position_vector = normalized_position
+			input_position_vector.x = 1.0 - input_position_vector.x
+			var DotB = input_position_vector.dot(random_vector_grid[upper_right_grid_pt.x][upper_right_grid_pt.y])
+			
+			#Dot Product of Point C
+			input_position_vector = normalized_position
+			input_position_vector.y = 1.0 - input_position_vector.y
+			var DotC = input_position_vector.dot(random_vector_grid[lower_left_grid_pt.x][lower_left_grid_pt.y])
+			
+			#Dot Product of Point D
+			input_position_vector = normalized_position
+			input_position_vector.x = 1.0 - input_position_vector.x
+			input_position_vector.y = 1.0 - input_position_vector.y
+			var DotD = input_position_vector.dot(random_vector_grid[lower_right_grid_pt.x][lower_right_grid_pt.y])
+
+			#Others
+			var FracX = normalized_position.x
+			var FracY = normalized_position.y
+
+			#Crunchy Crunchy
+			var AB = DotA + (FracX * (DotB - DotA))
+			var CD = DotC + (FracX * (DotD - DotC))
+			var value = AB + (FracY * (CD - AB))
+
+			## Apply the Fade Function
+			value = ( 6.0*pow(value,5.0) ) - ( 15.0*pow(value,4.0) ) + (10.0*pow(value,3.0))
+
+			#The values range from -1 to 1... we want to map them to 255
+			##Mapping functions work like this
+			## output = output_start + ((output_end - output_start) / (input_end - input_start)) * (input - input_start)
+			## output is 0 to 255
+			## input is -1 to 1
+			#value = 0 + ((255.0 - 0) / (1.0 + 1.0)) * (value + 1.0)
+			#value = int(round(value))
+
+			value = value + 0.5
+
+			#Finally, record value in image
+			perlin_noise_values[i][j] = value
+
+
+	return(perlin_noise_values)
+
+
+
+#Generate (2D) PERLIN noise VARIATION...
+# This is a more uniform grid - 
+# simply change the pool of random vectors to 0 & -1
+# Returns a 2D array with different height maps
+# The values range from -1 to 1
+func GeneratePseudoPerlinBumpImage(img_width, img_height, grid_pts_x, grid_pts_y):
+	
+	#Intitialize 2D image array we are returning
+	var perlin_noise_values = [] #The 2D array being returned
+	for i in range(img_width):
+		var row = [] # a new row
+		for j in range(img_height):
+			row.append(0)
+		perlin_noise_values.append(row)
+			
+	# Create Grid of random vectors....
+	var random_vector_grid = []
+	for i in range(grid_pts_x + 1):
+		var row = [] # a new row
+		for j in range(grid_pts_y + 1):
+			var choice = randi()%4
+			if choice == 0:
+				row.append(Vector2(0,0))
+			if choice == 1:
+				row.append(Vector2(0,1))
+			if choice == 2:
+				row.append(Vector2(1,0))
+			if choice == 3:
+				row.append(Vector2(1,1))
+		random_vector_grid.append(row)
+
+	# Important grid calculations
+	# Calculate how many pixels/cells are in between each grid point
+	var grid_step_cells_x = img_width / grid_pts_x
+	var grid_step_cells_y = img_height / grid_pts_y
+	## Calculate the grid step_size percentage
+	var grid_step_percent_x = 1.0/(grid_step_cells_x - 1.0)
+	var grid_step_percent_y = 1.0/(grid_step_cells_y - 1.0)
+
+	#Cycle through every single value in the noise image
+	for i in range(perlin_noise_values.size()):
+		for j in range(perlin_noise_values[0].size()):
+			
+			#Determine which grid points (random vectors) we will dot procudt to
+			var upper_left_grid_pt = Vector2(0.0,0.0)
+			var upper_right_grid_pt = Vector2(0.0,0.0)
+			var lower_left_grid_pt = Vector2(0.0,0.0)
+			var lower_right_grid_pt = Vector2(0.0,0.0)
+			
+			upper_left_grid_pt.x = floor( float(i) / float(grid_step_cells_x))
+			upper_left_grid_pt.y = floor( float(j) / float(grid_step_cells_y))
+
+			upper_right_grid_pt.x = ceil( float(i) / float(grid_step_cells_x))
+			upper_right_grid_pt.y = floor( float(j) / float(grid_step_cells_y))
+			
+			lower_left_grid_pt.x = floor( float(i) / float(grid_step_cells_x))
+			lower_left_grid_pt.y = ceil( float(j) / float(grid_step_cells_y))
+
+			lower_right_grid_pt.x = ceil( float(i) / float(grid_step_cells_x))
+			lower_right_grid_pt.y = ceil( float(j) / float(grid_step_cells_y))
+			
+			## Determine it's RELATIVE_POSITION_VECTOR (relative to upper left GRID point, in PIXEL distance)
+			## Here, the reference vector is the upper left grid point
+			var local_postion = Vector2(0.0,0.0)
+			local_postion.x = float(i) - (upper_left_grid_pt.x * grid_step_cells_x)
+			local_postion.y = float(j) - (upper_left_grid_pt.y * grid_step_cells_y)
+			## Now normalize the position vector in terms of percentage between each grid point
+			var normalized_position = Vector2(0.0,0.0)
+			normalized_position.x = local_postion.x * grid_step_percent_x
+			normalized_position.y = local_postion.y * grid_step_percent_y
+
+			#Now we can start crunching them numbers
+			var input_position_vector = Vector2(0,0) #a helper variable for calculating the position vector to be dot producted with random vect
+			
+			#Dot Product of Point A
+			input_position_vector = normalized_position
+			var DotA = input_position_vector.dot(random_vector_grid[upper_left_grid_pt.x][upper_left_grid_pt.y])
+			
+			#Dot Product of Point B
+			input_position_vector = normalized_position
+			input_position_vector.x = 1.0 - input_position_vector.x
+			var DotB = input_position_vector.dot(random_vector_grid[upper_right_grid_pt.x][upper_right_grid_pt.y])
+			
+			#Dot Product of Point C
+			input_position_vector = normalized_position
+			input_position_vector.y = 1.0 - input_position_vector.y
+			var DotC = input_position_vector.dot(random_vector_grid[lower_left_grid_pt.x][lower_left_grid_pt.y])
+			
+			#Dot Product of Point D
+			input_position_vector = normalized_position
+			input_position_vector.x = 1.0 - input_position_vector.x
+			input_position_vector.y = 1.0 - input_position_vector.y
+			var DotD = input_position_vector.dot(random_vector_grid[lower_right_grid_pt.x][lower_right_grid_pt.y])
+
+			#Others
+			var FracX = normalized_position.x
+			var FracY = normalized_position.y
+
+			#Crunchy Crunchy
+			var AB = DotA + (FracX * (DotB - DotA))
+			var CD = DotC + (FracX * (DotD - DotC))
+			var value = AB + (FracY * (CD - AB))
+
+			## Apply the Fade Function
+			value = ( 6.0*pow(value,5.0) ) - ( 15.0*pow(value,4.0) ) + (10.0*pow(value,3.0))
+
+			#The values range from -1 to 1... we want to map them to 255
+			##Mapping functions work like this
+			## output = output_start + ((output_end - output_start) / (input_end - input_start)) * (input - input_start)
+			## output is 0 to 255
+			## input is -1 to 1
+			#value = 0 + ((255.0 - 0) / (1.0 + 1.0)) * (value + 1.0)
+			#value = int(round(value))
+
+			#value = value + 0.5
+
+			#Finally, record value in image
+			perlin_noise_values[i][j] = value
+
+
+	return(perlin_noise_values)
+
+

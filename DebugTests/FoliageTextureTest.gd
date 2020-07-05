@@ -370,8 +370,8 @@ func _ready():
 		
 	#CanvasLayerOn(birdseyeLayers[0])
 	#CanvasLayerOn(balconyXZLayers[0])
-	view_mode = VIEW_MODE.balcony
-	
+	#view_mode = VIEW_MODE.balcony
+	view_mode = VIEW_MODE.birdseye
 	
 	#################################################
 	#DEBUG SHIT
