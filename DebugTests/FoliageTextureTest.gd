@@ -54,6 +54,8 @@ var personal_room_furniture_seco
 var public_room_furniture_prim
 var public_room_furniture_seco
 var window_prim
+var foliage_prim
+var foliage_seco
 
 ##Distance Shade  Sprites
 #Initialize Distance Shade Sprites
@@ -95,7 +97,11 @@ func _ready():
 	public_room_furniture_prim = Color(randf(), randf(), randf())
 	public_room_furniture_seco = Color(randf(), randf(), randf())
 	window_prim = Color(randf(), randf(), randf(), 0.7)
-	background_color = Color(randf(), randf(), randf(), 0.7)
+	#background_color = Color(randf(), randf(), randf())
+	background_color = MedAlgo.generate_darkenable_color(0.3)
+	background_color = MedAlgo.color_shift(background_color,-0.3)
+	foliage_prim = Color(randf(), randf(), randf(), 0.7)
+	foliage_seco = Color(randf(), randf(), randf())
 	
 	#DEBUG
 	#window_prim = Color(1,1,1)
@@ -129,12 +135,14 @@ func _ready():
 	field_map = RogueGen.InitializeFoliageSeeds(field_map,1,10)
 	#field_map = RogueGen.AdvanceGenerationsFoliageSeeds(field_map,1,4)
 	
+	field_map = RogueGen.AdvanceSingleGenerationFoliageSeeds(field_map,1)
 	
-	print(field_map)
+	#print(field_map)
 
 	##Build out the field...
 	for i in range(field_map.size()):
 		for j in range(field_map[0].size()):
+			#BLANK TILE
 			if field_map[i][j] == 0:
 				var new_building_item = Item.instance()
 				new_building_item.position.y = j * $TileMap.cell_size.y
@@ -348,6 +356,52 @@ func _ready():
 				new_building_item.setTile(choice)
 				new_building_item.SetPrimColor(personal_room_furniture_prim)
 				new_building_item.SetSecoColor(personal_room_furniture_seco)
+			#FOLIAGE TILES
+			if field_map[i][j] == 301:
+				#Make the blank tile
+				var new_building_item = Item.instance()
+				new_building_item.position.y = j * $TileMap.cell_size.y
+				new_building_item.position.x = i * $TileMap.cell_size.x
+				add_child(new_building_item)
+				new_building_item.setTile(999)
+				new_building_item.SetPrimColor(background_color)
+				#Also make the leafy tile on top
+				new_building_item = Item.instance()
+				new_building_item.position.y = j * $TileMap.cell_size.y
+				new_building_item.position.x = i * $TileMap.cell_size.x
+				add_child(new_building_item)
+				new_building_item.setTile(301)
+				new_building_item.SetPrimColor(foliage_prim)
+			if field_map[i][j] == 302:
+				#Make the blank tile
+				var new_building_item = Item.instance()
+				new_building_item.position.y = j * $TileMap.cell_size.y
+				new_building_item.position.x = i * $TileMap.cell_size.x
+				add_child(new_building_item)
+				new_building_item.setTile(999)
+				new_building_item.SetPrimColor(background_color)
+				#Also make the leafy tile on top
+				new_building_item = Item.instance()
+				new_building_item.position.y = j * $TileMap.cell_size.y
+				new_building_item.position.x = i * $TileMap.cell_size.x
+				add_child(new_building_item)
+				new_building_item.setTile(302)
+				new_building_item.SetPrimColor(foliage_prim)
+			if field_map[i][j] == 303:
+				#Make the blank tile
+				var new_building_item = Item.instance()
+				new_building_item.position.y = j * $TileMap.cell_size.y
+				new_building_item.position.x = i * $TileMap.cell_size.x
+				add_child(new_building_item)
+				new_building_item.setTile(999)
+				new_building_item.SetPrimColor(background_color)
+				#Also make the leafy tile on top
+				new_building_item = Item.instance()
+				new_building_item.position.y = j * $TileMap.cell_size.y
+				new_building_item.position.x = i * $TileMap.cell_size.x
+				add_child(new_building_item)
+				new_building_item.setTile(303)
+				new_building_item.SetPrimColor(foliage_prim)
 
 #	#Background
 #	background_color = Color(randf(), randf(), randf())

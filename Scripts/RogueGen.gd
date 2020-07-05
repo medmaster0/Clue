@@ -2674,8 +2674,55 @@ func InitializeFoliageSeeds(field_map, pattern_type, num_seeds):
 func AdvanceGenerationsFoliageSeeds(field_map, pattern_type, num_generations):
 	print("hey im on the radio")
 	
-func AdvanceSingleGenerationFoliageSeeds(field_map, pattern_type):
-	print("dfsafdsa")
+
+
+#Advance a single generation of foliage
+# 1. A blank spot turns into a lvl1 if it touches a lvl1, lvl2, or lvl3 (NSEW adjacent,4 directions)
+# 2. lvl1 -> lvl2
+# 3. lvl2 -> lvl3
+func AdvanceSingleGenerationFoliageSeeds(field_map, pattern_type = 1):
+	
+	#We will apply changes to a copy of the field map
+	#But we will still reference the first one in making changes
+	
+	#First make a copy of the map....
+	var copy_map = Copy2DArray(field_map)
+	
+	##Now... go through the whole map... tile by tile
+	for i in field_map.size():
+		for j in field_map[0].size():
+			match(field_map[i][j]):
+				301:
+					#If any of the ajacent ones are blank, make them lvl1
+					print("found lvl1")
+					#NORTH
+					if j >= 1:
+						if field_map[i][j-1] == 0:
+							#Make it lvl1
+							copy_map[i][j-1] = 301
+					#SOUTH
+					if j < field_map[0].size() - 1:
+						if field_map[i][j+1] == 0:
+							#Make it lvl1
+							copy_map[i][j+1] = 301
+					#EAST
+					if i < field_map.size() - 1:
+						if field_map[i+1][j] == 0:
+							#Make it lvl1
+							copy_map[i+1][j] = 301
+					#WEST
+					if i >= 1:
+						if field_map[i-1][j] == 0:
+							#Make it lvl1
+							copy_map[i-1][j] = 301
+					#Then finally, turn this one to lvl2
+					copy_map[i][j] = 302
+				302:
+					#If any of the adjacent ones are lvl1, make them lvl2
+					print("found lvl2")
+					#Then finally, turn this one to lvl3
+	
+	return(copy_map)
 
 #####NOISE FUNCTIONS
 #Generate (2D) PERLIN noise...
