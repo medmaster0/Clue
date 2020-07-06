@@ -727,6 +727,25 @@ func color_shift(in_col, shift_amt):
 	var out_col = Color(r,g,b)
 	return(out_col)
 
+#A function that converts a given color to pastel...
+#It maps the full color RGB values onto
+#THe last upper portion of the RGB spectrum (specified by low_grey)
+#
+#This function used to make metallic/shiny color (like rose gold, silver gold, etc)
+#Was also used to make ground seem farther below (keep rising in air from color ground to pure white)
+func color_to_pastel(color):
+	
+	var low_grey = Color(0.75,0.75,0.75)
+	var remaining_portions = Color(1-low_grey.r, 1-low_grey.g, 1-low_grey.b) #The last region left to map onto
+	
+	#Now compute r,g,b values by mapping onto leftover portion
+	var r = low_grey.r + ( color.r * remaining_portions.r  )
+	var g = low_grey.g + ( color.g * remaining_portions.g  )
+	var b = low_grey.b + ( color.b * remaining_portions.b  )	
+	
+	var pastel_color = Color(r,g,b)
+	return(pastel_color)
+
 ###STORY ALGORITHMS!!!
 func generateName():
 	var consonants = "bcdfghjklmnpqrstvwxyz"
@@ -827,4 +846,27 @@ func generate_skin_color():
 
 	return(skin_color)
 	
+#Generate reddish browns for dirt
+#Basically a hack of generate skin color, but we add more red at the end...
+func generate_dirt_color():
+	
+	var r = rand_range(0.60,0.87)
+	var delta #The delta we subtract from r for g, and from g for b
+	if r < 0.78:
+		delta = rand_range(0.12,0.2)
+	else:
+		delta = rand_range(0.07,0.2)
+	var g = r - delta
+	var b = g - delta
+	
+	#***ALSO add more red
+	r = r + rand_range(0,0.13)
+	#Alo bllue
+	b = b + rand_range(0,0.09)
+	
+	var dirt_color = Color(r,g,b)
+
+	
+
+	return(dirt_color)
 
