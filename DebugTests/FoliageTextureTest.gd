@@ -133,9 +133,9 @@ func _ready():
 	field_map = RogueGen.StampSpaceOntoSpace(building_map, field_map, Vector2(2,2))
 	#Now generate the foliage
 	field_map = RogueGen.InitializeFoliageSeeds(field_map,1,10)
-	#field_map = RogueGen.AdvanceGenerationsFoliageSeeds(field_map,1,4)
+	field_map = RogueGen.AdvanceGenerationsFoliageSeeds(field_map,1,4)
 	
-	field_map = RogueGen.AdvanceSingleGenerationFoliageSeeds(field_map,1)
+	#field_map = RogueGen.AdvanceSingleGenerationFoliageSeeds(field_map,1)
 	
 	#print(field_map)
 

@@ -2671,10 +2671,15 @@ func InitializeFoliageSeeds(field_map, pattern_type, num_seeds):
 #The rule is any tiles adjacent to a foliage tile will grow foliage the next generation
 #Existing foliage will advance to next generation (unless lvl3)
 
+#Function that will call the single generation function a numbe rof times
 func AdvanceGenerationsFoliageSeeds(field_map, pattern_type, num_generations):
-	print("hey im on the radio")
 	
-
+	var return_map = Copy2DArray(field_map) #the map we return
+	
+	for i in range(num_generations):
+		return_map = AdvanceSingleGenerationFoliageSeeds(return_map, pattern_type)
+	
+	return(return_map)
 
 #Advance a single generation of foliage
 # 1. A blank spot turns into a lvl1 if it touches a lvl1, lvl2, or lvl3 (NSEW adjacent,4 directions)
@@ -2718,10 +2723,57 @@ func AdvanceSingleGenerationFoliageSeeds(field_map, pattern_type = 1):
 					#Then finally, turn this one to lvl2
 					copy_map[i][j] = 302
 				302:
-					#If any of the adjacent ones are lvl1, make them lvl2
+					#If any of the ajacent ones are lvl1, make them lvl2
 					print("found lvl2")
+					#NORTH
+					if j >= 1:
+						if field_map[i][j-1] == 301:
+							#Make it lvl1
+							copy_map[i][j-1] = 302
+					#SOUTH
+					if j < field_map[0].size() - 1:
+						if field_map[i][j+1] == 301:
+							#Make it lvl1
+							copy_map[i][j+1] = 302
+					#EAST
+					if i < field_map.size() - 1:
+						if field_map[i+1][j] == 301:
+							#Make it lvl1
+							copy_map[i+1][j] = 302
+					#WEST
+					if i >= 1:
+						if field_map[i-1][j] == 301:
+							#Make it lvl1
+							copy_map[i-1][j] = 302
 					#Then finally, turn this one to lvl3
-	
+					copy_map[i][j] = 303
+				303:
+					#If any of the ajacent ones are lvl2, make them lvl3
+					print("found lvl3")
+					#NORTH
+					if j >= 1:
+						if field_map[i][j-1] == 302:
+							#Make it lvl1
+							copy_map[i][j-1] = 303
+					#SOUTH
+					if j < field_map[0].size() - 1:
+						if field_map[i][j+1] == 302:
+							#Make it lvl1
+							copy_map[i][j+1] = 303
+					#EAST
+					if i < field_map.size() - 1:
+						if field_map[i+1][j] == 302:
+							#Make it lvl1
+							copy_map[i+1][j] = 303
+					#WEST
+					if i >= 1:
+						if field_map[i-1][j] == 302:
+							#Make it lvl1
+							copy_map[i-1][j] = 303
+					#Lvl3's will remain the same
+					#copy_map[i][j] = 303
+
+
 	return(copy_map)
 
 #####NOISE FUNCTIONS
