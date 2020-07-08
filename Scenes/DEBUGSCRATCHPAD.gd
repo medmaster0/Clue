@@ -7,10 +7,39 @@ var tree
 var mod_tree
 var pos_tree
 
+export (PackedScene) var FarmTile
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	randomize()
+	
+	var dirt_color_base = MedAlgo.generate_darkenable_color(0.22)
+	
+	#FARM TEST
+	#DIRT PATCH 1 - all random offset
+	for i in range(10):
+		for j in range(12):
+			var temp_farm_tile = FarmTile.instance()
+			temp_farm_tile.position = Vector2(i*16, j*16)
+			add_child(temp_farm_tile)
+			temp_farm_tile.change_tile(1)
+			var temp_dirt_color = MedAlgo.generate_off_color(dirt_color_base,0.05)
+			temp_dirt_color = MedAlgo.color_to_pastel_set_grey(temp_dirt_color,rand_range(0.0,0.75))
+			temp_farm_tile.SetPrim(temp_dirt_color); 
+			
+	
+	#DIRT PATCH 2 - random pick from 10 random offsets
+	#(VASTLY SUPERIOR!!!!)
+	var offset_return_data = MedAlgo.generate_offset_color_set(dirt_color_base,10,0.05)
+	for i in range(10):
+		for j in range(12):
+			var temp_farm_tile = FarmTile.instance()
+			temp_farm_tile.position = Vector2(17*16+i*16, j*16)
+			add_child(temp_farm_tile)
+			temp_farm_tile.change_tile(1)
+			var temp_dirt_color = offset_return_data["color_set"][randi()%offset_return_data["color_set"].size()]
+			temp_farm_tile.SetPrim(temp_dirt_color); 
+	
 	
 	#FOLIAGE TEST...
 	

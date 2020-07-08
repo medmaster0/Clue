@@ -746,6 +746,20 @@ func color_to_pastel(color):
 	var pastel_color = Color(r,g,b)
 	return(pastel_color)
 
+#Same as above
+# but you can set the lowest level of grey
+func color_to_pastel_set_grey(color, grey_level):
+	var low_grey = Color(grey_level,grey_level,grey_level)
+	var remaining_portions = Color(1-low_grey.r, 1-low_grey.g, 1-low_grey.b) #The last region left to map onto
+	
+	#Now compute r,g,b values by mapping onto leftover portion
+	var r = low_grey.r + ( color.r * remaining_portions.r  )
+	var g = low_grey.g + ( color.g * remaining_portions.g  )
+	var b = low_grey.b + ( color.b * remaining_portions.b  )	
+	
+	var pastel_color = Color(r,g,b)
+	return(pastel_color)
+
 ###STORY ALGORITHMS!!!
 func generateName():
 	var consonants = "bcdfghjklmnpqrstvwxyz"
@@ -870,3 +884,101 @@ func generate_dirt_color():
 
 	return(dirt_color)
 
+#Make a dirt color look wet
+#Subtract the following constants from r,g,b:
+#respectively: 0.04, 0.16, 0.22
+func wet_dirt(dirt_brown):
+	var r = dirt_brown.r - 0.04
+	var g = dirt_brown.g - 0.16
+	var b = dirt_brown.b - 0.22
+	
+	var wet_dirt_color = Color(r,g,b)
+	return(wet_dirt_color)
+
+
+#A function for generating water colors...
+#The colors should be between 75 and 200 ->> 0.29 and 0.78...
+#But, BLUE should be highest...
+func generate_water_color():
+	var b = rand_range(0.32,0.78)
+	var r = rand_range(0.3,0.78)
+	var g = rand_range(0.29,0.78)
+	var water_color = Color(r,g,b)
+	return(water_color)
+
+
+##function that will take a color
+#it will generate 3 random colors 
+#that are slightly different from the main color
+# Each RGB value has a chance to go up, down, or stay the same
+func generate_off_color(in_color, max_channel_offset):
+	var out_color = in_color #the color we will return
+	#RED
+	match(randi()%3):
+		0:
+			#Go UP
+			out_color.r = out_color.r + rand_range(0.0,max_channel_offset)
+		1:
+			#Go DOWN
+			out_color.r = out_color.r - rand_range(0.0,max_channel_offset)
+		2:
+			continue
+	#GREEN
+	match(randi()%3):
+		0:
+			#Go UP
+			out_color.g = out_color.g + rand_range(0.0,max_channel_offset)
+		1:
+			#Go DOWN
+			out_color.g = out_color.g - rand_range(0.0,max_channel_offset)
+		2:
+			continue
+	#BLUE
+	match(randi()%3):
+		0:
+			#Go UP
+			out_color.b = out_color.b + rand_range(0.0,max_channel_offset)
+		1:
+			#Go DOWN
+			out_color.b = out_color.b - rand_range(0.0,max_channel_offset)
+		2:
+			continue
+
+	return(out_color)
+
+#Function to generate a set of off set colors
+#Will also return the average of all of them....
+#REturn{
+# color_set = [] #list of colors
+# average_color # a color of all the colors averaged
+func generate_offset_color_set(base_color, num_colors, max_offset = 0.05):
+	
+	var color_set = [] #the set of colors
+	
+	#Generate the colors
+	for i in range(num_colors):
+			var temp_color = generate_off_color(base_color,max_offset)
+			temp_color = MedAlgo.color_to_pastel_set_grey(temp_color,rand_range(0.0,0.75))
+			color_set.append(temp_color)
+	
+	#Find out the average
+	var avg_color = Color(1.0,1.0,1.0) #initialize to whatever
+	#These vars will keep track of the total values in each channel
+	var total_red = 0
+	var total_green = 0
+	var total_blue = 0
+	for color in color_set:
+		total_red = total_red + color.r
+		total_green = total_green + color.g
+		total_blue = total_blue + color.b
+	avg_color.r = total_red / float(num_colors)
+	avg_color.g = total_green / float(num_colors)
+	avg_color.b = total_blue / float(num_colors)
+	
+	var return_data = {
+		"color_set": color_set,
+		"average_color": avg_color
+	}
+	
+	return(return_data)
+		

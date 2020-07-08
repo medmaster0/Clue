@@ -6,6 +6,10 @@ extends Node2D
 
 var tile_index #the index of which child/tile is visible
 
+var primColor #dry dirt
+var secoColor #wet dirt
+var tertColor #water
+
 func _ready():
 	# Called when the node is added to the scene for the first time.
 	# Initialization here
@@ -48,3 +52,18 @@ func change_color(color1,color2,color3):
 	$Prim.get_child(tile_index).modulate = color1
 	$Seco.get_child(tile_index).modulate = color2
 	$Tert.get_child(tile_index).modulate = color3
+
+func SetPrim(color):
+	primColor = color
+	for child in $Prim.get_children():
+		child.modulate = primColor
+
+func SetSeco(color):
+	secoColor = color
+	for child in $Seco.get_children():
+		child.modulate = secoColor
+
+func SetTert(color):
+	tertColor = color
+	for child in $Tert.get_children():
+		child.modulate = tertColor

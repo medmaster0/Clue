@@ -9,6 +9,7 @@ var dirt_color #the color of the sprites (prim)
 var wet_color #the color of the wet dirt (seco)
 var water_color #the color of the water or plants (tert)
 
+
 func _ready():
 	# Called when the node is added to the scene for the first time.
 	# Initialization here
@@ -39,13 +40,33 @@ func change_tile(in_tile_index):
 	tile_index = in_tile_index
 	$BackTile.change_symbol(tile_index)
 	$FrontTile.change_symbol(tile_index)
-	
-func change_color(dirt_color,wet_color,water_color):
+
+#func SetTile(in_tile_index):
+#	tile_index = in_tile_index
+#	$BackTile.change_symbol(tile_index)
+#	$FrontTile.change_symbol(tile_index)
+
+func change_color(in_dirt_color,in_wet_color,in_water_color):
+	dirt_color = in_dirt_color
+	wet_color = in_wet_color
+	water_color = in_water_color
 	$BackTile.change_color(dirt_color,wet_color,water_color)
 	$FrontTile.change_color(dirt_color,wet_color,water_color)
 
+func SetPrim(in_color):
+	dirt_color = in_color
+	$BackTile.SetPrim(in_color)
+	$FrontTile.SetPrim(in_color)
 
-
+func SetSeco(in_color):
+	wet_color = in_color
+	$BackTile.SetSeco(in_color)
+	$FrontTile.SetSeco(in_color)
+	
+func SetTert(in_color):
+	water_color = in_color
+	$BackTile.SetTert(in_color)
+	$FrontTile.SetTert(in_color)
 
 func _on_GrowTimer_timeout():
 	print("yo")

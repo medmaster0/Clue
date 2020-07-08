@@ -13,6 +13,8 @@ extends Node2D
 
 export (PackedScene) var Item
 export (PackedScene) var BattleHuntItem
+export (PackedScene) var FarmTile
+export (PackedScene) var DirtTile
 
 # Declare member variables here. Examples:
 # var a = 2
@@ -56,6 +58,12 @@ var public_room_furniture_seco
 var window_prim
 var foliage_prim
 var foliage_seco
+#
+var dirt_color_prim #dry
+var dirt_color_seco #wet
+var dirt_color_tert #water
+#
+var dirt_patch_color_set_data #will keep track of random colors for the dirt patch
 
 ##Distance Shade  Sprites
 #Initialize Distance Shade Sprites
@@ -99,9 +107,15 @@ func _ready():
 	window_prim = Color(randf(), randf(), randf(), 0.7)
 	#background_color = Color(randf(), randf(), randf())
 	background_color = MedAlgo.generate_darkenable_color(0.3)
-	background_color = MedAlgo.color_shift(background_color,-0.3)
+	#background_color = MedAlgo.color_shift(background_color,-0.3)
 	foliage_prim = Color(randf(), randf(), randf(), 0.7)
 	foliage_seco = Color(randf(), randf(), randf())
+	#
+#	dirt_color_prim = MedAlgo.generate_pastel()
+#	dirt_color_seco = MedAlgo.wet_dirt(dirt_color_prim)
+#	dirt_color_tert = MedAlgo.generate_water_color()
+	#
+	dirt_patch_color_set_data = MedAlgo.generate_offset_color_set(background_color, 10, 0.05)
 	
 	#DEBUG
 	#window_prim = Color(1,1,1)
@@ -134,6 +148,19 @@ func _ready():
 	#Now generate the foliage
 	field_map = RogueGen.InitializeFoliageSeeds(field_map,1,10)
 	field_map = RogueGen.AdvanceGenerationsFoliageSeeds(field_map,1,4)
+	
+	#Make an array for dirt tiles and stamp those down onto the field_map
+	var farm_plot = []
+	var farm_plot_x = 4 + randi()%3
+	var farm_plot_y = 4 + randi()%3
+	for i in range(farm_plot_x):
+		var temp_row = []
+		for j in range(farm_plot_y):
+			temp_row.append(401) #the code for dirt tiles
+		farm_plot.append(temp_row)
+	
+	field_map = RogueGen.StampSpaceOntoSpace(farm_plot, field_map, Vector2(30+randi()%6,15+randi()%3))
+			
 	
 	#field_map = RogueGen.AdvanceSingleGenerationFoliageSeeds(field_map,1)
 	
@@ -402,6 +429,33 @@ func _ready():
 				add_child(new_building_item)
 				new_building_item.setTile(303)
 				new_building_item.SetPrimColor(foliage_prim)
+			#FARM TILES
+			#dirt
+			if field_map[i][j] == 401:
+				var temp_tile = DirtTile.instance()
+				temp_tile.position.y = j * $TileMap.cell_size.y
+				temp_tile.position.x = i * $TileMap.cell_size.x
+				add_child(temp_tile)
+				#Choose a random dirt color from the set
+				var temp_col = dirt_patch_color_set_data["color_set"][randi()%dirt_patch_color_set_data["color_set"].size()]
+				temp_tile.SetPrimColor(temp_col)
+
+
+#			#DIRT
+#			temp_tile = DirtTile.instance()
+#			temp_tile.position = temp_global_coords
+#			add_child(temp_tile)
+#			map_tiles[temp_map_coords.y*map_width + temp_map_coords.x] = temp_tile
+#			pass
+
+
+#			var temp_farm_tile = FarmTile.instance()
+#			temp_farm_tile.position = Vector2(i*16, j*16)
+#			add_child(temp_farm_tile)
+#			temp_farm_tile.change_tile(8)
+#			temp_farm_tile.SetPrim(Color(1.0,1.0,0.0)); 
+
+
 
 #	#Background
 #	background_color = Color(randf(), randf(), randf())

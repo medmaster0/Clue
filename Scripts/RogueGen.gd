@@ -969,6 +969,7 @@ func RowDeckTop(botRow, midRow):
 # 3 - DOOR
 # 4 - KITCHEN FLOOR
 # 9 - WINDOW
+# OLD LEGEND>>>>>> INCOMPLETE
 #
 # Output:
 # 	a 2D indexed array [x][y] with tile data for the mansion (see legend)
@@ -1529,6 +1530,7 @@ func Copy2DArray(in_array):
 # 2 - FLOOR
 # 3 - DOOR
 # 4 - KITCHEN FLOOR
+# OLD LEGEND>>>>>> INCOMPLETE
 
 #Function to outline an existing building with walls and floors inside...
 # Accepts 2D map array as input
@@ -2106,7 +2108,7 @@ func PathAroundRoom(in_array, start_location, valid_tiles = [2,4]):
 ## Functions for placements
 ########
 ### There are two types of FURNITURE: Kitchen and Personal (specifies which type of floor they go over)
-# MAP Legend
+# MAIN MAP Legend
 # 0 - Empty Space
 # 1 - WALL
 # 2 - FLOOR
@@ -2124,6 +2126,17 @@ func PathAroundRoom(in_array, start_location, valid_tiles = [2,4]):
 # 104 - LEFT PRIVATE ROOM SET FURNITURE
 # 105 - MID PRIVATE ROOM SET FURNITURE
 # 106 - RIGHT PRIVATE ROOM SET FURNITURE
+
+# FOLIAGE PATTERNS
+#PATTERN 1
+# 301 - light foliage
+# 302 - medium foliage
+# 303 - heavy foliage
+
+# FARM PLOTS
+# 401 - ROUGH DIRT TILE
+# 402 - FARM TILE
+# 403 - WATER TILE???
 
 #This funciton takes an existing 2D mansion array and populates it with furniture
 func MansionFurnitureGen(in_array):
@@ -2699,7 +2712,6 @@ func AdvanceSingleGenerationFoliageSeeds(field_map, pattern_type = 1):
 			match(field_map[i][j]):
 				301:
 					#If any of the ajacent ones are blank, make them lvl1
-					print("found lvl1")
 					#NORTH
 					if j >= 1:
 						if field_map[i][j-1] == 0:
@@ -2724,7 +2736,6 @@ func AdvanceSingleGenerationFoliageSeeds(field_map, pattern_type = 1):
 					copy_map[i][j] = 302
 				302:
 					#If any of the ajacent ones are lvl1, make them lvl2
-					print("found lvl2")
 					#NORTH
 					if j >= 1:
 						if field_map[i][j-1] == 301:
@@ -2749,7 +2760,6 @@ func AdvanceSingleGenerationFoliageSeeds(field_map, pattern_type = 1):
 					copy_map[i][j] = 303
 				303:
 					#If any of the ajacent ones are lvl2, make them lvl3
-					print("found lvl3")
 					#NORTH
 					if j >= 1:
 						if field_map[i][j-1] == 302:

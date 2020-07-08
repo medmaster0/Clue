@@ -1,14 +1,18 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://DebugTests/FoliageTextureTest.gd" type="Script" id=1]
 [ext_resource path="res://Scenes/Item.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Scenes/BattleHuntItem.tscn" type="PackedScene" id=3]
-[ext_resource path="res://Tiles/blank.png" type="Texture" id=4]
+[ext_resource path="res://Scenes/Farming/FarmTile.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Scenes/Farming/DirtTile.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Tiles/blank.png" type="Texture" id=6]
 
 [node name="FoliageTextureTest" type="Node2D"]
 script = ExtResource( 1 )
 Item = ExtResource( 2 )
 BattleHuntItem = ExtResource( 3 )
+FarmTile = ExtResource( 4 )
+DirtTile = ExtResource( 5 )
 
 [node name="TileMap" type="TileMap" parent="."]
 cell_size = Vector2( 16, 16 )
@@ -16,5 +20,5 @@ format = 1
 
 [node name="DepthSprite" type="Sprite" parent="."]
 visible = false
-texture = ExtResource( 4 )
+texture = ExtResource( 6 )
 centered = false
