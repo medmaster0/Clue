@@ -2138,6 +2138,9 @@ func PathAroundRoom(in_array, start_location, valid_tiles = [2,4]):
 # 402 - FARM TILE
 # 403 - WATER TILE???
 
+# RESOURCE TILES
+# 501 - CURTAINS
+
 #This funciton takes an existing 2D mansion array and populates it with furniture
 func MansionFurnitureGen(in_array):
 	print("furnishing")
@@ -2248,6 +2251,36 @@ func MansionWindowGen(in_array, num_windws):
 		outside_walls.erase(temp_wall_coord) 
 		#Change That Wall to a Window
 		in_array[temp_wall_coord.x][temp_wall_coord.y] = 9
+		
+		
+	return(in_array)
+
+### Mansion Generate Functions THAT put resources
+
+#This function will apply curtained windows along outside walls
+func MansionResourceWindowGen(in_array, num_windws):
+	var outside_walls = IdentifyExposedWalls(in_array, true)
+	for i in range(num_windws):
+		#Pick a random wall
+		var temp_wall_coord = outside_walls[randi()%outside_walls.size()]
+		#Remove from list
+		outside_walls.erase(temp_wall_coord) 
+		#Change That Wall to a Window
+		in_array[temp_wall_coord.x][temp_wall_coord.y] = 501
+		
+		
+	return(in_array)
+
+#This function will apply a front door to the outside walls
+func MansionFrontDoorGen(in_array):
+	var outside_walls = IdentifyExposedWalls(in_array, true)
+	#Pick a random wall
+	var temp_wall_coord = outside_walls[randi()%outside_walls.size()]
+	#Remove from list
+	outside_walls.erase(temp_wall_coord) 
+	#Change That Wall to a Window
+	in_array[temp_wall_coord.x][temp_wall_coord.y] = 3
+		
 		
 	return(in_array)
 

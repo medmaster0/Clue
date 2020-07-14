@@ -65,6 +65,9 @@ var dirt_color_tert #water
 #
 var dirt_patch_color_set_data #will keep track of random colors for the dirt patch
 
+# Resources
+var curtains_prim
+
 ##Distance Shade  Sprites
 #Initialize Distance Shade Sprites
 #This is an array of sprites to give the distance depth effect
@@ -117,6 +120,8 @@ func _ready():
 	#
 	dirt_patch_color_set_data = MedAlgo.generate_offset_color_set(background_color, 10, 0.05)
 	
+	curtains_prim = Color(randf(), randf(), randf())
+	
 	#DEBUG
 	#window_prim = Color(1,1,1)
 	
@@ -143,6 +148,9 @@ func _ready():
 	#First make an empty map
 	var field_map = RogueGen.GenerateEmptySpaceArray(Vector2(num_x_layers,num_y_layers))
 	var building_map = RogueGen.GenerateMansion(Vector2(25,25))
+	building_map = RogueGen.MansionResourceWindowGen(building_map, 5)
+	building_map = RogueGen.MansionWindowGen(building_map,5)
+	building_map = RogueGen.MansionFrontDoorGen(building_map)
 	#field_map = RogueGen.MansionWindowGen(building_map,2)
 	field_map = RogueGen.StampSpaceOntoSpace(building_map, field_map, Vector2(2,2))
 	#Now generate the foliage
@@ -439,6 +447,27 @@ func _ready():
 				#Choose a random dirt color from the set
 				var temp_col = dirt_patch_color_set_data["color_set"][randi()%dirt_patch_color_set_data["color_set"].size()]
 				temp_tile.SetPrimColor(temp_col)
+				
+			#RESOURCE HARVEST OBJECTS
+			#CuRTAINS
+			if field_map[i][j] == 501:
+				#Make Window first
+				var new_building_item = Item.instance()
+				new_building_item.position.y =  j * $TileMap.cell_size.y
+				new_building_item.position.x =  i * $TileMap.cell_size.x
+				add_child(new_building_item)
+				new_building_item.setTile(108)
+				new_building_item.SetPrimColor(brick_color_prim)
+				new_building_item.SetSecoColor(brick_color_seco)
+				new_building_item.SetTertColor(window_prim)
+				#Make the curtains
+				new_building_item = Item.instance()
+				new_building_item.position.y =  j * $TileMap.cell_size.y
+				new_building_item.position.x =  i * $TileMap.cell_size.x
+				add_child(new_building_item)
+				new_building_item.setTile(404)
+				new_building_item.SetPrimColor(curtains_prim)
+
 
 
 #			#DIRT
