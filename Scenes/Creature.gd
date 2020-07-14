@@ -9,6 +9,7 @@ var step_timer = 0 #will help keep track of when we stepped
 var path = [] #A set of steps to follow in pathfinding (usually set outside)
 var last_position #a position vector, keeping track of what tile we came from (for positioning)
 var map_coords = Vector3(0,0,0) #the map coords of the creature....
+var cell_size = 16
 
 #ALCHEMY SPECIFIC STUFF  (kept for reference.....)
 #export (PackedScene) var MaterialSymbol #has to create it's own material for picking up
@@ -32,9 +33,19 @@ var fave_color = null; #the color the creature always likes going for
 #Dungeon Stuff - Every Creature has it's own dungeon it crawls through...
 var dungeon_map = null; #a pointer to the current dungeon creature is crawling through
 
-##GOD DAMN...
-## Stealth Mansion Stuff
+# Stealth Mansion Stuff
 
+#MMO Stuff
+var skills = [] #Skills are stored in an array... like so...
+#SKILLS LIST
+# 0 - PAINTING
+# 1 - CURTAIN_FIX
+# 2 - CANDLE_LIGHTING
+# 3 - DOOR_MANSHIP
+# 4 - HAIR_BRUSH
+# 5 - SWEEPING
+# 6 - DUSTING
+# 7 - PERFUMING
 
 func _ready():
 	# Called when the node is added to the scene for the first time.
@@ -56,6 +67,10 @@ func _ready():
 	
 	#Random step tick?
 	step_tick = rand_range(0.25,0.75)
+	
+	#Initialize skills to 0 
+	for i in range(8):
+		skills.append(0)
 	
 	pass
 
@@ -124,3 +139,7 @@ func _on_SelectButton_pressed():
 	#Displaying the crature
 	get_parent().DisplayCreature(self)
 	#pass creature data to parent scene's (Game's) CreatureDisplayFunction
+
+func moveCreature(in_map_coords):
+	map_coords = in_map_coords
+	position = Vector2(map_coords.x*cell_size, map_coords.y*cell_size)

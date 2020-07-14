@@ -15,6 +15,7 @@ export (PackedScene) var Item
 export (PackedScene) var BattleHuntItem
 export (PackedScene) var FarmTile
 export (PackedScene) var DirtTile
+export (PackedScene) var Creature
 
 # Declare member variables here. Examples:
 # var a = 2
@@ -85,8 +86,20 @@ var distanceShadeSprites = []
 var birdseyeLayers = []
 var balconyXZLayers = [] 
 
+################
+### 3-D Indexed ITEM arrays -> Really a 4-D list
+#######
+### Access: map_items[x_coord][y_coord][z-_coord] = {list of Item scenes}
+var map_items = [] #items that can be picked up...
+var map_buildings = [] #building items (no diff between top and bottom) -> Always under creature
+
 #Control Stuff
 var balcony_begin_position 
+
+#Main Player
+var main_player #the main creature
+#tiles that the player can't walk through (reference Mansion Gen MAIN MAP LIST)
+var blocked_tiles = [1,5,6,7,8,9,101,102,103,104,105,106,501] 
 
 
 # Called when the node enters the scene tree for the first time.
@@ -130,6 +143,36 @@ func _ready():
 	world_height = get_viewport().size.y
 	map_width = int($TileMap.world_to_map(Vector2(world_width,0)).x)
 	map_height = int($TileMap.world_to_map(Vector2(0,world_height)).y)
+	
+	#Initialize canvas layers for each of the floors
+	#BIRDSEYE
+	for temp_floor in building_layout:
+		var temp_canvas_layer = CanvasLayer.new()
+		birdseyeLayers.append(temp_canvas_layer)
+		add_child(temp_canvas_layer)
+	
+	#Initialize Item Arrays
+	#MAP ITEMS
+	for i in range(num_x_layers):
+		var x_list = []
+		for j in range(num_y_layers):
+			var y_list = []
+			for z in range(num_floors):
+				var z_list = []
+				y_list.append(z_list)
+			x_list.append(y_list)
+		map_items.append(x_list)
+	#BUILDINGS
+	for i in range(num_x_layers):
+		var x_list = []
+		for j in range(num_y_layers):
+			var y_list = []
+			for z in range(num_floors):
+				var z_list = []
+				y_list.append(z_list)
+			x_list.append(y_list)
+		map_buildings.append(x_list)
+	
 	
 	####### POSITION INITIALIZATION
 	balcony_begin_position = Vector2(30*($TileMap.cell_size.x),30*($TileMap.cell_size.y))
@@ -182,6 +225,7 @@ func _ready():
 				var new_building_item = Item.instance()
 				new_building_item.position.y = j * $TileMap.cell_size.y
 				new_building_item.position.x = i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				new_building_item.setTile(999)
 				new_building_item.SetPrimColor(background_color)
@@ -190,6 +234,7 @@ func _ready():
 				var new_building_item = Item.instance()
 				new_building_item.position.y = j * $TileMap.cell_size.y
 				new_building_item.position.x = i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				new_building_item.setTile(102)
 				new_building_item.SetPrimColor(brick_color_prim)
@@ -199,6 +244,7 @@ func _ready():
 				var new_building_item = Item.instance()
 				new_building_item.position.y = j * $TileMap.cell_size.y
 				new_building_item.position.x = i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				new_building_item.setTile(101)
 				new_building_item.SetPrimColor(basic_floor_color_prim)
@@ -207,6 +253,7 @@ func _ready():
 				var new_building_item = Item.instance()
 				new_building_item.position.y =  j * $TileMap.cell_size.y
 				new_building_item.position.x =  i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				new_building_item.setTile(103)
 				new_building_item.SetPrimColor(basic_door_color_prim)
@@ -215,6 +262,7 @@ func _ready():
 				var new_building_item = Item.instance()
 				new_building_item.position.y =  j * $TileMap.cell_size.y
 				new_building_item.position.x =  i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				new_building_item.setTile(107)
 				new_building_item.SetPrimColor(kitchen_floor_color_prim)
@@ -225,6 +273,7 @@ func _ready():
 				var new_building_item = Item.instance()
 				new_building_item.position.y =  j * $TileMap.cell_size.y
 				new_building_item.position.x =  i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				new_building_item.setTile(101)
 				new_building_item.SetPrimColor(basic_floor_color_prim)
@@ -233,6 +282,7 @@ func _ready():
 				new_building_item = BattleHuntItem.instance()
 				new_building_item.position.y =  j * $TileMap.cell_size.y
 				new_building_item.position.x =  i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				var furniture_items = [402, 403, 404, 405, 406, 410]
 				var choice = furniture_items[randi()%furniture_items.size()]
@@ -245,6 +295,7 @@ func _ready():
 				var new_building_item = Item.instance()
 				new_building_item.position.y =  j * $TileMap.cell_size.y
 				new_building_item.position.x =  i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				new_building_item.setTile(107)
 				new_building_item.SetPrimColor(kitchen_floor_color_prim)
@@ -253,6 +304,7 @@ func _ready():
 				new_building_item = BattleHuntItem.instance()
 				new_building_item.position.y =  j * $TileMap.cell_size.y
 				new_building_item.position.x =  i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				var furniture_items = [401, 407, 408, 409, 410]
 				var choice = furniture_items[randi()%furniture_items.size()]
@@ -264,6 +316,7 @@ func _ready():
 				var new_building_item = Item.instance()
 				new_building_item.position.y =  j * $TileMap.cell_size.y
 				new_building_item.position.x =  i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				new_building_item.setTile(108)
 				new_building_item.SetPrimColor(brick_color_prim)
@@ -277,6 +330,7 @@ func _ready():
 				var new_building_item = Item.instance()
 				new_building_item.position.y =  j * $TileMap.cell_size.y
 				new_building_item.position.x =  i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				new_building_item.setTile(107)
 				new_building_item.SetPrimColor(kitchen_floor_color_prim)
@@ -285,6 +339,7 @@ func _ready():
 				new_building_item = BattleHuntItem.instance()
 				new_building_item.position.y =  j * $TileMap.cell_size.y
 				new_building_item.position.x =  i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				var furniture_items = [409]
 				var choice = furniture_items[randi()%furniture_items.size()]
@@ -297,6 +352,7 @@ func _ready():
 				var new_building_item = Item.instance()
 				new_building_item.position.y =  j * $TileMap.cell_size.y
 				new_building_item.position.x =  i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				new_building_item.setTile(107)
 				new_building_item.SetPrimColor(kitchen_floor_color_prim)
@@ -305,6 +361,7 @@ func _ready():
 				new_building_item = BattleHuntItem.instance()
 				new_building_item.position.y =  j * $TileMap.cell_size.y
 				new_building_item.position.x =  i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				var furniture_items = [407]
 				var choice = furniture_items[randi()%furniture_items.size()]
@@ -317,6 +374,7 @@ func _ready():
 				var new_building_item = Item.instance()
 				new_building_item.position.y =  j * $TileMap.cell_size.y
 				new_building_item.position.x =  i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				new_building_item.setTile(107)
 				new_building_item.SetPrimColor(kitchen_floor_color_prim)
@@ -325,6 +383,7 @@ func _ready():
 				new_building_item = BattleHuntItem.instance()
 				new_building_item.position.y =  j * $TileMap.cell_size.y
 				new_building_item.position.x =  i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				var furniture_items = [408]
 				var choice = furniture_items[randi()%furniture_items.size()]
@@ -337,6 +396,7 @@ func _ready():
 				var new_building_item = Item.instance()
 				new_building_item.position.y =  j * $TileMap.cell_size.y
 				new_building_item.position.x =  i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				new_building_item.setTile(101)
 				new_building_item.SetPrimColor(basic_floor_color_prim)
@@ -345,6 +405,7 @@ func _ready():
 				new_building_item = BattleHuntItem.instance()
 				new_building_item.position.y =  j * $TileMap.cell_size.y
 				new_building_item.position.x =  i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				var furniture_items = [403]
 				var choice = furniture_items[randi()%furniture_items.size()]
@@ -357,6 +418,7 @@ func _ready():
 				var new_building_item = Item.instance()
 				new_building_item.position.y =  j * $TileMap.cell_size.y
 				new_building_item.position.x =  i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				new_building_item.setTile(101)
 				new_building_item.SetPrimColor(basic_floor_color_prim)
@@ -365,6 +427,7 @@ func _ready():
 				new_building_item = BattleHuntItem.instance()
 				new_building_item.position.y =  j * $TileMap.cell_size.y
 				new_building_item.position.x =  i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				var furniture_items = [402]
 				var choice = furniture_items[randi()%furniture_items.size()]
@@ -377,6 +440,7 @@ func _ready():
 				var new_building_item = Item.instance()
 				new_building_item.position.y =  j * $TileMap.cell_size.y
 				new_building_item.position.x =  i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				new_building_item.setTile(101)
 				new_building_item.SetPrimColor(basic_floor_color_prim)
@@ -385,6 +449,7 @@ func _ready():
 				new_building_item = BattleHuntItem.instance()
 				new_building_item.position.y =  j * $TileMap.cell_size.y
 				new_building_item.position.x =  i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				var furniture_items = [405]
 				var choice = furniture_items[randi()%furniture_items.size()]
@@ -397,6 +462,7 @@ func _ready():
 				var new_building_item = Item.instance()
 				new_building_item.position.y = j * $TileMap.cell_size.y
 				new_building_item.position.x = i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				new_building_item.setTile(999)
 				new_building_item.SetPrimColor(background_color)
@@ -404,6 +470,7 @@ func _ready():
 				new_building_item = Item.instance()
 				new_building_item.position.y = j * $TileMap.cell_size.y
 				new_building_item.position.x = i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				new_building_item.setTile(301)
 				new_building_item.SetPrimColor(foliage_prim)
@@ -412,6 +479,7 @@ func _ready():
 				var new_building_item = Item.instance()
 				new_building_item.position.y = j * $TileMap.cell_size.y
 				new_building_item.position.x = i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				new_building_item.setTile(999)
 				new_building_item.SetPrimColor(background_color)
@@ -419,6 +487,7 @@ func _ready():
 				new_building_item = Item.instance()
 				new_building_item.position.y = j * $TileMap.cell_size.y
 				new_building_item.position.x = i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				new_building_item.setTile(302)
 				new_building_item.SetPrimColor(foliage_prim)
@@ -427,6 +496,7 @@ func _ready():
 				var new_building_item = Item.instance()
 				new_building_item.position.y = j * $TileMap.cell_size.y
 				new_building_item.position.x = i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				new_building_item.setTile(999)
 				new_building_item.SetPrimColor(background_color)
@@ -434,6 +504,7 @@ func _ready():
 				new_building_item = Item.instance()
 				new_building_item.position.y = j * $TileMap.cell_size.y
 				new_building_item.position.x = i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				new_building_item.setTile(303)
 				new_building_item.SetPrimColor(foliage_prim)
@@ -443,6 +514,7 @@ func _ready():
 				var temp_tile = DirtTile.instance()
 				temp_tile.position.y = j * $TileMap.cell_size.y
 				temp_tile.position.x = i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(temp_tile) #add to global item matrix
 				add_child(temp_tile)
 				#Choose a random dirt color from the set
 				var temp_col = dirt_patch_color_set_data["color_set"][randi()%dirt_patch_color_set_data["color_set"].size()]
@@ -455,6 +527,7 @@ func _ready():
 				var new_building_item = Item.instance()
 				new_building_item.position.y =  j * $TileMap.cell_size.y
 				new_building_item.position.x =  i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				new_building_item.setTile(108)
 				new_building_item.SetPrimColor(brick_color_prim)
@@ -464,11 +537,16 @@ func _ready():
 				new_building_item = Item.instance()
 				new_building_item.position.y =  j * $TileMap.cell_size.y
 				new_building_item.position.x =  i * $TileMap.cell_size.x
+				map_buildings[i][j][0].append(new_building_item) #add to global item matrix
 				add_child(new_building_item)
 				new_building_item.setTile(404)
 				new_building_item.SetPrimColor(curtains_prim)
 
-
+	#Now We can build out the creature(s)
+	main_player = Creature.instance()
+	#main_player.position = Vector2(2 * $TileMap.cell_size.x, 2 * $TileMap.cell_size.y)
+	add_child(main_player)
+	main_player.moveCreature(Vector3(4,4,0))
 
 #			#DIRT
 #			temp_tile = DirtTile.instance()
@@ -754,6 +832,27 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
+
+var move_timer  = 0#A timer that keeps track of when last movement happened
+func _input(event):
+	
+	var next_step = Vector3(0,0,0)
+	
+	#Handle movement
+	if event.is_action_pressed("ui_up"):
+		#record the next step...
+		next_step = main_player.map_coords + Vector3(0,-1,0)
+	if event.is_action_pressed("ui_down"):
+		#record the next step...
+		next_step = main_player.map_coords + Vector3(0,1,0)
+	if event.is_action_pressed("ui_left"):
+		#record the next step...
+		next_step = main_player.map_coords + Vector3(-1,0,0)
+	if event.is_action_pressed("ui_right"):
+		#record the next step...
+		next_step = main_player.map_coords + Vector3(1,0,0)
+
+	#Check if the next tile is blocked....
 
 #func _input(event):
 #	#If in BIRDSEYE MODE
