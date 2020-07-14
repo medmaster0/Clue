@@ -6,7 +6,7 @@ extends Node
 # 0 - cloud
 # 2 - empty
 func GenerateClouds(map_size):
-	randomize()
+	#randomize()
 	
 #	#INitialize!
 #	var map = []
@@ -63,7 +63,7 @@ func GenerateClouds(map_size):
 # map : individual pixel data in a 2D array, XY-accessed
 # rooms : a list of Rect2 
 func GenerateVault_v1(map_size):
-	randomize()
+	#randomize()
 	
 	var map = [] #the main map (2D array) that we will return map[x][y]
 	var num_rooms = 9 #How many rooms we have
@@ -242,7 +242,7 @@ func v_path(y1, y2, x, map):
 	
 #Generate Bank Layout
 func GenerateBank(map_size):
-	randomize()
+	#randomize()
 	
 	var map = [] #the main map (2D array) that we will return map[x][y]
 	var num_rooms = 9 #How many rooms we have
@@ -306,7 +306,7 @@ func GenerateBank(map_size):
 # Access maze[row][col]
 func GenerateCorridorMaze(num_rows, num_cols, num_inner_walls):
 	
-	randomize()
+	#randomize()
 	
 	var maze = [] #2D Array, with maze tiles to return
 	#Intialize array with alternating rows of 0 and 1

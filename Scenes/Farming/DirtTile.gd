@@ -20,7 +20,7 @@ var primColor
 func _ready():
 	# Called when the node is added to the scene for the first time.
 	# Initialization here
-	randomize()
+	#randomize()
 	
 	#Generate and change to new dirt pallete colors
 	dirt_colors[0] = MedAlgo.generate_dirt_color()

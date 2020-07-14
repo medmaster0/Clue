@@ -13,7 +13,7 @@ var water_color #the color of the water or plants (tert)
 func _ready():
 	# Called when the node is added to the scene for the first time.
 	# Initialization here
-	randomize()
+	#randomize()
 	
 	tile_index = 0
 	

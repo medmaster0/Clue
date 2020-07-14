@@ -49,6 +49,12 @@ extends Node2D
 # 302 - Foliage Num1 Lvl2
 # 303 - Foliage Num1 Lvl3
 
+## RESOURCES (HARVEST OBJECTS)
+# 401 - CURTAINS LVL 0
+# 402 - CURTAINS LVL 1
+# 403 - CURTAINS LVL 2
+# 404 - CURTAINS LVL 3
+
 #LOAD UP ALL THE SPRITES>>>>
 
 #Resources Load
@@ -128,6 +134,12 @@ var folliage_num1_lvl1Prim = preload("res://Tiles//scenery//foliage//pattern_num
 var folliage_num1_lvl2Prim = preload("res://Tiles//scenery//foliage//pattern_num1_lvl2.png")
 var folliage_num1_lvl3Prim = preload("res://Tiles//scenery//foliage//pattern_num1_lvl3.png")
 
+# Resources - Harvest Objects
+var curtains_lvl0Prim = preload("res://Tiles/crafting_lonely/harvet_objects/curtains_lvl0_Prim.png")
+var curtains_lvl1Prim = preload("res://Tiles/crafting_lonely/harvet_objects/curtains_lvl1_Prim.png")
+var curtains_lvl2Prim = preload("res://Tiles/crafting_lonely/harvet_objects/curtains_lvl2_Prim.png")
+var curtains_lvl3Prim = preload("res://Tiles/crafting_lonely/harvet_objects/curtains_lvl3_Prim.png")
+
 #Class Variables
 var primColor
 var secoColor
@@ -137,7 +149,7 @@ var item_name #a string to be shown when selected
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	randomize() 
+	#randomize() 
 	
 	#Pick colors...
 	primColor = Color(randf(), randf(), randf())
@@ -221,6 +233,7 @@ func setTile(in_tile_index):
 			$Prim.texture = bagPrim
 			$Seco.texture = bagSeco
 			$Tert.texture = null
+		
 		######BUILDING SHIT
 		101:
 			#FLOOR
@@ -399,6 +412,34 @@ func setTile(in_tile_index):
 			$Prim.texture = folliage_num1_lvl3Prim
 			$Seco.texture = null
 			$Tert.texture = null
+		
+		## Resources - Harvest Objects
+		401:
+			# 401 - CURTAINS LVL 0
+			item_name = "curtains"
+			$Prim.texture = curtains_lvl0Prim
+			$Seco.texture = null
+			$Tert.texture = null
+		402:
+			# 401 - CURTAINS LVL 1
+			item_name = "curtains"
+			$Prim.texture = curtains_lvl1Prim
+			$Seco.texture = null
+			$Tert.texture = null
+		403:
+			# 401 - CURTAINS LVL 2
+			item_name = "curtains"
+			$Prim.texture = curtains_lvl2Prim
+			$Seco.texture = null
+			$Tert.texture = null
+		404:
+			# 401 - CURTAINS LVL 3
+			item_name = "curtains"
+			$Prim.texture = curtains_lvl3Prim
+			$Seco.texture = null
+			$Tert.texture = null
+		
+		
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

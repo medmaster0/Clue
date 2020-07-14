@@ -34,6 +34,7 @@ var num_enemies = 5
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	randomize()
+	#seed(7)
 	
 	mansion = RogueGen.GenerateMansion(Vector2(30,29))
 	

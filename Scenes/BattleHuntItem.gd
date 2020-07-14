@@ -142,6 +142,11 @@ extends Node2D
 # 409 - LEFT CHAIR
 # 410 - LAMP
 
+# GATHERED RESOURCES
+# 501 - STITCH
+
+# RESOURCES TOOLS
+# 601 - SCISSORS
 
 #LOAD UP ALL THE SPRITES!!!
 
@@ -556,6 +561,15 @@ var leftChairSecoItem = preload("res://Tiles//scenery//leftChairSeco.png")
 
 var lampPrimItem = preload("res://Tiles//scenery//lampPrim.png")
 var lampSecoItem = preload("res://Tiles//scenery//lampSeco.png")
+
+### Resources to be gathered
+
+var stitchPrim = preload("res://Tiles/crafting_lonely/gathered_resources/stitchPrim.png")
+
+### Tools for gathering
+
+var scissorsPrim = preload("res://Tiles/crafting_lonely/tools/scissorsPrim.png")
+var scissorsSeco = preload("res://Tiles/crafting_lonely/tools/scissorsSeco.png")
 
 #Class Variables
 var primColor
@@ -2443,6 +2457,41 @@ func setTile(in_tile_index):
 			quadColor = Color(1,1,1)
 			quinColor = Color(1,1,1)
 			sextColor = Color(1,1,1)
+			
+		#GATHERABLE RESOURCES
+		501:
+			# STITCH
+			item_name = "stitch"
+			$Prim.texture = stitchPrim
+			$Seco.texture = null
+			$Tert.texture = null
+			$Quad.texture = null
+			$Quin.texture = null
+			$Sext.texture = null
+			primColor = Color(randf(), randf(), randf())
+			secoColor = Color(1,1,1)
+			tertColor = Color(1,1,1)
+			quadColor = Color(1,1,1)
+			quinColor = Color(1,1,1)
+			sextColor = Color(1,1,1)
+
+		#TOOLS
+		601:
+			# SCISSORS
+			item_name = "scissors"
+			$Prim.texture = scissorsPrim
+			$Seco.texture = scissorsSeco
+			$Tert.texture = null
+			$Quad.texture = null
+			$Quin.texture = null
+			$Sext.texture = null
+			primColor = Color(randf(), randf(), randf())
+			secoColor = MedAlgo.generate_pastel()
+			tertColor = Color(1,1,1)
+			quadColor = Color(1,1,1)
+			quinColor = Color(1,1,1)
+			sextColor = Color(1,1,1)
+
 
 	#Update Colors...
 	$Prim.modulate = primColor
