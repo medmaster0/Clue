@@ -860,6 +860,9 @@ func _input(event):
 		if !(next_index in blocked_tiles):
 			main_player.moveCreature(next_step)
 		
+	if event.is_action_pressed("mmo_send_map"):
+		print("sending map")
+
 
 #func _input(event):
 #	#If in BIRDSEYE MODE
