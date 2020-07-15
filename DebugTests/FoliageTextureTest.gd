@@ -29,6 +29,7 @@ enum VIEW_MODE{
 
 #MEMBER VARIABLES
 var building_layout = [] #The 3D tile layout of the building
+var field_map = [] #A tile layout of the level (from RogueGen.GenerateMansion Main Map)
 # ACCESS IS: building_layout[z_floor][x][y]
 var num_floors = 20
 var num_x_layers = 50
@@ -189,7 +190,7 @@ func _ready():
 
 	#Generate a field of foliage... It will go around the building
 	#First make an empty map
-	var field_map = RogueGen.GenerateEmptySpaceArray(Vector2(num_x_layers,num_y_layers))
+	field_map = RogueGen.GenerateEmptySpaceArray(Vector2(num_x_layers,num_y_layers))
 	var building_map = RogueGen.GenerateMansion(Vector2(25,25))
 	building_map = RogueGen.MansionResourceWindowGen(building_map, 5)
 	building_map = RogueGen.MansionWindowGen(building_map,5)
@@ -852,7 +853,13 @@ func _input(event):
 		#record the next step...
 		next_step = main_player.map_coords + Vector3(1,0,0)
 
-	#Check if the next tile is blocked....
+	#Bounds check
+	if next_step.x > 0 and next_step.y > 0 and next_step.x < num_x_layers and next_step.y < num_y_layers: 
+		#Check if next tile is blocked
+		var next_index = field_map[next_step.x][next_step.y]
+		if !(next_index in blocked_tiles):
+			main_player.moveCreature(next_step)
+		
 
 #func _input(event):
 #	#If in BIRDSEYE MODE
