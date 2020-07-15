@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://DebugTests/MMO_Test1.gd" type="Script" id=1]
 [ext_resource path="res://Scenes/Item.tscn" type="PackedScene" id=2]
@@ -7,6 +7,8 @@
 [ext_resource path="res://Scenes/Farming/DirtTile.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Scenes/Creature.tscn" type="PackedScene" id=6]
 [ext_resource path="res://Tiles/blank.png" type="Texture" id=7]
+[ext_resource path="res://InterfaceWindows/CreatureDisplay.tscn" type="PackedScene" id=8]
+[ext_resource path="res://InterfaceWindows/ItemDisplay.tscn" type="PackedScene" id=9]
 
 [node name="MMO_Test1" type="Node2D"]
 script = ExtResource( 1 )
@@ -24,3 +26,11 @@ format = 1
 visible = false
 texture = ExtResource( 7 )
 centered = false
+
+[node name="HUDLayer" type="CanvasLayer" parent="."]
+
+[node name="CreatureDisplay" parent="HUDLayer" instance=ExtResource( 8 )]
+visible = false
+
+[node name="ItemDisplay" parent="HUDLayer" instance=ExtResource( 9 )]
+visible = false

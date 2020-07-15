@@ -66,8 +66,7 @@ var dirt_color_seco #wet
 var dirt_color_tert #water
 #
 var dirt_patch_color_set_data #will keep track of random colors for the dirt patch
-
-# Resources
+#
 var curtains_prim
 
 ##Distance Shade  Sprites
@@ -102,6 +101,8 @@ var main_player #the main creature
 #tiles that the player can't walk through (reference Mansion Gen MAIN MAP LIST)
 var blocked_tiles = [1,5,6,7,8,9,101,102,103,104,105,106,501] 
 
+#Display stuff
+var selected_creature #which creature is picked to look at
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -144,6 +145,10 @@ func _ready():
 	world_height = get_viewport().size.y
 	map_width = int($TileMap.world_to_map(Vector2(world_width,0)).x)
 	map_height = int($TileMap.world_to_map(Vector2(0,world_height)).y)
+	
+	#Position Display Windows
+	$HUDLayer/CreatureDisplay.position.y = world_height - 8*16
+	$HUDLayer/ItemDisplay.position.y = world_height - 8*16
 	
 	#Initialize canvas layers for each of the floors
 	#BIRDSEYE
@@ -963,10 +968,35 @@ func _input(event):
 #
 #
 	
+
+#Function that displays and populates the Creature Status Window
+#Called by individual creature's scenes when they are selected
+#Also handles the closing/deselecting? of other windows...
+func DisplayCreature(cre):
+	#Turn on window
+	$HUDLayer/CreatureDisplay.visible = true
 	
+	#Turn off other windows
+	$HUDLayer/ItemDisplay.visible = false
 	
+	#Populate the Window with passed creature data
+	$HUDLayer/CreatureDisplay.setDisplayInfo(cre)
 	
+	#Update selected creature...
+	selected_creature = cre
+
+#Function that displays and populate the Item Display Window
+#Called by individual item scenes when they are pressed
+#also handles the closing/deselecting of other windows
+func DisplayItem(item):
+	#Turn on window
+	$HUDLayer/ItemDisplay.visible = true
 	
+	#Turn off other windows
+	$HUDLayer/CreatureDisplay.visible = false
+	
+	#Populate the window with the passed item data
+	$HUDLayer/ItemDisplay.setDisplayInfo(item)
 
 
 
