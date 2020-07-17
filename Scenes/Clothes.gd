@@ -185,7 +185,7 @@ func set_tile_index(index):
 			get_child(index).find_node("Tert").modulate = tertColor
 			get_child(index).visible = true
 		21:
-			#Witch Doc... No need to set colors
+			#Clown... No need to set colors
 			get_child(index).visible = true
 			primColor = Color(1,1,1) #Don't change the color at all
 
@@ -212,3 +212,30 @@ func copy_clothes(in_clothes):
 	if in_clothes.get_child(tile_index).find_node("Quad") != null:
 		get_child(tile_index).find_node("Quad").modulate = in_clothes.quadColor
 		quadColor = in_clothes.quadColor
+
+#Functions that will return the colors of the clothes
+#Returns it as a list (for easier  processing)
+#If null, the returned color will be (9999,9999,9999)
+func dumpPrimColor():
+	if primColor != null:
+		return([primColor.r, primColor.g, primColor.b])
+	else:
+		return([9999,9999,9999])
+
+func dumpSecoColor():
+	if secoColor != null:
+		return([secoColor.r, secoColor.g, secoColor.b])
+	else:
+		return([9999,9999,9999])
+
+func dumpTertColor():
+	if tertColor != null:
+		return([tertColor.r, tertColor.g, tertColor.b])
+	else:
+		return([9999,9999,9999])
+
+func dumpQuadColor():
+	if quadColor != null:
+		return([quadColor.r, quadColor.g, quadColor.b])
+	else:
+		return([9999,9999,9999])

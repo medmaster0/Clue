@@ -143,3 +143,10 @@ func _on_SelectButton_pressed():
 func moveCreature(in_map_coords):
 	map_coords = in_map_coords
 	position = Vector2(map_coords.x*cell_size, map_coords.y*cell_size)
+
+#Function that will return the colors of the creature
+#Returns it as a list (for easier  processing)
+#If null, the returned color will be (9999,9999,9999)
+func dumpPrimColor():
+	return([primColor.r, primColor.g, primColor.b])
+

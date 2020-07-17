@@ -104,6 +104,13 @@ var blocked_tiles = [1,5,6,7,8,9,101,102,103,104,105,106,501]
 #Display stuff
 var selected_creature #which creature is picked to look at
 
+#MMO STUFF
+
+#NETWORKING STUFF (CLIENT)
+var client #the object that will handle network comms with server
+var wrapped_client #more specialized to handle the individual bytes
+var connected = false #if we are connected to server or not
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	
@@ -553,6 +560,10 @@ func _ready():
 	#main_player.position = Vector2(2 * $TileMap.cell_size.x, 2 * $TileMap.cell_size.y)
 	add_child(main_player)
 	main_player.moveCreature(Vector3(4,4,0))
+	
+	#Networking stuff....
+	client = StreamPeerTCP.new()
+	client.set_no_delay(true)
 
 #			#DIRT
 #			temp_tile = DirtTile.instance()
@@ -866,8 +877,84 @@ func _input(event):
 			main_player.moveCreature(next_step)
 		
 	if event.is_action_pressed("mmo_send_map"):
-		print("sending map")
+		if connected == true:
+			print("sending map")
+			send_msg_server("send")
+	
+	if event.is_action_pressed("mmo_make_connection"):
+		if connected == false: 
+			print("making connection")
+			set_process(true) #We'll now start calling the _process fucntion every frame
+			var ip = "localhost"
+			var port = 5555
+			var connect = client.connect_to_host(ip, port)
+			#Check if connection was successful
+			if client.is_connected_to_host():
+				print("connected")
+				#We are connected
+				connected = true
+				wrapped_client = PacketPeerStream.new()
+				wrapped_client.set_stream_peer(client)
+				#Upon initial connection completion, send full player profile
+				#STANDARD REGISTER PROFILE ROUTINE
+				send_msg_server("uno")
+				send_msg_server("dos")
+				send_msg_server("tres") #for some reason, the first msgs fall off?
+				## Does this only happen when we first connect/ call set_stream_peer?
+				send_msg_server("REGISTER") #Tell server to make a blank profile for itself
+				send_msg_server("CRE_NAME<" + main_player.creature_name + ">END_CRE_NAME") #enter the name
+				send_msg_server("CRE_PRIM<"+str(main_player.dumpPrimColor()[0]) +"," + str(main_player.dumpPrimColor()[1]) +"," +str(main_player.dumpPrimColor()[2]) +">END_CRE_PRIM"  )
+				send_msg_server("CLOTHES_INDEX<" + str(main_player.find_node("Clothes").tile_index) + ">END_CLOTHES_INDEX")
+				send_msg_server("CLOTHES_PRIM<"+str(main_player.find_node("Clothes").dumpPrimColor()[0]) +"," + \
+					str(main_player.find_node("Clothes").dumpPrimColor()[1]) +"," +str(main_player.find_node("Clothes").dumpPrimColor()[2]) +">END_CLOTHES_PRIM"  )
+				send_msg_server("CLOTHES_SECO<"+str(main_player.find_node("Clothes").dumpSecoColor()[0]) +"," + \
+					str(main_player.find_node("Clothes").dumpSecoColor()[1]) +"," +str(main_player.find_node("Clothes").dumpSecoColor()[2]) +">END_CLOTHES_SECO"  )
+				send_msg_server("CLOTHES_TERT<"+str(main_player.find_node("Clothes").dumpTertColor()[0]) +"," + \
+					str(main_player.find_node("Clothes").dumpTertColor()[1]) +"," +str(main_player.find_node("Clothes").dumpTertColor()[2]) +">END_CLOTHES_TERT"  )
+				send_msg_server("CLOTHES_QUAD<"+str(main_player.find_node("Clothes").dumpQuadColor()[0]) +"," + \
+					str(main_player.find_node("Clothes").dumpQuadColor()[1]) +"," +str(main_player.find_node("Clothes").dumpQuadColor()[2]) +">END_CLOTHES_QUAD"  )
 
+
+
+#Happens every cycle
+#Mainly Network stuff
+func _process(delta):
+	if connected == true:
+		poll_server()
+
+
+func poll_server():
+	
+	while client.get_available_bytes() > 0:
+		print("we poll stream")
+		var msg = client.get_string(client.get_available_bytes())
+		if msg == null:
+			print("nothing")
+			continue
+		print("Recieved msg: " + str(msg))
+#	while wrapped_client.get_available_packet_count() > 0:
+#		print("we poll")
+#		var msg = wrapped_client.get_var()
+#		var error = wrapped_client.get_packet_error()
+#		if error != 0:
+#			print("Error on packet get: %s" % error)
+#		if msg == null:
+#			print("nothing")
+#			continue;
+#		print("Received msg: " + str(msg))
+	
+	
+
+#Function that will send a message to the server
+var debug_count = 1
+func send_msg_server(msg):
+	print("sending")
+	wrapped_client.put_var(msg)
+	debug_count = debug_count + 1
+	var error = wrapped_client.get_packet_error()
+	if error != 0:
+		print(error)
+	
 
 #func _input(event):
 #	#If in BIRDSEYE MODE
