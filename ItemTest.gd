@@ -9,6 +9,7 @@ export (PackedScene) var MajorArcWeapon
 export (PackedScene) var Item
 export (PackedScene) var BattleHuntItem
 export (PackedScene) var Creature
+export (PackedScene) var NewCre
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -35,6 +36,12 @@ func _ready():
 		temp_item.position = Vector2(randi()%int(get_viewport().size.x), randi()%int(get_viewport().size.y))
 		add_child(temp_item)
 		temp_item.setTile(404)
+	
+	for i in range(300):
+		var temp_cre = NewCre.instance()
+		temp_cre.position = Vector2(randi()%int(get_viewport().size.x), randi()%int(get_viewport().size.y))
+		add_child(temp_cre)
+		#temp_cre.setTile(0)
 
 #	var temp_item = Item.instance()
 #	temp_item.position = Vector2(16,16)

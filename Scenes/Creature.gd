@@ -2,7 +2,6 @@ extends Node2D
 
 onready var map = get_parent().find_node("TileMap")
 
-
 #Movement stuff
 var step_tick = 0.5 #time period for each step
 var step_timer = 0 #will help keep track of when we stepped

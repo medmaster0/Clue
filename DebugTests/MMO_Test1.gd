@@ -932,6 +932,11 @@ func poll_server():
 			print("nothing")
 			continue
 		print("Recieved msg: " + str(msg))
+		
+		#PROCESS MESSAGE HERE
+		
+		
+		
 #	while wrapped_client.get_available_packet_count() > 0:
 #		print("we poll")
 #		var msg = wrapped_client.get_var()
