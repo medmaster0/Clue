@@ -29,8 +29,11 @@ enum VIEW_MODE{
 
 #MEMBER VARIABLES
 var building_layout = [] #The 3D tile layout of the building
+# ACCESS IS: building_layout[z_floor][x][y] (when we were using balcon view)
 var field_map = [] #A tile layout of the level (from RogueGen.GenerateMansion Main Map)
-# ACCESS IS: building_layout[z_floor][x][y]
+# ACCESS SHOULD BE: field_map[z_floor][x][y]
+#Currently its not like this!! ^^^^^^
+# it's actually a 2D array with access field_map[x][y] 
 var num_floors = 20
 var num_x_layers = 50
 var num_y_layers = 30
@@ -913,6 +916,8 @@ func _input(event):
 					str(main_player.find_node("Clothes").dumpTertColor()[1]) +"," +str(main_player.find_node("Clothes").dumpTertColor()[2]) +">END_CLOTHES_TERT"  )
 				send_msg_server("CLOTHES_QUAD<"+str(main_player.find_node("Clothes").dumpQuadColor()[0]) +"," + \
 					str(main_player.find_node("Clothes").dumpQuadColor()[1]) +"," +str(main_player.find_node("Clothes").dumpQuadColor()[2]) +">END_CLOTHES_QUAD"  )
+				send_msg_server("CRE_POS<"+str(main_player.map_coords.x) +"," + \
+					str(main_player.map_coords.y) +"," +str(main_player.map_coords.z) +">END_CRE_POS"  )
 
 
 
@@ -935,8 +940,11 @@ func poll_server():
 		
 		#PROCESS MESSAGE HERE
 		
-		
-		
+
+func transmit_world_data():
+	print("sending world data over tcp...")
+
+
 #	while wrapped_client.get_available_packet_count() > 0:
 #		print("we poll")
 #		var msg = wrapped_client.get_var()
