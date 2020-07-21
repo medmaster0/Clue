@@ -1554,7 +1554,7 @@ func OutlineBuilding(in_array):
 				0:
 					#EMPTY TILE
 					var z = 1
-				1,9:
+				1,3,9,501: #these are tiles that are conisdered outside "walls"
 					#WALL TILE
 					#Then we can check each other its neighbors it they are empty space
 					var isTouchingEmpty = false
