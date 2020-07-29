@@ -64,10 +64,6 @@ var window_prim
 var foliage_prim
 var foliage_seco
 #
-var dirt_color_prim #dry
-var dirt_color_seco #wet
-var dirt_color_tert #water
-#
 var dirt_patch_color_set_data #will keep track of random colors for the dirt patch
 #
 var curtains_prim
@@ -914,6 +910,13 @@ func _input(event):
 		if connected == true:
 			print("sending map")
 			send_msg_server("NEW_MAP<" + str(num_x_layers) + "," + str(num_y_layers) + "," + str(num_floors) + ">END_NEW_MAP" )
+			transmit_world_data()
+	
+	if event.is_action_pressed("mmo_send_tile_data"):
+		transmit_one_tile()
+	
+	if event.is_action_pressed("mmo_send_debug_info"):
+		send_msg_server("PRINT_BUFFER")
 	
 	if event.is_action_pressed("mmo_make_connection"):
 		if connected == false: 
@@ -1001,7 +1004,21 @@ func poll_server():
 
 func transmit_world_data():
 	print("sending world data over tcp...")
+	#Sending tile indices
+	for k in range(field_map.size()): #floors
+		for i in range(field_map[0].size()): #x dim
+			for j in range(field_map[0][0].size()):
+				var read_index = field_map[k][i][j]
+				send_msg_server("PUT_TILE_DATA<"+str(i)+","+str(j)+","+str(k)+","+str(read_index)+">END_PUT_TILE_DATA")
+				
+	#Sending World colors....
+	
+	#Flush Buffer when over...
+	send_msg_server("FLUSH_BUFFER")
 
+#PRetty much for debug
+func transmit_one_tile():
+	send_msg_server("PUT_TILE_DATA<1,1,1,33>END_PUT_TILE_DATA")
 
 #	while wrapped_client.get_available_packet_count() > 0:
 #		print("we poll")

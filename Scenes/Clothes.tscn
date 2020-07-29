@@ -381,6 +381,7 @@ centered = false
 offset = Vector2( -8, -16 )
 
 [node name="WitchDoctor" type="Node2D" parent="."]
+editor/display_folded = true
 visible = false
 z_index = 1
 
@@ -391,6 +392,7 @@ centered = false
 offset = Vector2( -8, -8 )
 
 [node name="Welder" type="Node2D" parent="."]
+editor/display_folded = true
 visible = false
 z_index = 1
 
@@ -410,6 +412,7 @@ centered = false
 offset = Vector2( 0, -8 )
 
 [node name="Clown" type="Node2D" parent="."]
+editor/display_folded = true
 visible = false
 
 [node name="Prim" type="Sprite" parent="Clown"]
