@@ -25,23 +25,23 @@ func _ready():
 #		temp_weapon.position = Vector2(randi()%int(get_viewport().size.x), randi()%int(get_viewport().size.y))
 #		add_child(temp_weapon)
 #
-	for i in range(300):
-		var temp_item = BattleHuntItem.instance()
-		temp_item.position = Vector2(randi()%int(get_viewport().size.x), randi()%int(get_viewport().size.y))
-		add_child(temp_item)
-		temp_item.setTile(601)
+#	for i in range(300):
+#		var temp_item = BattleHuntItem.instance()
+#		temp_item.position = Vector2(randi()%int(get_viewport().size.x), randi()%int(get_viewport().size.y))
+#		add_child(temp_item)
+#		temp_item.setTile(601)
 	
-	for i in range(300):
-		var temp_item = Item.instance()
-		temp_item.position = Vector2(randi()%int(get_viewport().size.x), randi()%int(get_viewport().size.y))
-		add_child(temp_item)
-		temp_item.setTile(404)
+#	for i in range(300):
+#		var temp_item = Item.instance()
+#		temp_item.position = Vector2(randi()%int(get_viewport().size.x), randi()%int(get_viewport().size.y))
+#		add_child(temp_item)
+#		temp_item.setTile(404)
 	
-	for i in range(300):
-		var temp_cre = NewCre.instance()
-		temp_cre.position = Vector2(randi()%int(get_viewport().size.x), randi()%int(get_viewport().size.y))
-		add_child(temp_cre)
-		#temp_cre.setTile(0)
+#	for i in range(300):
+#		var temp_cre = NewCre.instance()
+#		temp_cre.position = Vector2(randi()%int(get_viewport().size.x), randi()%int(get_viewport().size.y))
+#		add_child(temp_cre)
+#		#temp_cre.setTile(0)
 
 #	var temp_item = Item.instance()
 #	temp_item.position = Vector2(16,16)

@@ -1012,7 +1012,26 @@ func transmit_world_data():
 				send_msg_server("PUT_TILE_DATA<"+str(i)+","+str(j)+","+str(k)+","+str(read_index)+">END_PUT_TILE_DATA")
 				
 	#Sending World colors....
-	
+	send_msg_server("PUT_COLOR_DATA<0,"+str(brick_color_prim.r)+","+str(brick_color_prim.g)+","+str(brick_color_prim.b)+">END_PUT_COLOR_DATA")
+	send_msg_server("PUT_COLOR_DATA<1,"+str(brick_color_seco.r)+","+str(brick_color_seco.g)+","+str(brick_color_seco.b)+">END_PUT_COLOR_DATA")
+	send_msg_server("PUT_COLOR_DATA<2,"+str(basic_floor_color_prim.r)+","+str(basic_floor_color_prim.g)+","+str(basic_floor_color_prim.b)+">END_PUT_COLOR_DATA")
+	send_msg_server("PUT_COLOR_DATA<3,"+str(basic_floor_color_seco.r)+","+str(basic_floor_color_seco.g)+","+str(basic_floor_color_seco.b)+">END_PUT_COLOR_DATA")
+	send_msg_server("PUT_COLOR_DATA<4,"+str(basic_door_color_prim.r)+","+str(basic_door_color_prim.g)+","+str(basic_door_color_prim.b)+">END_PUT_COLOR_DATA")
+	send_msg_server("PUT_COLOR_DATA<5,"+str(basic_door_color_seco.r)+","+str(basic_door_color_seco.g)+","+str(basic_door_color_seco.b)+">END_PUT_COLOR_DATA")
+	send_msg_server("PUT_COLOR_DATA<6,"+str(kitchen_floor_color_prim.r)+","+str(kitchen_floor_color_prim.g)+","+str(kitchen_floor_color_prim.b)+">END_PUT_COLOR_DATA")
+	send_msg_server("PUT_COLOR_DATA<7,"+str(kitchen_floor_color_seco.r)+","+str(kitchen_floor_color_seco.g)+","+str(kitchen_floor_color_seco.b)+">END_PUT_COLOR_DATA")
+	send_msg_server("PUT_COLOR_DATA<8,"+str(personal_room_furniture_prim.r)+","+str(personal_room_furniture_prim.g)+","+str(personal_room_furniture_prim.b)+">END_PUT_COLOR_DATA")
+	send_msg_server("PUT_COLOR_DATA<9,"+str(personal_room_furniture_seco.r)+","+str(personal_room_furniture_seco.g)+","+str(personal_room_furniture_seco.b)+">END_PUT_COLOR_DATA")
+	send_msg_server("PUT_COLOR_DATA<10,"+str(public_room_furniture_prim.r)+","+str(public_room_furniture_prim.g)+","+str(public_room_furniture_prim.b)+">END_PUT_COLOR_DATA")
+	send_msg_server("PUT_COLOR_DATA<11,"+str(public_room_furniture_seco.r)+","+str(public_room_furniture_seco.g)+","+str(public_room_furniture_seco.b)+">END_PUT_COLOR_DATA")
+	send_msg_server("PUT_COLOR_DATA<12,"+str(window_prim.r)+","+str(window_prim.g)+","+str(window_prim.b)+">END_PUT_COLOR_DATA")
+	send_msg_server("PUT_COLOR_DATA<13,"+str(background_color.r)+","+str(background_color.g)+","+str(background_color.b)+">END_PUT_COLOR_DATA")
+	send_msg_server("PUT_COLOR_DATA<14,"+str(foliage_prim.r)+","+str(foliage_prim.g)+","+str(foliage_prim.b)+">END_PUT_COLOR_DATA")
+	send_msg_server("PUT_COLOR_DATA<15,"+str(foliage_seco.r)+","+str(foliage_seco.g)+","+str(foliage_seco.b)+">END_PUT_COLOR_DATA")
+
+	#Resource colors
+	send_msg_server("PUT_COLOR_DATA<16,"+str(curtains_prim.r)+","+str(curtains_prim.g)+","+str(curtains_prim.b)+">END_PUT_COLOR_DATA")
+
 	#Flush Buffer when over...
 	send_msg_server("FLUSH_BUFFER")
 
