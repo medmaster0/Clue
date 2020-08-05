@@ -32,8 +32,6 @@ var building_layout = [] #The 2D tile layout of the building (temp)
 # ACCESS IS: building_layout[x][y] (when we were using balcon view)
 var field_map = [] #A tile layout of the level (from RogueGen.GenerateMansion Main Map)
 # ACCESS SHOULD BE: field_map[z_floor][x][y]
-#Currently its not like this!! ^^^^^^
-# it's actually a 2D array with access field_map[x][y] 
 var num_floors = 20
 var num_x_layers = 50
 var num_y_layers = 30
@@ -109,6 +107,7 @@ var selected_creature #which creature is picked to look at
 var client #the object that will handle network comms with server
 var wrapped_client #more specialized to handle the individual bytes
 var connected = false #if we are connected to server or not
+var recvBuffer = "" # a string buffer containging messages from the server
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -912,11 +911,25 @@ func _input(event):
 			send_msg_server("NEW_MAP<" + str(num_x_layers) + "," + str(num_y_layers) + "," + str(num_floors) + ">END_NEW_MAP" )
 			transmit_world_data()
 	
+	if event.is_action_pressed("mmo_request_map"):
+		if connected == true:
+			#First, bring up the loading screen 
+			$GenericLoadingScreen.visible = true
+			update()
+			
+			#Send message requesting map data
+			send_msg_server("REQUEST_MAP")
+	
+	if event.is_action_pressed("mmo_dump_recvBuffer"):
+		print("This is the buffer:")
+		print(recvBuffer)
+	
 	if event.is_action_pressed("mmo_send_tile_data"):
 		transmit_one_tile()
 	
 	if event.is_action_pressed("mmo_send_debug_info"):
-		send_msg_server("PRINT_BUFFER")
+		if connected == true:
+			send_msg_server("PRINT_BUFFER")
 	
 	if event.is_action_pressed("mmo_make_connection"):
 		if connected == false: 
@@ -998,9 +1011,101 @@ func poll_server():
 			print("nothing")
 			continue
 		print("Recieved msg: " + str(msg))
+		recvBuffer = recvBuffer + msg
 		
 		#PROCESS MESSAGE HERE
+		#########################################
 		
+		#NEW_MAP command
+		var new_map_regex = RegEx.new()
+		new_map_regex.compile("NEW_MAP<(\\d+),(\\d+),(\\d+)>END_NEW_MAP")
+		var new_map_result = new_map_regex.search(recvBuffer)
+		if new_map_result:
+			#First, bring up the loading screen 
+			$GenericLoadingScreen.visible = true
+			update()
+			
+			#Record the new map dimensions in global variables
+			num_x_layers = int(new_map_result.get_string(1))
+			num_y_layers = int(new_map_result.get_string(2))
+			num_floors = int(new_map_result.get_string(3))
+			
+			#REMOVE COMMAND from BUFFER
+			recvBuffer = recvBuffer.replace(new_map_result.get_string(),"")
+		
+		#PUT_TILE_DATA command
+		var tile_data_regex = RegEx.new()
+		tile_data_regex.compile("PUT_TILE_DATA<(\\d+),(\\d+),(\\d+),(\\d+)>END_PUT_TILE_DATA")
+		var tile_data_result_list = tile_data_regex.search_all(recvBuffer)
+		if tile_data_result_list.size() > 0:
+			#iterate through all of the results
+			for tile_data_result in tile_data_result_list:
+				#Convert each of the result strings to ints
+				var x_result = int(tile_data_result.get_string(1))
+				var y_result = int(tile_data_result.get_string(2))
+				var z_result = int(tile_data_result.get_string(3))
+				var tile_result = int(tile_data_result.get_string(4))
+				#Enter the data into the field_map
+				field_map[z_result][x_result][y_result] = tile_result
+				
+				#REMOVE COMMAND from BUFFER
+				recvBuffer = recvBuffer.replace(tile_data_result.get_string(), "")
+				
+		#PUT_COLOR_DATA command
+		var color_data_regex = RegEx.new()
+		color_data_regex.compile("PUT_COLOR_DATA<(\\d+),(\\d+(\\.\\d+)?),(\\d+(\\.\\d+)?),(\\d+(\\.\\d+)?)>END_PUT_COLOR_DATA")
+		var color_data_result_list = color_data_regex.search_all(recvBuffer)
+		if color_data_result_list.size() > 0:
+			#iterate through all of the results
+			for color_data_result in color_data_result_list:
+				#Convert each of the result strings to numbers
+				var index_result = int(color_data_result.get_string(1))
+				var r_result = float(color_data_result.get_string(2))
+				var g_result = float(color_data_result.get_string(3))
+				var b_result = float(color_data_result.get_string(4))
+				#Enter the data in the list of world colors
+				var temp_color = Color(r_result,g_result,b_result)
+				match(index_result):
+					0:
+						brick_color_prim = temp_color
+					1:
+						brick_color_seco = temp_color
+					2:
+						basic_floor_color_prim = temp_color
+					3:
+						basic_floor_color_seco = temp_color
+					4:
+						basic_door_color_prim = temp_color
+					5:
+						basic_door_color_seco = temp_color
+					6:
+						kitchen_floor_color_prim = temp_color
+					7:
+						kitchen_floor_color_seco = temp_color
+					8:
+						personal_room_furniture_prim = temp_color
+					9:
+						personal_room_furniture_seco = temp_color
+					10:
+						public_room_furniture_prim = temp_color
+					11:
+						public_room_furniture_seco = temp_color
+					12:
+						window_prim = temp_color
+						window_prim.a = 0.7 #also set alpha for windows...
+					13:
+						background_color = temp_color
+					14:
+						foliage_prim = temp_color
+					15:
+						foliage_seco = temp_color
+					16:
+						curtains_prim = temp_color
+				###End Match
+				
+				#REMOVE COMMAND from BUFFER
+				recvBuffer = recvBuffer.replace(color_data_result.get_string(), "")
+
 
 func transmit_world_data():
 	print("sending world data over tcp...")
