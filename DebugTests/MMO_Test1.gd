@@ -914,7 +914,7 @@ func _input(event):
 	if event.is_action_pressed("mmo_request_map"):
 		if connected == true:
 			#First, bring up the loading screen 
-			$GenericLoadingScreen.visible = true
+			$HUDLayer/GenericLoadingScreen.visible = true
 			update()
 			
 			#Send message requesting map data
@@ -1022,7 +1022,7 @@ func poll_server():
 		var new_map_result = new_map_regex.search(recvBuffer)
 		if new_map_result:
 			#First, bring up the loading screen 
-			$GenericLoadingScreen.visible = true
+			$HUDLayer/GenericLoadingScreen.visible = true
 			update()
 			
 			#Record the new map dimensions in global variables

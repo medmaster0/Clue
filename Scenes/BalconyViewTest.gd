@@ -121,6 +121,10 @@ func _ready():
 	#Background
 	background_color = Color(randf(), randf(), randf())
 	VisualServer.set_default_clear_color(background_color)
+	#Ground
+	$GroundSprite.scale = Vector2(map_width,map_height)
+	$GroundSprite.position.y = balcony_begin_position.y
+	$GroundSprite.position.x = 0
 	
 	#Initialize Distance Shade Sprites
 	#This is an array of sprites to give the distance depth effect
@@ -144,10 +148,9 @@ func _ready():
 		balconyXZLayers.append(temp_canvas_layer)
 		add_child(temp_canvas_layer)
 		#also set the layer index....
-		temp_canvas_layer.layer = layer_index
+		temp_canvas_layer.layer = layer_index # Z-INDEX for Canvas Layer
 		#update counter... we go backwards, depper into the z levels 
 		layer_index = layer_index - 1
-	print(balconyXZLayers.size())
 	
 	#Add a depth Sprite into each layer... This gives the haze effect since they are transparent
 	for balcony_layer in balconyXZLayers:
