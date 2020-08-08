@@ -229,358 +229,7 @@ func _ready():
 	
 	field_map[0] = RogueGen.StampSpaceOntoSpace(farm_plot, field_map[0], Vector2(30+randi()%6,15+randi()%3))
 			
-	
-	#field_map = RogueGen.AdvanceSingleGenerationFoliageSeeds(field_map,1)
-	#print(field_map)
-	
-	#Initialize canvas layers for each of the floors
-	#BIRDSEYE
-	for temp_floor in field_map:
-		var temp_canvas_layer = CanvasLayer.new()
-		birdseyeLayers.append(temp_canvas_layer)
-		add_child(temp_canvas_layer)
-		#BALCONY
-	var layer_index = 0 #used to set the layers 
-	for temp_slice in field_map[0][0]: #cycling through the y dimensions...
-		var temp_canvas_layer = CanvasLayer.new()
-		balconyXZLayers.append(temp_canvas_layer)
-		add_child(temp_canvas_layer)
-		#also set the layer index....
-		temp_canvas_layer.layer = layer_index
-		#update counter... we go backwards, depper into the z levels 
-		layer_index = layer_index - 1
-
-	##Build out the field...
-	for k in range(field_map.size()):
-		for i in range(field_map[0].size()):
-			for j in range(field_map[0][0].size()):
-				#BLANK TILE
-				if field_map[k][i][j] == 0:
-					var new_building_item = Item.instance()
-					new_building_item.position.y = j * $TileMap.cell_size.y
-					new_building_item.position.x = i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					new_building_item.setTile(999)
-					new_building_item.SetPrimColor(background_color)
-					
-				if field_map[k][i][j] == 1:
-					var new_building_item = Item.instance()
-					new_building_item.position.y = j * $TileMap.cell_size.y
-					new_building_item.position.x = i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					new_building_item.setTile(102)
-					new_building_item.SetPrimColor(brick_color_prim)
-					new_building_item.SetSecoColor(brick_color_seco)
-					
-				if field_map[k][i][j] == 2:
-					var new_building_item = Item.instance()
-					new_building_item.position.y = j * $TileMap.cell_size.y
-					new_building_item.position.x = i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					new_building_item.setTile(101)
-					new_building_item.SetPrimColor(basic_floor_color_prim)
-					new_building_item.SetSecoColor(basic_floor_color_seco)
-				if field_map[k][i][j] == 3:
-					var new_building_item = Item.instance()
-					new_building_item.position.y =  j * $TileMap.cell_size.y
-					new_building_item.position.x =  i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					new_building_item.setTile(103)
-					new_building_item.SetPrimColor(basic_door_color_prim)
-					new_building_item.SetSecoColor(basic_door_color_seco)
-				if field_map[k][i][j] == 4:
-					var new_building_item = Item.instance()
-					new_building_item.position.y =  j * $TileMap.cell_size.y
-					new_building_item.position.x =  i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					new_building_item.setTile(107)
-					new_building_item.SetPrimColor(kitchen_floor_color_prim)
-					new_building_item.SetSecoColor(kitchen_floor_color_seco)
-				#PERSONAL ROOM (FLOOR) FURNITURE
-				if field_map[k][i][j] == 5:
-					#CREATE THE FLOOR ITEM
-					var new_building_item = Item.instance()
-					new_building_item.position.y =  j * $TileMap.cell_size.y
-					new_building_item.position.x =  i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					new_building_item.setTile(101)
-					new_building_item.SetPrimColor(basic_floor_color_prim)
-					new_building_item.SetSecoColor(basic_floor_color_seco)
-					#CREATE THE RANDOM FURNITURE ITEM
-					new_building_item = BattleHuntItem.instance()
-					new_building_item.position.y =  j * $TileMap.cell_size.y
-					new_building_item.position.x =  i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					var furniture_items = [402, 403, 404, 405, 406, 410]
-					var choice = furniture_items[randi()%furniture_items.size()]
-					new_building_item.setTile(choice)
-					new_building_item.SetPrimColor(personal_room_furniture_prim)
-					new_building_item.SetSecoColor(personal_room_furniture_seco)
-				#PUBLIC ROOM (FLOOR) FURNITURE
-				if field_map[k][i][j] == 6:
-					#CREATE THE FLOOR ITEM
-					var new_building_item = Item.instance()
-					new_building_item.position.y =  j * $TileMap.cell_size.y
-					new_building_item.position.x =  i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					new_building_item.setTile(107)
-					new_building_item.SetPrimColor(kitchen_floor_color_prim)
-					new_building_item.SetSecoColor(kitchen_floor_color_seco)
-					#CREATE THE RANDOM FURNITURE ITEM
-					new_building_item = BattleHuntItem.instance()
-					new_building_item.position.y =  j * $TileMap.cell_size.y
-					new_building_item.position.x =  i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					var furniture_items = [401, 407, 408, 409, 410]
-					var choice = furniture_items[randi()%furniture_items.size()]
-					new_building_item.setTile(choice)
-					new_building_item.SetPrimColor(public_room_furniture_prim)
-					new_building_item.SetSecoColor(public_room_furniture_seco)
-				#WINDOW
-				if field_map[k][i][j] == 9:
-					var new_building_item = Item.instance()
-					new_building_item.position.y =  j * $TileMap.cell_size.y
-					new_building_item.position.x =  i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					new_building_item.setTile(108)
-					new_building_item.SetPrimColor(brick_color_prim)
-					new_building_item.SetSecoColor(brick_color_seco)
-					new_building_item.SetTertColor(window_prim)
-	
-				#SPECIFIC FURNITURE CODES!!!
-				#LEFT PUBLIC ROOM SET FURNITURE
-				if field_map[k][i][j] == 101:
-					#CREATE THE FLOOR ITEM
-					var new_building_item = Item.instance()
-					new_building_item.position.y =  j * $TileMap.cell_size.y
-					new_building_item.position.x =  i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					new_building_item.setTile(107)
-					new_building_item.SetPrimColor(kitchen_floor_color_prim)
-					new_building_item.SetSecoColor(kitchen_floor_color_seco)
-					#CREATE THE FURNITURE ITEM
-					new_building_item = BattleHuntItem.instance()
-					new_building_item.position.y =  j * $TileMap.cell_size.y
-					new_building_item.position.x =  i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					var furniture_items = [409]
-					var choice = furniture_items[randi()%furniture_items.size()]
-					new_building_item.setTile(choice)
-					new_building_item.SetPrimColor(public_room_furniture_prim)
-					new_building_item.SetSecoColor(public_room_furniture_seco)
-				#MID PUBLIC ROOM SET FURNITURE
-				if field_map[k][i][j] == 102:
-					#CREATE THE FLOOR ITEM
-					var new_building_item = Item.instance()
-					new_building_item.position.y =  j * $TileMap.cell_size.y
-					new_building_item.position.x =  i * $TileMap.cell_size.x
-					map_buildings[i][j][0].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					new_building_item.setTile(107)
-					new_building_item.SetPrimColor(kitchen_floor_color_prim)
-					new_building_item.SetSecoColor(kitchen_floor_color_seco)
-					#CREATE THE FURNITURE ITEM
-					new_building_item = BattleHuntItem.instance()
-					new_building_item.position.y =  j * $TileMap.cell_size.y
-					new_building_item.position.x =  i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					var furniture_items = [407]
-					var choice = furniture_items[randi()%furniture_items.size()]
-					new_building_item.setTile(choice)
-					new_building_item.SetPrimColor(public_room_furniture_prim)
-					new_building_item.SetSecoColor(public_room_furniture_seco)
-				#RIGHT PUBLIC ROOM SET FURNITURE
-				if field_map[k][i][j] == 103:
-					#CREATE THE FLOOR ITEM
-					var new_building_item = Item.instance()
-					new_building_item.position.y =  j * $TileMap.cell_size.y
-					new_building_item.position.x =  i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					new_building_item.setTile(107)
-					new_building_item.SetPrimColor(kitchen_floor_color_prim)
-					new_building_item.SetSecoColor(kitchen_floor_color_seco)
-					#CREATE THE FURNITURE ITEM
-					new_building_item = BattleHuntItem.instance()
-					new_building_item.position.y =  j * $TileMap.cell_size.y
-					new_building_item.position.x =  i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					var furniture_items = [408]
-					var choice = furniture_items[randi()%furniture_items.size()]
-					new_building_item.setTile(choice)
-					new_building_item.SetPrimColor(public_room_furniture_prim)
-					new_building_item.SetSecoColor(public_room_furniture_seco)
-				#LEFT PRIVATEROOM SET FURNITURE
-				if field_map[k][i][j] == 104:
-					#CREATE THE FLOOR ITEM
-					var new_building_item = Item.instance()
-					new_building_item.position.y =  j * $TileMap.cell_size.y
-					new_building_item.position.x =  i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					new_building_item.setTile(101)
-					new_building_item.SetPrimColor(basic_floor_color_prim)
-					new_building_item.SetSecoColor(basic_floor_color_seco)
-					#CREATE THE FURNITURE ITEM
-					new_building_item = BattleHuntItem.instance()
-					new_building_item.position.y =  j * $TileMap.cell_size.y
-					new_building_item.position.x =  i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					var furniture_items = [403]
-					var choice = furniture_items[randi()%furniture_items.size()]
-					new_building_item.setTile(choice)
-					new_building_item.SetPrimColor(personal_room_furniture_prim)
-					new_building_item.SetSecoColor(personal_room_furniture_seco)
-				#MID PUBLIC ROOM SET FURNITURE
-				if field_map[k][i][j] == 105:
-					#CREATE THE FLOOR ITEM
-					var new_building_item = Item.instance()
-					new_building_item.position.y =  j * $TileMap.cell_size.y
-					new_building_item.position.x =  i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					new_building_item.setTile(101)
-					new_building_item.SetPrimColor(basic_floor_color_prim)
-					new_building_item.SetSecoColor(basic_floor_color_seco)
-					#CREATE THE FURNITURE ITEM
-					new_building_item = BattleHuntItem.instance()
-					new_building_item.position.y =  j * $TileMap.cell_size.y
-					new_building_item.position.x =  i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					var furniture_items = [402]
-					var choice = furniture_items[randi()%furniture_items.size()]
-					new_building_item.setTile(choice)
-					new_building_item.SetPrimColor(personal_room_furniture_prim)
-					new_building_item.SetSecoColor(personal_room_furniture_seco)
-				#RIGHT PUBLIC ROOM SET FURNITURE
-				if field_map[k][i][j] == 106:
-					#CREATE THE FLOOR ITEM
-					var new_building_item = Item.instance()
-					new_building_item.position.y =  j * $TileMap.cell_size.y
-					new_building_item.position.x =  i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					new_building_item.setTile(101)
-					new_building_item.SetPrimColor(basic_floor_color_prim)
-					new_building_item.SetSecoColor(basic_floor_color_seco)
-					#CREATE THE FURNITURE ITEM
-					new_building_item = BattleHuntItem.instance()
-					new_building_item.position.y =  j * $TileMap.cell_size.y
-					new_building_item.position.x =  i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					var furniture_items = [405]
-					var choice = furniture_items[randi()%furniture_items.size()]
-					new_building_item.setTile(choice)
-					new_building_item.SetPrimColor(personal_room_furniture_prim)
-					new_building_item.SetSecoColor(personal_room_furniture_seco)
-				#FOLIAGE TILES
-				if field_map[k][i][j] == 301:
-					#Make the blank tile
-					var new_building_item = Item.instance()
-					new_building_item.position.y = j * $TileMap.cell_size.y
-					new_building_item.position.x = i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					new_building_item.setTile(999)
-					new_building_item.SetPrimColor(background_color)
-					#Also make the leafy tile on top
-					new_building_item = Item.instance()
-					new_building_item.position.y = j * $TileMap.cell_size.y
-					new_building_item.position.x = i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					new_building_item.setTile(301)
-					new_building_item.SetPrimColor(foliage_prim)
-				if field_map[k][i][j] == 302:
-					#Make the blank tile
-					var new_building_item = Item.instance()
-					new_building_item.position.y = j * $TileMap.cell_size.y
-					new_building_item.position.x = i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					new_building_item.setTile(999)
-					new_building_item.SetPrimColor(background_color)
-					#Also make the leafy tile on top
-					new_building_item = Item.instance()
-					new_building_item.position.y = j * $TileMap.cell_size.y
-					new_building_item.position.x = i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					new_building_item.setTile(302)
-					new_building_item.SetPrimColor(foliage_prim)
-				if field_map[k][i][j] == 303:
-					#Make the blank tile
-					var new_building_item = Item.instance()
-					new_building_item.position.y = j * $TileMap.cell_size.y
-					new_building_item.position.x = i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					new_building_item.setTile(999)
-					new_building_item.SetPrimColor(background_color)
-					#Also make the leafy tile on top
-					new_building_item = Item.instance()
-					new_building_item.position.y = j * $TileMap.cell_size.y
-					new_building_item.position.x = i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					new_building_item.setTile(303)
-					new_building_item.SetPrimColor(foliage_prim)
-				#FARM TILES
-				#dirt
-				if field_map[k][i][j] == 401:
-					var temp_tile = DirtTile.instance()
-					temp_tile.position.y = j * $TileMap.cell_size.y
-					temp_tile.position.x = i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(temp_tile) #add to global item matrix
-					birdseyeLayers[k].add_child(temp_tile)
-					#Choose a random dirt color from the set
-					var temp_col = dirt_patch_color_set_data["color_set"][randi()%dirt_patch_color_set_data["color_set"].size()]
-					temp_tile.SetPrimColor(temp_col)
-					
-				#RESOURCE HARVEST OBJECTS
-				#CuRTAINS
-				if field_map[k][i][j] == 501:
-					#Make Window first
-					var new_building_item = Item.instance()
-					new_building_item.position.y =  j * $TileMap.cell_size.y
-					new_building_item.position.x =  i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					new_building_item.setTile(108)
-					new_building_item.SetPrimColor(brick_color_prim)
-					new_building_item.SetSecoColor(brick_color_seco)
-					new_building_item.SetTertColor(window_prim)
-					#Make the curtains
-					new_building_item = Item.instance()
-					new_building_item.position.y =  j * $TileMap.cell_size.y
-					new_building_item.position.x =  i * $TileMap.cell_size.x
-					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
-					birdseyeLayers[k].add_child(new_building_item)
-					new_building_item.setTile(404)
-					new_building_item.SetPrimColor(curtains_prim)
-
-	#INitially, turn off all canvas layers
-	for layer in birdseyeLayers:
-		CanvasLayerOff(layer)
-	for layer in balconyXZLayers:
-		CanvasLayerOff(layer)
+	BuildMap() #build the map from field_map
 		
 	view_mode = VIEW_MODE.birdseye
 
@@ -1061,8 +710,8 @@ func poll_server():
 				#Convert each of the result strings to numbers
 				var index_result = int(color_data_result.get_string(1))
 				var r_result = float(color_data_result.get_string(2))
-				var g_result = float(color_data_result.get_string(3))
-				var b_result = float(color_data_result.get_string(4))
+				var g_result = float(color_data_result.get_string(4)) #it's every other since we have nested groups
+				var b_result = float(color_data_result.get_string(6)) #it's every other since we have nested groups
 				#Enter the data in the list of world colors
 				var temp_color = Color(r_result,g_result,b_result)
 				match(index_result):
@@ -1105,7 +754,23 @@ func poll_server():
 				
 				#REMOVE COMMAND from BUFFER
 				recvBuffer = recvBuffer.replace(color_data_result.get_string(), "")
-
+		
+		#DONE_MAP command
+		var done_map_regex = RegEx.new()
+		done_map_regex.compile("DONE_MAP")
+		var done_map_result = done_map_regex.search(recvBuffer)
+		if done_map_result:
+			
+			#At this point, we should have all the map data stored in field_map
+			#Rebuild the map
+			BuildMap()
+			
+			#Turn off the loading screen 
+			$HUDLayer/GenericLoadingScreen.visible = false
+			update()
+			
+			#REMOVE COMMAND from Buffer
+			recvBuffer = recvBuffer.replace(done_map_result.get_string(), "")
 
 func transmit_world_data():
 	print("sending world data over tcp...")
@@ -1304,6 +969,369 @@ func CanvasLayerOn(canvas_layer):
 	for child in canvas_layer.get_children():
 		child.show()
 
+#Function to build all map items based on the field_map 
+#field_map must already be generated
+func BuildMap():
+	
+	print(background_color)
+	
+	FreeCanvasLayers()
+	
+	#Initialize canvas layers for each of the floors
+	#BIRDSEYE
+	for temp_floor in field_map:
+		var temp_canvas_layer = CanvasLayer.new()
+		birdseyeLayers.append(temp_canvas_layer)
+		add_child(temp_canvas_layer)
+		#BALCONY
+	var layer_index = 0 #used to set the layers 
+	for temp_slice in field_map[0][0]: #cycling through the y dimensions...
+		var temp_canvas_layer = CanvasLayer.new()
+		balconyXZLayers.append(temp_canvas_layer)
+		add_child(temp_canvas_layer)
+		#also set the layer index....
+		temp_canvas_layer.layer = layer_index
+		#update counter... we go backwards, depper into the z levels 
+		layer_index = layer_index - 1
 
+	##Build out the field...
+	for k in range(field_map.size()):
+		for i in range(field_map[0].size()):
+			for j in range(field_map[0][0].size()):
+				#BLANK TILE
+				if field_map[k][i][j] == 0:
+					var new_building_item = Item.instance()
+					new_building_item.position.y = j * $TileMap.cell_size.y
+					new_building_item.position.x = i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					new_building_item.setTile(999)
+					new_building_item.SetPrimColor(background_color)
+					
+				if field_map[k][i][j] == 1:
+					var new_building_item = Item.instance()
+					new_building_item.position.y = j * $TileMap.cell_size.y
+					new_building_item.position.x = i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					new_building_item.setTile(102)
+					new_building_item.SetPrimColor(brick_color_prim)
+					new_building_item.SetSecoColor(brick_color_seco)
+					
+				if field_map[k][i][j] == 2:
+					var new_building_item = Item.instance()
+					new_building_item.position.y = j * $TileMap.cell_size.y
+					new_building_item.position.x = i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					new_building_item.setTile(101)
+					new_building_item.SetPrimColor(basic_floor_color_prim)
+					new_building_item.SetSecoColor(basic_floor_color_seco)
+				if field_map[k][i][j] == 3:
+					var new_building_item = Item.instance()
+					new_building_item.position.y =  j * $TileMap.cell_size.y
+					new_building_item.position.x =  i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					new_building_item.setTile(103)
+					new_building_item.SetPrimColor(basic_door_color_prim)
+					new_building_item.SetSecoColor(basic_door_color_seco)
+				if field_map[k][i][j] == 4:
+					var new_building_item = Item.instance()
+					new_building_item.position.y =  j * $TileMap.cell_size.y
+					new_building_item.position.x =  i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					new_building_item.setTile(107)
+					new_building_item.SetPrimColor(kitchen_floor_color_prim)
+					new_building_item.SetSecoColor(kitchen_floor_color_seco)
+				#PERSONAL ROOM (FLOOR) FURNITURE
+				if field_map[k][i][j] == 5:
+					#CREATE THE FLOOR ITEM
+					var new_building_item = Item.instance()
+					new_building_item.position.y =  j * $TileMap.cell_size.y
+					new_building_item.position.x =  i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					new_building_item.setTile(101)
+					new_building_item.SetPrimColor(basic_floor_color_prim)
+					new_building_item.SetSecoColor(basic_floor_color_seco)
+					#CREATE THE RANDOM FURNITURE ITEM
+					new_building_item = BattleHuntItem.instance()
+					new_building_item.position.y =  j * $TileMap.cell_size.y
+					new_building_item.position.x =  i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					var furniture_items = [402, 403, 404, 405, 406, 410]
+					var choice = furniture_items[randi()%furniture_items.size()]
+					new_building_item.setTile(choice)
+					new_building_item.SetPrimColor(personal_room_furniture_prim)
+					new_building_item.SetSecoColor(personal_room_furniture_seco)
+				#PUBLIC ROOM (FLOOR) FURNITURE
+				if field_map[k][i][j] == 6:
+					#CREATE THE FLOOR ITEM
+					var new_building_item = Item.instance()
+					new_building_item.position.y =  j * $TileMap.cell_size.y
+					new_building_item.position.x =  i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					new_building_item.setTile(107)
+					new_building_item.SetPrimColor(kitchen_floor_color_prim)
+					new_building_item.SetSecoColor(kitchen_floor_color_seco)
+					#CREATE THE RANDOM FURNITURE ITEM
+					new_building_item = BattleHuntItem.instance()
+					new_building_item.position.y =  j * $TileMap.cell_size.y
+					new_building_item.position.x =  i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					var furniture_items = [401, 407, 408, 409, 410]
+					var choice = furniture_items[randi()%furniture_items.size()]
+					new_building_item.setTile(choice)
+					new_building_item.SetPrimColor(public_room_furniture_prim)
+					new_building_item.SetSecoColor(public_room_furniture_seco)
+				#WINDOW
+				if field_map[k][i][j] == 9:
+					var new_building_item = Item.instance()
+					new_building_item.position.y =  j * $TileMap.cell_size.y
+					new_building_item.position.x =  i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					new_building_item.setTile(108)
+					new_building_item.SetPrimColor(brick_color_prim)
+					new_building_item.SetSecoColor(brick_color_seco)
+					new_building_item.SetTertColor(window_prim)
+	
+				#SPECIFIC FURNITURE CODES!!!
+				#LEFT PUBLIC ROOM SET FURNITURE
+				if field_map[k][i][j] == 101:
+					#CREATE THE FLOOR ITEM
+					var new_building_item = Item.instance()
+					new_building_item.position.y =  j * $TileMap.cell_size.y
+					new_building_item.position.x =  i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					new_building_item.setTile(107)
+					new_building_item.SetPrimColor(kitchen_floor_color_prim)
+					new_building_item.SetSecoColor(kitchen_floor_color_seco)
+					#CREATE THE FURNITURE ITEM
+					new_building_item = BattleHuntItem.instance()
+					new_building_item.position.y =  j * $TileMap.cell_size.y
+					new_building_item.position.x =  i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					var furniture_items = [409]
+					var choice = furniture_items[randi()%furniture_items.size()]
+					new_building_item.setTile(choice)
+					new_building_item.SetPrimColor(public_room_furniture_prim)
+					new_building_item.SetSecoColor(public_room_furniture_seco)
+				#MID PUBLIC ROOM SET FURNITURE
+				if field_map[k][i][j] == 102:
+					#CREATE THE FLOOR ITEM
+					var new_building_item = Item.instance()
+					new_building_item.position.y =  j * $TileMap.cell_size.y
+					new_building_item.position.x =  i * $TileMap.cell_size.x
+					map_buildings[i][j][0].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					new_building_item.setTile(107)
+					new_building_item.SetPrimColor(kitchen_floor_color_prim)
+					new_building_item.SetSecoColor(kitchen_floor_color_seco)
+					#CREATE THE FURNITURE ITEM
+					new_building_item = BattleHuntItem.instance()
+					new_building_item.position.y =  j * $TileMap.cell_size.y
+					new_building_item.position.x =  i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					var furniture_items = [407]
+					var choice = furniture_items[randi()%furniture_items.size()]
+					new_building_item.setTile(choice)
+					new_building_item.SetPrimColor(public_room_furniture_prim)
+					new_building_item.SetSecoColor(public_room_furniture_seco)
+				#RIGHT PUBLIC ROOM SET FURNITURE
+				if field_map[k][i][j] == 103:
+					#CREATE THE FLOOR ITEM
+					var new_building_item = Item.instance()
+					new_building_item.position.y =  j * $TileMap.cell_size.y
+					new_building_item.position.x =  i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					new_building_item.setTile(107)
+					new_building_item.SetPrimColor(kitchen_floor_color_prim)
+					new_building_item.SetSecoColor(kitchen_floor_color_seco)
+					#CREATE THE FURNITURE ITEM
+					new_building_item = BattleHuntItem.instance()
+					new_building_item.position.y =  j * $TileMap.cell_size.y
+					new_building_item.position.x =  i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					var furniture_items = [408]
+					var choice = furniture_items[randi()%furniture_items.size()]
+					new_building_item.setTile(choice)
+					new_building_item.SetPrimColor(public_room_furniture_prim)
+					new_building_item.SetSecoColor(public_room_furniture_seco)
+				#LEFT PRIVATEROOM SET FURNITURE
+				if field_map[k][i][j] == 104:
+					#CREATE THE FLOOR ITEM
+					var new_building_item = Item.instance()
+					new_building_item.position.y =  j * $TileMap.cell_size.y
+					new_building_item.position.x =  i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					new_building_item.setTile(101)
+					new_building_item.SetPrimColor(basic_floor_color_prim)
+					new_building_item.SetSecoColor(basic_floor_color_seco)
+					#CREATE THE FURNITURE ITEM
+					new_building_item = BattleHuntItem.instance()
+					new_building_item.position.y =  j * $TileMap.cell_size.y
+					new_building_item.position.x =  i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					var furniture_items = [403]
+					var choice = furniture_items[randi()%furniture_items.size()]
+					new_building_item.setTile(choice)
+					new_building_item.SetPrimColor(personal_room_furniture_prim)
+					new_building_item.SetSecoColor(personal_room_furniture_seco)
+				#MID PUBLIC ROOM SET FURNITURE
+				if field_map[k][i][j] == 105:
+					#CREATE THE FLOOR ITEM
+					var new_building_item = Item.instance()
+					new_building_item.position.y =  j * $TileMap.cell_size.y
+					new_building_item.position.x =  i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					new_building_item.setTile(101)
+					new_building_item.SetPrimColor(basic_floor_color_prim)
+					new_building_item.SetSecoColor(basic_floor_color_seco)
+					#CREATE THE FURNITURE ITEM
+					new_building_item = BattleHuntItem.instance()
+					new_building_item.position.y =  j * $TileMap.cell_size.y
+					new_building_item.position.x =  i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					var furniture_items = [402]
+					var choice = furniture_items[randi()%furniture_items.size()]
+					new_building_item.setTile(choice)
+					new_building_item.SetPrimColor(personal_room_furniture_prim)
+					new_building_item.SetSecoColor(personal_room_furniture_seco)
+				#RIGHT PUBLIC ROOM SET FURNITURE
+				if field_map[k][i][j] == 106:
+					#CREATE THE FLOOR ITEM
+					var new_building_item = Item.instance()
+					new_building_item.position.y =  j * $TileMap.cell_size.y
+					new_building_item.position.x =  i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					new_building_item.setTile(101)
+					new_building_item.SetPrimColor(basic_floor_color_prim)
+					new_building_item.SetSecoColor(basic_floor_color_seco)
+					#CREATE THE FURNITURE ITEM
+					new_building_item = BattleHuntItem.instance()
+					new_building_item.position.y =  j * $TileMap.cell_size.y
+					new_building_item.position.x =  i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					var furniture_items = [405]
+					var choice = furniture_items[randi()%furniture_items.size()]
+					new_building_item.setTile(choice)
+					new_building_item.SetPrimColor(personal_room_furniture_prim)
+					new_building_item.SetSecoColor(personal_room_furniture_seco)
+				#FOLIAGE TILES
+				if field_map[k][i][j] == 301:
+					#Make the blank tile
+					var new_building_item = Item.instance()
+					new_building_item.position.y = j * $TileMap.cell_size.y
+					new_building_item.position.x = i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					new_building_item.setTile(999)
+					new_building_item.SetPrimColor(background_color)
+					#Also make the leafy tile on top
+					new_building_item = Item.instance()
+					new_building_item.position.y = j * $TileMap.cell_size.y
+					new_building_item.position.x = i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					new_building_item.setTile(301)
+					new_building_item.SetPrimColor(foliage_prim)
+				if field_map[k][i][j] == 302:
+					#Make the blank tile
+					var new_building_item = Item.instance()
+					new_building_item.position.y = j * $TileMap.cell_size.y
+					new_building_item.position.x = i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					new_building_item.setTile(999)
+					new_building_item.SetPrimColor(background_color)
+					#Also make the leafy tile on top
+					new_building_item = Item.instance()
+					new_building_item.position.y = j * $TileMap.cell_size.y
+					new_building_item.position.x = i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					new_building_item.setTile(302)
+					new_building_item.SetPrimColor(foliage_prim)
+				if field_map[k][i][j] == 303:
+					#Make the blank tile
+					var new_building_item = Item.instance()
+					new_building_item.position.y = j * $TileMap.cell_size.y
+					new_building_item.position.x = i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					new_building_item.setTile(999)
+					new_building_item.SetPrimColor(background_color)
+					#Also make the leafy tile on top
+					new_building_item = Item.instance()
+					new_building_item.position.y = j * $TileMap.cell_size.y
+					new_building_item.position.x = i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					new_building_item.setTile(303)
+					new_building_item.SetPrimColor(foliage_prim)
+				#FARM TILES
+				#dirt
+				if field_map[k][i][j] == 401:
+					var temp_tile = DirtTile.instance()
+					temp_tile.position.y = j * $TileMap.cell_size.y
+					temp_tile.position.x = i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(temp_tile) #add to global item matrix
+					birdseyeLayers[k].add_child(temp_tile)
+					#Choose a random dirt color from the set
+					var temp_col = dirt_patch_color_set_data["color_set"][randi()%dirt_patch_color_set_data["color_set"].size()]
+					temp_tile.SetPrimColor(temp_col)
+					
+				#RESOURCE HARVEST OBJECTS
+				#CuRTAINS
+				if field_map[k][i][j] == 501:
+					#Make Window first
+					var new_building_item = Item.instance()
+					new_building_item.position.y =  j * $TileMap.cell_size.y
+					new_building_item.position.x =  i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					new_building_item.setTile(108)
+					new_building_item.SetPrimColor(brick_color_prim)
+					new_building_item.SetSecoColor(brick_color_seco)
+					new_building_item.SetTertColor(window_prim)
+					#Make the curtains
+					new_building_item = Item.instance()
+					new_building_item.position.y =  j * $TileMap.cell_size.y
+					new_building_item.position.x =  i * $TileMap.cell_size.x
+					map_buildings[i][j][k].append(new_building_item) #add to global item matrix
+					birdseyeLayers[k].add_child(new_building_item)
+					new_building_item.setTile(404)
+					new_building_item.SetPrimColor(curtains_prim)
 
+	#INitially, turn off all canvas layers
+	for layer in birdseyeLayers:
+		CanvasLayerOff(layer)
+	for layer in balconyXZLayers:
+		CanvasLayerOff(layer)
 
+#This function will free all items in a node
+func FreeCanvasLayers():
+	for layer in birdseyeLayers:
+		layer.queue_free()
+		birdseyeLayers.erase(layer)
+	
+	for layer in balconyXZLayers:
+		layer.queue_free()
+		balconyXZLayers.erase(layer)

@@ -448,7 +448,7 @@ func setTile(in_tile_index):
 #All this function does is pass itself to the parent Game
 #By calling the funciton with itself
 func _on_SelectButton_pressed():
-	get_parent().DisplayItem(self)
+	get_parent().get_parent().DisplayItem(self)
 
 #This function will disable the select button
 func disableSelect():
