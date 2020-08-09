@@ -152,13 +152,6 @@ func _ready():
 	$HUDLayer/CreatureDisplay.position.y = world_height - 8*16
 	$HUDLayer/ItemDisplay.position.y = world_height - 8*16
 	
-	#Initialize canvas layers for each of the floors
-	#BIRDSEYE
-	for temp_floor in building_layout:
-		var temp_canvas_layer = CanvasLayer.new()
-		birdseyeLayers.append(temp_canvas_layer)
-		add_child(temp_canvas_layer)
-	
 	#Initialize Item Arrays
 	#MAP ITEMS
 	for i in range(num_x_layers):
@@ -973,9 +966,11 @@ func CanvasLayerOn(canvas_layer):
 #field_map must already be generated
 func BuildMap():
 	
-	print(background_color)
-	
+	FreeMapItems()
 	FreeCanvasLayers()
+	
+	#Redetermine the dirt tile colors
+	dirt_patch_color_set_data = MedAlgo.generate_offset_color_set(background_color, 10, 0.05)
 	
 	#Initialize canvas layers for each of the floors
 	#BIRDSEYE
@@ -1325,6 +1320,19 @@ func BuildMap():
 		CanvasLayerOff(layer)
 	for layer in balconyXZLayers:
 		CanvasLayerOff(layer)
+
+#This function will free all items in the item arrays
+func FreeMapItems():
+
+	#Cycle through each of the tiles
+	for i in range(num_x_layers):
+		for j in range(num_y_layers):
+			for k in range(num_floors):
+				for item in map_items[i][j][k]:
+					item.queue_free()
+				for item in map_buildings[i][j][k]:
+					item.queue_free()
+
 
 #This function will free all items in a node
 func FreeCanvasLayers():
